@@ -1,0 +1,592 @@
+/* Doctor Management Styles */
+
+/* Avatar Styles */
+.avatar-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.avatar-circle-lg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 32px;
+}
+
+/* Doctor Card */
+.doctor-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.doctor-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.15) !important;
+  transform: translateY(-6px);
+}
+
+.doctor-card:hover .avatar-circle {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Quick Stats */
+.quick-stats {
+  gap: 16px;
+}
+
+.quick-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Offcanvas Styling */
+.doctor-offcanvas .offcanvas-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.doctor-offcanvas .offcanvas-body {
+  padding: 24px;
+}
+
+/* Progress Bars */
+.progress-bar-animated {
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+/* Form Controls */
+.form-control,
+.form-select {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Button Group */
+.btn-group .btn {
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-group .btn.active {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Card Styling */
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.card.bg-light {
+  background-color: #f8fafc !important;
+  border: none;
+}
+
+/* Badge Styles */
+.badge {
+  font-weight: 600;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Sticky Search Bar */
+.sticky-top {
+  top: 90px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Dropdown Styling */
+.dropdown-menu {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item:hover {
+  background-color: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+/* Input Group */
+.input-group {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.input-group .form-control {
+  border-radius: 0;
+}
+
+.input-group .form-control:focus {
+  border-color: #2563eb;
+}
+
+.input-group-text {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+/* Header Styling */
+h2,
+h4,
+h5,
+h6 {
+  color: #1e293b;
+}
+
+small.text-muted {
+  color: #64748b;
+}
+
+/* Empty State */
+.text-center {
+  margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .avatar-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 17px;
+  }
+
+  .avatar-circle-lg {
+    width: 90px;
+    height: 90px;
+    font-size: 28px;
+  }
+
+  .doctor-card {
+    border-radius: 11px;
+  }
+
+  .quick-stats {
+    gap: 14px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 5px 11px;
+  }
+
+  .btn-group .btn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .avatar-circle {
+    width: 52px;
+    height: 52px;
+    font-size: 16px;
+  }
+
+  .avatar-circle-lg {
+    width: 85px;
+    height: 85px;
+    font-size: 26px;
+  }
+
+  .doctor-card {
+    border-radius: 10px;
+  }
+
+  .doctor-card .card-body {
+    padding: 16px;
+  }
+
+  .quick-stats {
+    gap: 12px;
+  }
+
+  .quick-stats > div {
+    gap: 3px;
+  }
+
+  .quick-stats > div small {
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 4px 9px;
+  }
+
+  .btn-group .btn {
+    font-size: 10px;
+    padding: 5px 9px;
+  }
+
+  .sticky-top {
+    top: 80px;
+  }
+
+  .card-body {
+    padding: 18px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .avatar-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .avatar-circle-lg {
+    width: 75px;
+    height: 75px;
+    font-size: 24px;
+  }
+
+  .doctor-card {
+    border-radius: 9px;
+  }
+
+  .doctor-card .card-body {
+    padding: 14px;
+  }
+
+  .quick-stats {
+    gap: 10px;
+  }
+
+  .quick-stats > div small {
+    font-size: 0.75rem;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .btn-group .btn {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+
+  .sticky-top {
+    top: 70px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.375rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.9rem;
+    padding: 0.475rem 0.75rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .avatar-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .doctor-card {
+    border-radius: 8px;
+  }
+
+  .btn-group .btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .quick-stats {
+    gap: 8px;
+  }
+
+  .offcanvas {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sticky-top {
+    top: 65px;
+  }
+
+  .avatar-circle {
+    width: 45px;
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .avatar-circle-lg {
+    width: 70px;
+    height: 70px;
+    font-size: 22px;
+  }
+
+  .doctor-card {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .doctor-card .card-body {
+    padding: 12px;
+  }
+
+  .quick-stats {
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  .quick-stats > div small {
+    font-size: 0.7rem;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+
+  .btn-group .btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .card-body {
+    padding: 14px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 0.95rem;
+  }
+
+  h5 {
+    font-size: 0.9rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .offcanvas {
+    width: 100% !important;
+  }
+
+  .doctor-offcanvas .offcanvas-body {
+    padding: 16px;
+  }
+
+  .input-group {
+    gap: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .sticky-top {
+    top: 56px;
+  }
+
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .avatar-circle-lg {
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+  }
+
+  .doctor-card {
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 0.75rem;
+  }
+
+  .doctor-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .doctor-card .card-body {
+    padding: 10px;
+  }
+
+  .quick-stats {
+    gap: 6px;
+  }
+
+  .quick-stats > div {
+    gap: 2px;
+  }
+
+  .quick-stats > div small {
+    font-size: 0.65rem;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .btn-group {
+    gap: 4px;
+  }
+
+  .btn-group .btn {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
+
+  h4 {
+    font-size: 0.875rem;
+  }
+
+  h5 {
+    font-size: 0.8125rem;
+  }
+
+  small.text-muted {
+    font-size: 0.75rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .offcanvas {
+    width: 100% !important;
+  }
+
+  .doctor-offcanvas .offcanvas-body {
+    padding: 12px;
+  }
+
+  .progress {
+    height: 6px;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doctor-card,
+.card {
+  animation: slideIn 0.3s ease;
+}
+
+/* Badge Colors */
+.bg-primary {
+  background-color: #2563eb !important;
+}
+
+.bg-success {
+  background-color: #10b981 !important;
+}
+
+.bg-warning {
+  background-color: #f59e0b !important;
+}
+
+.bg-info {
+  background-color: #0891b2 !important;
+}
+
+.bg-danger {
+  background-color: #ef4444 !important;
+}
+
+/* Text Colors */
+.text-success {
+  color: #10b981 !important;
+}
+
+.text-warning {
+  color: #f59e0b !important;
+}
+
+.text-info {
+  color: #0891b2 !important;
+}
+
+.text-danger {
+  color: #ef4444 !important;
+}
+
+.text-secondary {
+  color: #64748b !important;
+}
