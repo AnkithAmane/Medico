@@ -12,11 +12,11 @@ import {
   Dropdown,
   Modal,
   Form,
-  Offcanvas,
   Card,
   ListGroup,
+  Collapse,
 } from 'react-bootstrap';
-import { Search, Plus, Calendar, List, Trash2, Edit2 } from 'lucide-react';
+import { Search, Plus, Calendar, List, Trash2, Edit2, Filter, X } from 'lucide-react';
 import Layout from '../../components/Common/Layout';
 import '../../styles/AdminAppointments.css';
 
@@ -70,48 +70,67 @@ const FilterBar = ({ showFilters, setShowFilters, selectedDoctor, setSelectedDoc
   const statuses = ['All Status', 'Confirmed', 'Pending', 'Cancelled'];
 
   return (
-    <Offcanvas show={showFilters} onHide={() => setShowFilters(false)} placement="start">
-      <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Filters</Offcanvas.Title>
-      </Offcanvas.Header>
-      <Offcanvas.Body>
-        <Form>
-          <Form.Group className="mb-4">
-            <Form.Label className="fw-bold">Doctor</Form.Label>
-            <Form.Select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
-              {doctors.map((doctor) => (
-                <option key={doctor} value={doctor}>
-                  {doctor}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mb-4">
-            <Form.Label className="fw-bold">Status</Form.Label>
-            <Form.Select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
+    <Collapse in={showFilters} className="mb-4">
+      <Card className="shadow-sm border-0">
+        <Card.Header className="bg-light d-flex align-items-center justify-content-between">
+          <h6 className="fw-bold mb-0">
+            <Filter size={18} className="me-2" style={{ display: 'inline' }} />
+            Filters
+          </h6>
           <Button
-            variant="secondary"
+            variant="light"
             size="sm"
-            onClick={() => {
-              setSelectedDoctor('All Doctors');
-              setSelectedStatus('All Status');
-            }}
-            className="w-100"
+            onClick={() => setShowFilters(false)}
+            className="p-0"
           >
-            Reset Filters
+            <X size={18} />
           </Button>
-        </Form>
-      </Offcanvas.Body>
-    </Offcanvas>
+        </Card.Header>
+        <Card.Body>
+          <Row className="g-3">
+            <Col md={6}>
+              <Form.Group>
+                <Form.Label className="fw-bold mb-2">Doctor</Form.Label>
+                <Form.Select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
+                  {doctors.map((doctor) => (
+                    <option key={doctor} value={doctor}>
+                      {doctor}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group>
+                <Form.Label className="fw-bold mb-2">Status</Form.Label>
+                <Form.Select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                  {statuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col md={12}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setSelectedDoctor('All Doctors');
+                  setSelectedStatus('All Status');
+                }}
+                className="w-100"
+              >
+                Reset Filters
+              </Button>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+    </Collapse>
   );
 };
 
@@ -345,6 +364,7 @@ const AdminAppointments = () => {
   const [selectedStatus, setSelectedStatus] = useState('All Status');
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [appointments, setAppointments] = useState(appointmentsData);
+  const [selectedDate, setSelectedDate] = useState('');
 
   const filteredAppointments = appointments.filter((apt) => {
     const matchesSearch =
@@ -399,12 +419,24 @@ const AdminAppointments = () => {
     <Layout>
       <Container fluid className="py-4">
         {/* Header */}
-        <Row className="mb-4">
-          <Col md={6}>
+        <Row className="mb-4 align-items-center">
+          <Col md={4}>
             <h2 className="mb-0 fw-bold">Appointments</h2>
-            <small className="text-muted">Manage all patient appointments</small>
           </Col>
-          <Col md={6} className="text-end">
+          <Col md={4} className="text-center">
+            <InputGroup className="date-selector-group mx-auto">
+              <InputGroup.Text className="bg-white border-2 border-primary">
+                <Calendar size={18} className="text-primary" />
+              </InputGroup.Text>
+              <FormControl
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="date-input-selector border-2 border-primary"
+              />
+            </InputGroup>
+          </Col>
+          <Col md={4} className="text-end">
             <Button
               variant="primary"
               onClick={() => {
@@ -420,9 +452,9 @@ const AdminAppointments = () => {
         </Row>
 
         {/* Controls Bar */}
-        <Card className="mb-4 shadow-sm">
+        <Card className="mb-3 shadow-sm">
           <Card.Body>
-            <Row className="g-3 align-items-center">
+            <Row className="g-3 align-items-center mb-3">
               <Col md={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light border-0">
@@ -437,8 +469,8 @@ const AdminAppointments = () => {
                 </InputGroup>
               </Col>
 
-              <Col md={6} className="text-end">
-                <ButtonGroup className="me-3">
+              <Col md={6} className="d-flex justify-content-end gap-2">
+                <ButtonGroup>
                   <Button
                     variant={viewMode === 'list' ? 'primary' : 'outline-secondary'}
                     onClick={() => setViewMode('list')}
@@ -458,16 +490,27 @@ const AdminAppointments = () => {
                 </ButtonGroup>
 
                 <Button
-                  variant="outline-secondary"
-                  onClick={() => setShowFilters(true)}
+                  variant={showFilters ? 'primary' : 'outline-secondary'}
+                  onClick={() => setShowFilters(!showFilters)}
                   className="gap-2 d-flex align-items-center"
                 >
+                  <Filter size={18} />
                   Filters
                 </Button>
               </Col>
             </Row>
           </Card.Body>
         </Card>
+
+        {/* Filter Bar */}
+        <FilterBar
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          selectedDoctor={selectedDoctor}
+          setSelectedDoctor={setSelectedDoctor}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+        />
 
         {/* Content */}
         <Card className="shadow-sm">
@@ -483,16 +526,6 @@ const AdminAppointments = () => {
             )}
           </Card.Body>
         </Card>
-
-        {/* Filter Bar */}
-        <FilterBar
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          selectedDoctor={selectedDoctor}
-          setSelectedDoctor={setSelectedDoctor}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-        />
 
         {/* Booking Modal */}
         <BookingModal

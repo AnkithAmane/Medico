@@ -1,5 +1,45 @@
 /* Appointments Page Styles */
 
+/* Date Selector Styling */
+.date-selector-group {
+  width: fit-content;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.date-selector-group .input-group-text {
+  background: #ffffff;
+  border: 2px solid #2563eb;
+  padding: 8px 12px;
+}
+
+.date-input-selector {
+  border: 2px solid #2563eb !important;
+  background: #f9fafb !important;
+  color: #1f2937;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  max-width: 200px;
+  text-decoration: none !important;
+}
+
+.date-input-selector:hover {
+  text-decoration: none !important;
+}
+
+.date-input-selector:focus {
+  border-color: #1e40af !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  text-decoration: none !important;
+}
+
+.date-input-selector::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.4) sepia(1) saturate(5) hue-rotate(175deg);
+}
+
 /* Table Styling */
 .appointments-table {
   margin-bottom: 0;
@@ -96,6 +136,104 @@
 }
 
 /* Responsive Calendar */
+@media (max-width: 1400px) {
+  .appointments-table thead th {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+
+  .appointments-table tbody td {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+  }
+
+  .calendar-day .fw-bold {
+    font-size: 18px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .appointments-table thead th {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+  }
+
+  .appointments-table tbody td {
+    padding: 9px 10px;
+    font-size: 0.8125rem;
+  }
+
+  .col-md-1-7 {
+    flex: 0 0 calc(16.666% - 6px);
+    max-width: calc(16.666% - 6px);
+  }
+
+  .calendar-day {
+    min-height: 90px;
+  }
+
+  .calendar-day .fw-bold {
+    font-size: 17px;
+  }
+
+  .calendar-day small {
+    font-size: 11px;
+  }
+
+  .col-md-1-7:nth-child(-n+7) {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .appointments-table thead th {
+    padding: 9px 10px;
+    font-size: 0.8125rem;
+  }
+
+  .appointments-table tbody td {
+    padding: 8px 9px;
+    font-size: 0.75rem;
+  }
+
+  .col-md-1-7 {
+    flex: 0 0 calc(16.666% - 5px);
+    max-width: calc(16.666% - 5px);
+  }
+
+  .calendar-day {
+    min-height: 80px;
+  }
+
+  .calendar-day .fw-bold {
+    font-size: 15px;
+  }
+
+  .calendar-day small {
+    font-size: 10px;
+  }
+
+  .col-md-1-7:nth-child(-n+7) {
+    font-size: 12px;
+    padding-bottom: 10px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .btn-group .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8125rem;
+  }
+}
+
 @media (max-width: 992px) {
   .col-md-1-7 {
     flex: 0 0 calc(16.666% - 8px);
@@ -109,9 +247,36 @@
   .calendar-day .fw-bold {
     font-size: 16px;
   }
+
+  .appointments-table {
+    font-size: 0.8rem;
+  }
+
+  .appointments-table thead th {
+    padding: 8px 8px;
+  }
+
+  .appointments-table tbody td {
+    padding: 7px 8px;
+  }
 }
 
 @media (max-width: 768px) {
+  .appointments-table {
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .appointments-table thead th {
+    padding: 7px 6px;
+    font-size: 0.75rem;
+  }
+
+  .appointments-table tbody td {
+    padding: 6px 5px;
+    font-size: 0.7rem;
+  }
+
   .col-md-1-7 {
     flex: 0 0 calc(20% - 6px);
     max-width: calc(20% - 6px);
@@ -123,6 +288,7 @@
 
   .calendar-day .fw-bold {
     font-size: 14px;
+    margin-bottom: 4px;
   }
 
   .calendar-day small {
@@ -132,6 +298,109 @@
   .col-md-1-7:nth-child(-n+7) {
     font-size: 12px;
     padding-bottom: 12px;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  .btn-group {
+    gap: 6px;
+  }
+
+  .btn-group .btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .offcanvas {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .appointments-table {
+    font-size: 0.7rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .appointments-table thead th {
+    padding: 6px 4px;
+    font-size: 0.65rem;
+  }
+
+  .appointments-table tbody td {
+    padding: 5px 4px;
+    font-size: 0.65rem;
+  }
+
+  .col-md-1-7 {
+    flex: 0 0 calc(20% - 4px);
+    max-width: calc(20% - 4px);
+  }
+
+  .calendar-day {
+    min-height: 60px;
+  }
+
+  .calendar-day .fw-bold {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .calendar-day small {
+    font-size: 9px;
+  }
+
+  .col-md-1-7:nth-child(-n+7) {
+    font-size: 11px;
+    padding-bottom: 10px;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+
+  .btn-group {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  .modal-content {
+    border-radius: 8px;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .form-floating > .form-control {
+    font-size: 0.875rem;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .input-group .form-control {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
   }
 }
 
@@ -241,29 +510,7 @@
   border-radius: 8px 0 0 8px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .offcanvas {
-    width: 100%;
-  }
 
-  .col-md-1-7 {
-    flex: 0 0 calc(20% - 8px);
-    max-width: calc(20% - 8px);
-  }
-
-  .calendar-day {
-    min-height: 60px;
-  }
-
-  .table-responsive {
-    font-size: 12px;
-  }
-
-  .btn-group {
-    gap: 8px;
-  }
-}
 
 /* Animations */
 @keyframes slideIn {

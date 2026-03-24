@@ -160,7 +160,7 @@ const SearchFilterBar = ({ searchTerm, setSearchTerm, selectedSpecialization, se
                   Experience
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => setSortBy('Fee')}>
-                  <span className="me-2">$</span>
+                  <span className="me-2">₹</span>
                   Consultation Fee
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -205,7 +205,7 @@ const DoctorCard = ({ doctor, onViewProfile }) => {
             <small className="text-muted">Rating</small>
           </div>
           <div className="text-center flex-grow-1">
-            <span className="fw-bold small text-success">${doctor.consultationFee}</span>
+            <span className="fw-bold small text-success">₹{doctor.consultationFee}</span>
             <div className="text-muted" style={{ fontSize: '10px' }}>Fee</div>
           </div>
         </div>
@@ -307,7 +307,7 @@ const DoctorProfileOffcanvas = ({ show, handleClose, doctor, onUpdateDoctor }) =
             <h6 className="fw-bold mb-3">Consultation Fee</h6>
             {editingFee ? (
               <InputGroup className="mb-2">
-                <InputGroup.Text>$</InputGroup.Text>
+                <InputGroup.Text>₹</InputGroup.Text>
                 <FormControl
                   type="number"
                   value={tempFee}
@@ -323,7 +323,7 @@ const DoctorProfileOffcanvas = ({ show, handleClose, doctor, onUpdateDoctor }) =
               </InputGroup>
             ) : (
               <div className="d-flex justify-content-between align-items-center">
-                <span className="fs-5 fw-bold text-success">${doctor.consultationFee}</span>
+                <span className="fs-5 fw-bold text-success">₹{doctor.consultationFee}</span>
                 <Button
                   variant="outline-secondary"
                   size="sm"
@@ -442,7 +442,6 @@ const AdminDoctors = () => {
         <Row className="mb-4">
           <Col>
             <h2 className="fw-bold mb-1">Doctor Management</h2>
-            <p className="text-muted">Manage all doctors and their schedules</p>
           </Col>
           <Col className="text-end">
             <Button variant="primary" className="gap-2 d-flex align-items-center justify-content-center ms-auto">

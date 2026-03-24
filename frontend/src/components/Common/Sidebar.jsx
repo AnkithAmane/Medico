@@ -30,8 +30,11 @@ const Sidebar = ({ isOpen, onToggleSidebar }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header border-bottom pb-3 mb-3">
-        <div className="d-flex align-items-center justify-content-center">
+        <div className="sidebar-logo-wrapper">
           <img src="/logoo.jpg" alt="Medico Logo" className="sidebar-logo rounded" />
+          <div className={`sidebar-brand ${isOpen ? 'show' : 'hide'}`}>
+            <h2 className="sidebar-brand-text">Medico</h2>
+          </div>
         </div>
       </div>
 

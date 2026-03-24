@@ -1,5 +1,67 @@
 /* Admin Patients Styling */
 
+/* Patient Detail View Styling */
+.form-control-plaintext {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  display: block;
+  width: 100%;
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Form Controls in Detail View */
+.form-control,
+.form-select,
+textarea.form-control {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background-color: #f9fafb;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+  font-family: 'Monaco', 'Courier', monospace;
+  font-size: 13px;
+}
+
+/* Card Headers in Detail View */
+.card-header {
+  border-bottom: 2px solid #e5e7eb !important;
+  padding: 12px 16px;
+  background-color: #f3f4f6 !important;
+}
+
+.card-header h5 {
+  margin-bottom: 0;
+  color: #1f2937;
+}
+
+/* Timeline Group */
+.timeline-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-group .list-group-item {
+  border: none !important;
+  padding: 0 !important;
+}
+
 /* Search & Filter Bar - Sticky */
 .sticky-top {
   background: rgba(255, 255, 255, 0.95) !important;
@@ -106,80 +168,151 @@
 .table {
   font-size: 14px;
   color: #374151;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .table thead th {
-  background-color: #f3f4f6;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
   font-weight: 700;
   color: #1f2937;
   border: 1px solid #e5e7eb;
-  padding: 12px;
+  padding: 14px 16px;
   text-transform: uppercase;
   font-size: 12px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.table thead th:first-child {
+  border-radius: 12px 0 0 0;
+}
+
+.table thead th:last-child {
+  border-radius: 0 12px 0 0;
 }
 
 .table tbody td {
   border: 1px solid #e5e7eb;
-  padding: 12px;
+  padding: 14px 16px;
   vertical-align: middle;
-}
-
-.table tbody tr {
+  background: #ffffff;
   transition: all 0.2s ease;
 }
 
+.table tbody tr {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+}
+
 .table tbody tr:hover {
-  background-color: #f0f9ff;
-  box-shadow: inset 3px 0 0 #2563eb;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.03) 0%, rgba(37, 99, 235, 0.05) 100%);
+  box-shadow: 
+    inset 4px 0 0 #3b82f6,
+    0 8px 24px rgba(37, 99, 235, 0.12);
+  transform: translateY(-2px);
 }
 
 .table tbody tr:hover td {
   color: #1e40af;
+  background: transparent;
+}
+
+.table tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 12px;
+}
+
+.table tbody tr:last-child td:last-child {
+  border-radius: 0 0 12px 0;
+}
+
+/* Striped Rows Effect */
+.table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.table tbody tr:nth-child(even):hover {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.07) 100%);
 }
 
 /* Code Tag in Table */
 code {
-  background-color: #f3f4f6;
-  padding: 2px 6px;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 12px;
   font-family: 'Monaco', 'Courier', monospace;
-  color: #6b7280;
+  color: #0369a1;
+  font-weight: 500;
+  border: 1px solid #bae6fd;
 }
 
 /* Button Styling */
 .btn-outline-primary {
   color: #2563eb;
-  border-color: #2563eb;
-  transition: all 0.2s ease;
+  border: 2px solid #2563eb;
+  background: transparent;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #2563eb;
+  transition: left 0.3s ease;
+  z-index: -1;
+  border-radius: 8px;
 }
 
 .btn-outline-primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
   color: #ffffff;
+  border-color: #2563eb;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.btn-outline-primary:hover::before {
+  left: 0;
 }
 
 .btn-outline-secondary {
   color: #6c757d;
-  border-color: #dee2e6;
-  transition: all 0.2s ease;
+  border: 2px solid #dee2e6;
+  background: transparent;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .btn-outline-secondary:hover {
   background-color: #f3f4f6;
   border-color: #adb5bd;
   color: #495057;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
   border: none;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  border-radius: 8px;
 }
 
 .btn-primary:hover {
@@ -384,9 +517,218 @@ code {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1400px) {
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 9px 11px;
+    font-size: 13px;
+  }
+
   .table {
     font-size: 13px;
+  }
+
+  .table thead th {
+    font-size: 11px;
+    padding: 11px;
+  }
+
+  .table tbody td {
+    padding: 11px;
+  }
+
+  .avatar-circle-small {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .avatar-circle-lg {
+    width: 75px;
+    height: 75px;
+    font-size: 22px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 5px 11px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  textarea.form-control {
+    min-height: 90px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table thead th {
+    font-size: 10px;
+    padding: 10px;
+  }
+
+  .table tbody td {
+    padding: 10px;
+  }
+
+  .avatar-circle-small {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .avatar-circle-lg {
+    width: 70px;
+    height: 70px;
+    font-size: 20px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .card-header {
+    padding: 11px 15px;
+  }
+
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 14px;
+  }
+
+  .timeline-item {
+    gap: 14px;
+    padding-bottom: 18px;
+  }
+
+  textarea.form-control {
+    min-height: 85px;
+    font-size: 12px;
+  }
+
+  .patient-offcanvas .offcanvas-header .offcanvas-title {
+    font-size: 16px;
+  }
+
+  .patient-offcanvas .offcanvas-body {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .table {
+    font-size: 11px;
+  }
+
+  .table thead th {
+    font-size: 9px;
+    padding: 8px;
+  }
+
+  .table tbody td {
+    padding: 8px;
+  }
+
+  .avatar-circle-small {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+
+  .avatar-circle-lg {
+    width: 65px;
+    height: 65px;
+    font-size: 19px;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 3px 9px;
+  }
+
+  .card-header {
+    padding: 10px 14px;
+  }
+
+  .card-header h5 {
+    font-size: 0.95rem;
+  }
+
+  .card-body {
+    padding: 13px;
+  }
+
+  .timeline-item {
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+
+  .timeline-marker {
+    width: 14px;
+    height: 14px;
+    margin-top: 3px;
+  }
+
+  .timeline-item:not(:last-child) .timeline-marker::after {
+    height: 55px;
+  }
+
+  textarea.form-control {
+    min-height: 80px;
+    font-size: 11px;
+  }
+
+  .patient-offcanvas .offcanvas-header .offcanvas-title {
+    font-size: 15px;
+  }
+
+  .patient-offcanvas .offcanvas-body {
+    padding: 18px;
+  }
+
+  .btn-outline-primary,
+  .btn-primary {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .table {
+    font-size: 11px;
   }
 
   .table thead th,
@@ -424,18 +766,25 @@ code {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   .table {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .table thead th {
-    font-size: 10px;
-    padding: 6px;
+    padding: 7px;
+    font-size: 9px;
   }
 
   .table tbody td {
-    padding: 6px;
+    padding: 7px;
+  }
+
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 6px 8px;
+    font-size: 10px;
   }
 
   .avatar-circle-small {
@@ -450,13 +799,177 @@ code {
     font-size: 18px;
   }
 
-  .btn {
-    font-size: 12px;
-    padding: 6px 12px;
+  .badge {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .card-header {
+    padding: 9px 12px;
+  }
+
+  .card-header h5 {
+    font-size: 0.9rem;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  .patient-offcanvas .offcanvas {
+    width: 100% !important;
+  }
+
+  .patient-offcanvas .offcanvas-body {
+    padding: 16px;
+  }
+
+  .timeline-item {
+    gap: 10px;
+    padding-bottom: 15px;
+  }
+
+  .timeline-marker {
+    width: 12px;
+    height: 12px;
+  }
+
+  .timeline-item:not(:last-child) .timeline-marker::after {
+    height: 50px;
+  }
+
+  textarea.form-control {
+    min-height: 75px;
+    font-size: 10px;
+  }
+
+  .sticky-top {
+    top: 65px;
   }
 
   code {
+    font-size: 9px;
+  }
+
+  .patient-offcanvas .offcanvas-header .offcanvas-title {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .table {
+    font-size: 10px;
+  }
+
+  .table thead th {
+    font-size: 8px;
+    padding: 5px;
+  }
+
+  .table tbody td {
+    padding: 5px;
+  }
+
+  .form-control,
+  .form-select,
+  textarea.form-control {
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+
+  .avatar-circle-small {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .avatar-circle-lg {
+    width: 50px;
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .btn {
     font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .card-header {
+    padding: 8px 10px;
+  }
+
+  .card-header h5 {
+    font-size: 0.85rem;
+  }
+
+  .card-body {
+    padding: 10px;
+  }
+
+  .patient-offcanvas .offcanvas {
+    width: 100% !important;
+  }
+
+  .patient-offcanvas .offcanvas-body {
+    padding: 12px;
+  }
+
+  .patient-offcanvas .offcanvas-header .offcanvas-title {
+    font-size: 13px;
+  }
+
+  .timeline-item {
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .timeline-marker {
+    width: 10px;
+    height: 10px;
+    margin-top: 2px;
+  }
+
+  .timeline-item:not(:last-child) .timeline-marker::after {
+    height: 45px;
+    width: 1px;
+  }
+
+  .timeline-content {
+    padding: 10px;
+    border-left: 2px solid #2563eb;
+  }
+
+  textarea.form-control {
+    min-height: 70px;
+    font-size: 9px;
+  }
+
+  .sticky-top {
+    top: 56px;
+  }
+
+  code {
+    font-size: 8px;
+  }
+
+  .alert-warning {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .input-group-text {
+    padding: 0.35rem 0.75rem;
+    font-size: 9px;
   }
 }
 

@@ -6,19 +6,17 @@ import {
   Table,
   Badge,
   Button,
-  Offcanvas,
   ListGroup,
   Alert,
   Form,
   InputGroup,
   FormControl,
-  Dropdown,
   OverlayTrigger,
   Tooltip,
   Card,
   Collapse,
 } from 'react-bootstrap';
-import { Search, Eye, Plus, Phone, Mail, AlertCircle } from 'lucide-react';
+import { Search, Eye, Plus, Phone, Mail, AlertCircle, ArrowLeft, Edit2, Save } from 'lucide-react';
 import Layout from '../../components/Common/Layout';
 import '../../styles/AdminPatients.css';
 
@@ -223,121 +221,357 @@ const SearchFilterBar = ({ searchTerm, setSearchTerm, filterBloodGroup, setFilte
   );
 };
 
-// Medical History Offcanvas Component
-const MedicalHistoryOffcanvas = ({ show, handleClose, patient, onUpdateReminders }) => {
-  if (!patient) return null;
+// Patient Detail View Component - Full Page for Viewing & Editing
+const PatientDetailView = ({ patient, onBack, patients, setPatients }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    name: patient.name,
+    age: patient.age,
+    gender: patient.gender,
+    bloodGroup: patient.bloodGroup,
+    phone: patient.phone,
+    email: patient.email,
+    allergies: patient.allergies.join(', '),
+    automatedReminders: patient.automatedReminders,
+  });
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    const updatedPatients = patients.map((p) =>
+      p.id === patient.id
+        ? {
+            ...p,
+            name: editData.name,
+            age: editData.age,
+            gender: editData.gender,
+            bloodGroup: editData.bloodGroup,
+            phone: editData.phone,
+            email: editData.email,
+            allergies: editData.allergies
+              .split(',')
+              .map((a) => a.trim())
+              .filter((a) => a),
+            automatedReminders: editData.automatedReminders,
+          }
+        : p
+    );
+    setPatients(updatedPatients);
+    setIsEditing(false);
+  };
+
+  const handleChange = (field, value) => {
+    setEditData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   return (
-    <Offcanvas show={show} onHide={handleClose} placement="end" className="patient-offcanvas">
-      <Offcanvas.Header closeButton>
-        <Offcanvas.Title className="fw-bold">Medical History</Offcanvas.Title>
-      </Offcanvas.Header>
-      <Offcanvas.Body>
-        {/* Patient Header */}
-        <div className="mb-4">
-          <div className="avatar-circle-lg bg-primary text-white mx-auto mb-3">
-            {patient.avatar}
-          </div>
-          <h5 className="fw-bold text-center">{patient.name}</h5>
-          <p className="text-muted text-center small">{patient.patientId}</p>
-        </div>
+    <Container fluid className="py-4">
+      {/* Back Button & Header */}
+      <div className="mb-4">
+        <Button
+          variant="outline-secondary"
+          size="sm"
+          onClick={onBack}
+          className="mb-3 d-flex align-items-center gap-2"
+        >
+          <ArrowLeft size={16} />
+          Back to Patients
+        </Button>
 
-        {/* Allergy Alert */}
-        {patient.allergies.length > 0 && (
-          <Alert variant="warning" className="d-flex align-items-center mb-4">
-            <AlertCircle size={20} className="me-2" />
-            <div>
-              <strong>Allergies:</strong> {patient.allergies.join(', ')}
+        <Row className="align-items-center mb-3">
+          <Col>
+            <div className="d-flex align-items-center gap-3">
+              <div className="avatar-circle-lg bg-primary text-white">
+                {patient.avatar}
+              </div>
+              <div>
+                <h2 className="fw-bold mb-0">{editData.name}</h2>
+                <p className="text-muted mb-0">
+                  <code>{patient.patientId}</code>
+                </p>
+              </div>
             </div>
-          </Alert>
-        )}
-
-        {/* Contact Information */}
-        <Card className="mb-4 border-0 bg-light">
-          <ListGroup flush>
-            <ListGroup.Item className="bg-light">
-              <div className="d-flex align-items-center gap-2">
-                <Phone size={18} className="text-primary" />
-                <span>{patient.phone}</span>
+          </Col>
+          <Col className="text-end">
+            {!isEditing ? (
+              <Button
+                variant="primary"
+                onClick={handleEdit}
+                className="d-flex align-items-center gap-2 ms-auto"
+              >
+                <Edit2 size={16} />
+                Edit Information
+              </Button>
+            ) : (
+              <div className="d-flex gap-2 ms-auto justify-content-end">
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="success"
+                  onClick={handleSave}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <Save size={16} />
+                  Save Changes
+                </Button>
               </div>
-            </ListGroup.Item>
-            <ListGroup.Item className="bg-light">
-              <div className="d-flex align-items-center gap-2">
-                <Mail size={18} className="text-primary" />
-                <span>{patient.email}</span>
-              </div>
-            </ListGroup.Item>
-          </ListGroup>
-        </Card>
+            )}
+          </Col>
+        </Row>
+      </div>
 
-        {/* Automated Reminders */}
-        <Card className="mb-4 border-0">
-          <Card.Body>
-            <Form.Group>
-              <Form.Check
-                type="switch"
-                id="reminders-switch"
-                label="Automated Reminders (SMS/Email)"
-                checked={patient.automatedReminders}
-                onChange={(e) => onUpdateReminders(patient.id, e.target.checked)}
-              />
-            </Form.Group>
-          </Card.Body>
-        </Card>
+      {/* Critical Allergy Alert */}
+      {editData.allergies && (
+        <Alert variant="danger" className="mb-4 d-flex align-items-center">
+          <AlertCircle size={24} className="me-3 flex-shrink-0" />
+          <div>
+            <strong className="d-block">⚠ ALLERGIES</strong>
+            <span>{editData.allergies || 'No known allergies'}</span>
+          </div>
+        </Alert>
+      )}
 
-        {/* Medical History Timeline */}
-        <h6 className="fw-bold mb-3">Past Visits</h6>
-        <ListGroup className="mb-4">
-          {patient.medicalHistory.map((visit, index) => (
-            <ListGroup.Item key={index} className="border-0 ps-0 mb-3">
-              <div className="timeline-item">
-                <div className="timeline-marker"></div>
-                <div className="timeline-content">
-                  <div className="d-flex justify-content-between align-items-start mb-2">
-                    <span className="fw-bold">{visit.diagnosis}</span>
-                    <small className="text-muted">{visit.date}</small>
+      <Row className="g-4">
+        {/* Left Column - Patient Information */}
+        <Col lg={7}>
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-light">
+              <h5 className="fw-bold mb-0">Personal Information</h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Full Name</Form.Label>
+                  {isEditing ? (
+                    <Form.Control
+                      value={editData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                    />
+                  ) : (
+                    <div className="form-control-plaintext fw-bold">{editData.name}</div>
+                  )}
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">Patient ID</Form.Label>
+                  <div className="form-control-plaintext">
+                    <code>{patient.patientId}</code>
                   </div>
-                  <small className="d-block mb-2">
-                    <strong>Doctor:</strong> {visit.doctor}
-                  </small>
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={<Tooltip id={`tooltip-${index}`}>{visit.reason}</Tooltip>}
-                  >
-                    <small className="text-primary cursor-pointer">
-                      📋 Quick Note (Hover)
-                    </small>
-                  </OverlayTrigger>
-                </div>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+                </Form.Group>
 
-        {/* Vital Stats Summary */}
-        <Card className="border-0 bg-light">
-          <Card.Body>
-            <h6 className="fw-bold mb-3">Patient Info</h6>
-            <Row>
-              <Col xs={6} className="mb-2">
-                <small className="text-muted">Age</small>
-                <div className="fw-bold">{patient.age} years</div>
-              </Col>
-              <Col xs={6} className="mb-2">
-                <small className="text-muted">Gender</small>
-                <div className="fw-bold">{patient.gender}</div>
-              </Col>
-              <Col xs={12}>
-                <small className="text-muted">Blood Group</small>
-                <Badge bg={bloodGroupColors[patient.bloodGroup]} className="d-block mt-1">
-                  {patient.bloodGroup}
-                </Badge>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </Offcanvas.Body>
-    </Offcanvas>
+                <Row className="mb-3">
+                  <Col md={4}>
+                    <Form.Group>
+                      <Form.Label className="fw-bold">Age</Form.Label>
+                      {isEditing ? (
+                        <Form.Control
+                          type="number"
+                          value={editData.age}
+                          onChange={(e) => handleChange('age', parseInt(e.target.value))}
+                        />
+                      ) : (
+                        <div className="form-control-plaintext">{editData.age} years</div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group>
+                      <Form.Label className="fw-bold">Gender</Form.Label>
+                      {isEditing ? (
+                        <Form.Select
+                          value={editData.gender}
+                          onChange={(e) => handleChange('gender', e.target.value)}
+                        >
+                          <option>Male</option>
+                          <option>Female</option>
+                          <option>Other</option>
+                        </Form.Select>
+                      ) : (
+                        <div className="form-control-plaintext">{editData.gender}</div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group>
+                      <Form.Label className="fw-bold">Blood Group</Form.Label>
+                      {isEditing ? (
+                        <Form.Select
+                          value={editData.bloodGroup}
+                          onChange={(e) => handleChange('bloodGroup', e.target.value)}
+                        >
+                          {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].map((bg) => (
+                            <option key={bg}>{bg}</option>
+                          ))}
+                        </Form.Select>
+                      ) : (
+                        <div className="form-control-plaintext">
+                          <Badge bg={bloodGroupColors[editData.bloodGroup]}>
+                            {editData.bloodGroup}
+                          </Badge>
+                        </div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          {/* Contact Information */}
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-light">
+              <h5 className="fw-bold mb-0">Contact Information</h5>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold d-flex align-items-center gap-2">
+                    <Phone size={16} className="text-primary" />
+                    Phone Number
+                  </Form.Label>
+                  {isEditing ? (
+                    <Form.Control
+                      value={editData.phone}
+                      onChange={(e) => handleChange('phone', e.target.value)}
+                    />
+                  ) : (
+                    <div className="form-control-plaintext">{editData.phone}</div>
+                  )}
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Label className="fw-bold d-flex align-items-center gap-2">
+                    <Mail size={16} className="text-primary" />
+                    Email Address
+                  </Form.Label>
+                  {isEditing ? (
+                    <Form.Control
+                      type="email"
+                      value={editData.email}
+                      onChange={(e) => handleChange('email', e.target.value)}
+                    />
+                  ) : (
+                    <div className="form-control-plaintext">{editData.email}</div>
+                  )}
+                </Form.Group>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          {/* Medical Information */}
+          <Card className="shadow-sm">
+            <Card.Header className="bg-light">
+              <h5 className="fw-bold mb-0">Medical Information</h5>
+            </Card.Header>
+            <Card.Body>
+              <Form.Group>
+                <Form.Label className="fw-bold d-flex align-items-center gap-2">
+                  <AlertCircle size={16} className="text-danger" />
+                  Known Allergies
+                </Form.Label>
+                {isEditing ? (
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Enter allergies separated by commas"
+                    value={editData.allergies}
+                    onChange={(e) => handleChange('allergies', e.target.value)}
+                  />
+                ) : (
+                  <div className="form-control-plaintext">
+                    {editData.allergies || 'No known allergies'}
+                  </div>
+                )}
+              </Form.Group>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Right Column - Medical History & Settings */}
+        <Col lg={5}>
+          {/* Automated Reminders */}
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-light">
+              <h5 className="fw-bold mb-0">Notification Settings</h5>
+            </Card.Header>
+            <Card.Body>
+              <Form.Group>
+                <Form.Check
+                  type="switch"
+                  id="reminders-switch-detail"
+                  label={
+                    <span>
+                      <strong>Automated Reminders</strong>
+                      <br />
+                      <small className="text-muted">SMS/Email notifications</small>
+                    </span>
+                  }
+                  checked={editData.automatedReminders}
+                  onChange={(e) => handleChange('automatedReminders', e.target.checked)}
+                  disabled={!isEditing}
+                />
+              </Form.Group>
+              <div className="mt-3 p-3 bg-light rounded">
+                <small className="text-muted">
+                  {editData.automatedReminders
+                    ? '✓ Patient will receive appointment reminders'
+                    : '✗ Reminders are disabled'}
+                </small>
+              </div>
+            </Card.Body>
+          </Card>
+
+          {/* Medical History Timeline */}
+          <Card className="shadow-sm">
+            <Card.Header className="bg-light">
+              <h5 className="fw-bold mb-0">Medical History</h5>
+            </Card.Header>
+            <Card.Body>
+              <ListGroup className="timeline-group">
+                {patient.medicalHistory.map((visit, index) => (
+                  <ListGroup.Item key={index} className="border-0 ps-0 mb-3">
+                    <div className="timeline-item">
+                      <div className="timeline-marker"></div>
+                      <div className="timeline-content">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div>
+                            <span className="fw-bold d-block">{visit.diagnosis}</span>
+                            <small className="text-muted">{visit.date}</small>
+                          </div>
+                        </div>
+                        <small className="d-block mb-2">
+                          <strong>👨‍⚕️ Dr.:</strong> {visit.doctor}
+                        </small>
+                        <OverlayTrigger
+                          placement="left"
+                          overlay={<Tooltip id={`tooltip-${index}`}>{visit.reason}</Tooltip>}
+                        >
+                          <small className="text-primary cursor-pointer">
+                            📋 Click for details
+                          </small>
+                        </OverlayTrigger>
+                      </div>
+                    </div>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+              {patient.medicalHistory.length === 0 && (
+                <p className="text-muted text-center py-4">No medical history records</p>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
@@ -348,7 +582,6 @@ const AdminPatients = () => {
   const [filterBloodGroup, setFilterBloodGroup] = useState('All');
   const [filterGender, setFilterGender] = useState('All');
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [expandedRows, setExpandedRows] = useState({});
 
   // Filter patients
@@ -363,7 +596,10 @@ const AdminPatients = () => {
 
   const handleViewHistory = (patient) => {
     setSelectedPatient(patient);
-    setShowOffcanvas(true);
+  };
+
+  const handleBackToList = () => {
+    setSelectedPatient(null);
   };
 
   const toggleRowExpand = (patientId) => {
@@ -373,12 +609,21 @@ const AdminPatients = () => {
     }));
   };
 
-  const handleUpdateReminders = (patientId, enabled) => {
-    setPatients((prev) =>
-      prev.map((p) => (p.id === patientId ? { ...p, automatedReminders: enabled } : p))
+  // Show detail view if patient selected
+  if (selectedPatient) {
+    return (
+      <Layout>
+        <PatientDetailView
+          patient={selectedPatient}
+          onBack={handleBackToList}
+          patients={patients}
+          setPatients={setPatients}
+        />
+      </Layout>
     );
-  };
+  }
 
+  // Show patient list
   return (
     <Layout>
       <Container fluid className="py-4">
@@ -386,7 +631,6 @@ const AdminPatients = () => {
         <Row className="mb-4">
           <Col>
             <h2 className="fw-bold mb-1">Patient Management</h2>
-            <p className="text-muted">View and manage patient records and medical history</p>
           </Col>
           <Col className="text-end">
             <Button variant="primary" className="gap-2 d-flex align-items-center justify-content-center ms-auto">
@@ -415,8 +659,6 @@ const AdminPatients = () => {
                   <th>Profile</th>
                   <th>Patient ID</th>
                   <th>Age/Gender</th>
-                  <th>Blood Group</th>
-                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -442,19 +684,6 @@ const AdminPatients = () => {
                         <span>{patient.age} yrs / {patient.gender}</span>
                       </td>
                       <td>
-                        <Badge bg={bloodGroupColors[patient.bloodGroup]} className="rounded-pill">
-                          {patient.bloodGroup}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge
-                          bg={patient.automatedReminders ? 'success' : 'secondary'}
-                          className="rounded-pill"
-                        >
-                          {patient.automatedReminders ? '✓ Reminders On' : '✗ Reminders Off'}
-                        </Badge>
-                      </td>
-                      <td>
                         <Button
                           variant="outline-primary"
                           size="sm"
@@ -462,7 +691,7 @@ const AdminPatients = () => {
                           className="me-2"
                         >
                           <Eye size={16} className="me-1" />
-                          View History
+                          View & Edit
                         </Button>
                         <Button
                           variant="outline-secondary"
@@ -516,14 +745,6 @@ const AdminPatients = () => {
             <p className="text-muted small">Try adjusting your search or filters</p>
           </div>
         )}
-
-        {/* Medical History Offcanvas */}
-        <MedicalHistoryOffcanvas
-          show={showOffcanvas}
-          handleClose={() => setShowOffcanvas(false)}
-          patient={selectedPatient}
-          onUpdateReminders={handleUpdateReminders}
-        />
       </Container>
     </Layout>
   );
