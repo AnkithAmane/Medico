@@ -12,7 +12,7 @@ export default function Patience() {
   const renderContent = () => {
     switch (selectedSection) {
       case 'Profile':
-        return <Profile />;
+        return <Profile userId="PAT000000011" />;
       case 'settings':
         return <div className="settings-container"><h2>Settings</h2><p>Settings content here.</p></div>;
       case 'logout':

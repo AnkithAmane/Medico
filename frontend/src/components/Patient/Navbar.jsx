@@ -27,7 +27,7 @@ export default function Navbar({ onSectionChange }) {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container-fluid">
         <a className="navbar-brand fw-bold" href="/">
-          🏥 HealthCare Pro
+          🏥 Medico
         </a>
         <button
           className="navbar-toggler"
@@ -43,24 +43,24 @@ export default function Navbar({ onSectionChange }) {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="/">
+              <a className="nav-link btn  text-white ms-2" aria-current="page" href="/">
                 Home
               </a>
             </li>
             
             <li className="nav-item">
-              <a className="nav-link" href="#AppointmentsHistory">
+              <a className="nav-link btn  text-white ms-2" href="#appointments">
+                Book Appointment
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link btn  text-white ms-2" href="#AppointmentsHistory">
                 Appointments history
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#contact">
+              <a className="nav-link btn  text-white ms-2" href="#contact">
                 Contact
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link btn btn-primary text-white ms-2" href="#appointments">
-                Book Appointment
               </a>
             </li>
             <li className="nav-item">
