@@ -1,0 +1,1173 @@
+/* ========================================
+   ADMIN SETTINGS - COMPREHENSIVE STYLING
+   ======================================== */
+
+/* Background & Container */
+.admin-settings-bg {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  min-height: 100vh;
+  padding-top: 1rem;
+}
+
+/* ========================================
+   SIDEBAR STYLING
+   ======================================== */
+
+.sticky-sidebar {
+  position: sticky;
+  top: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: none;
+  background: white;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  background: white;
+  color: #4b5563;
+}
+
+.sidebar-item:hover {
+  background-color: #f8f9fa;
+  padding-left: 1.5rem;
+}
+
+.sidebar-item.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-left-color: #2563eb;
+  font-weight: 600;
+}
+
+.sidebar-item span {
+  font-size: 0.95rem;
+}
+
+/* ========================================
+   SETTINGS SECTION STYLING
+   ======================================== */
+
+.settings-section {
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.settings-content {
+  background: transparent;
+}
+
+/* ========================================
+   CARD STYLING
+   ======================================== */
+
+.settings-section .card {
+  background: white;
+  border-radius: 12px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.settings-section .card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.settings-section .card-header {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 12px 12px 0 0;
+  padding: 1.25rem;
+}
+
+.settings-section .card-header h5 {
+  color: #1f2937;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.settings-section .card-header small {
+  display: block;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.settings-section .card-body {
+  padding: 1.75rem;
+}
+
+/* ========================================
+   LOGO UPLOAD ZONE
+   ======================================== */
+
+.logo-upload-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.upload-label {
+  border: 2px dashed #9ca3af;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-label:hover {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.upload-label div {
+  font-size: 1.05rem;
+  color: #1f2937;
+}
+
+.upload-label small {
+  color: #6b7280;
+}
+
+.logo-preview {
+  position: relative;
+  text-align: center;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+.change-btn {
+  margin-top: 1rem;
+}
+
+/* ========================================
+   FORM CONTROLS
+   ======================================== */
+
+.settings-section .form-floating > label {
+  color: #6b7280;
+}
+
+.settings-section .form-control {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.875rem 0.875rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+}
+
+.settings-section .form-control:focus {
+  border-color: #2563eb;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.settings-section .form-control:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+.settings-section .form-check {
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.settings-section .form-check-input {
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  width: 1.25em;
+  height: 1.25em;
+  transition: all 0.3s ease;
+}
+
+.settings-section .form-check-input:checked {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.settings-section .form-check-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Form Switch Styling */
+.settings-section .form-switch .form-check-input {
+  width: 2.5em;
+  height: 1.35em;
+  border-radius: 0.85em;
+  border: 2px solid #d1d5db;
+}
+
+.settings-section .form-switch .form-check-input:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+/* ========================================
+   COLLAPSE/SECURITY SECTION
+   ======================================== */
+
+.settings-section .card-header .cursor-pointer {
+  cursor: pointer;
+}
+
+.settings-section .card-header .cursor-pointer:hover {
+  opacity: 0.8;
+}
+
+.settings-section .collapse-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+/* ========================================
+   NOTIFICATION ITEMS
+   ======================================== */
+
+.notification-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f9fafb;
+}
+
+.notification-item h6 {
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.notification-item .text-muted {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* ========================================
+   RBAC TABLE STYLING
+   ======================================== */
+
+.settings-section .table {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.settings-section .table-bordered {
+  border: 1px solid #e5e7eb;
+}
+
+.settings-section .table-bordered th,
+.settings-section .table-bordered td {
+  border-color: #e5e7eb;
+  vertical-align: middle;
+  padding: 1rem 0.75rem;
+}
+
+.settings-section .table thead {
+  background-color: #f9fafb;
+}
+
+.settings-section .table thead th {
+  color: #1f2937;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.settings-section .table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.permission-header {
+  vertical-align: middle !important;
+  min-width: 120px;
+}
+
+.permission-header .form-check {
+  justify-content: center;
+}
+
+.permission-cell {
+  background-color: #f9fafb;
+}
+
+.permission-cell .form-check {
+  justify-content: center;
+}
+
+.permission-cell .form-check-input:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+  border-radius: 0 0 12px 12px;
+}
+
+/* ========================================
+   INFO BOX
+   ======================================== */
+
+.info-box {
+  background-color: #eff6ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.info-box .text-info {
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.settings-section .btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+}
+
+.settings-section .btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.settings-section .btn-primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
+}
+
+.settings-section .btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.settings-section .btn-outline-secondary {
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.settings-section .btn-outline-secondary:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* Spinner in button */
+.settings-section .btn .spinner-border-sm {
+  margin-right: 0.5rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Extra Large Desktop (1400px+) */
+@media (max-width: 1400px) {
+  .sticky-sidebar {
+    top: 1.75rem;
+  }
+
+  .sidebar-item {
+    padding: 0.95rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .sidebar-item span {
+    font-size: 0.92rem;
+  }
+
+  .settings-section .card-body {
+    padding: 1.65rem;
+  }
+
+  .settings-section .card-header h5 {
+    font-size: 0.98rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.92rem;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.95rem 0.7rem;
+  }
+
+  .settings-section .btn {
+    padding: 0.7rem 1.9rem;
+    font-size: 0.92rem;
+  }
+
+  .profile-image {
+    width: 145px;
+    height: 145px;
+  }
+
+  .upload-label {
+    padding: 2.8rem 1.9rem;
+  }
+}
+
+/* Large Desktop (1200px) */
+@media (max-width: 1200px) {
+  .sticky-sidebar {
+    top: 1.5rem;
+  }
+
+  .sidebar-item {
+    padding: 0.9rem 1.1rem;
+    font-size: 0.88rem;
+  }
+
+  .sidebar-item span {
+    font-size: 0.9rem;
+  }
+
+  .settings-section .card-header {
+    padding: 1.1rem;
+  }
+
+  .settings-section .card-header h5 {
+    font-size: 0.95rem;
+  }
+
+  .settings-section .card-header small {
+    font-size: 0.75rem;
+  }
+
+  .settings-section .card-body {
+    padding: 1.5rem;
+  }
+
+  .settings-section .form-control {
+    padding: 0.8rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.9rem;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.9rem 0.65rem;
+  }
+
+  .settings-section .table thead th {
+    font-size: 0.88rem;
+  }
+
+  .settings-section .btn {
+    padding: 0.65rem 1.75rem;
+    font-size: 0.9rem;
+  }
+
+  .notification-item {
+    padding: 1.3rem;
+  }
+
+  .notification-item h6 {
+    font-size: 0.92rem;
+  }
+
+  .info-box {
+    padding: 0.95rem 1.1rem;
+  }
+
+  .profile-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .upload-label {
+    padding: 2.6rem 1.8rem;
+  }
+
+  .upload-label div {
+    font-size: 1rem;
+  }
+}
+
+/* Medium Laptop (1024px) */
+@media (max-width: 1024px) {
+  .sticky-sidebar {
+    position: relative;
+    top: auto;
+    margin-bottom: 1.75rem;
+  }
+
+  .sidebar-item {
+    font-size: 0.85rem;
+    padding: 0.8rem 0.95rem;
+  }
+
+  .sidebar-item span {
+    font-size: 0.88rem;
+  }
+
+  .settings-section .card {
+    border-radius: 10px;
+  }
+
+  .settings-section .card-header {
+    padding: 1rem;
+  }
+
+  .settings-section .card-header h5 {
+    font-size: 0.92rem;
+  }
+
+  .settings-section .card-body {
+    padding: 1.35rem;
+  }
+
+  .settings-section .form-control {
+    padding: 0.75rem 0.75rem;
+    font-size: 0.88rem;
+  }
+
+  .settings-section .form-floating > label {
+    font-size: 0.85rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.85rem;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.75rem 0.55rem;
+  }
+
+  .settings-section .table thead th {
+    font-size: 0.82rem;
+  }
+
+  .settings-section .btn {
+    padding: 0.6rem 1.6rem;
+    font-size: 0.85rem;
+  }
+
+  .notification-item {
+    padding: 1.2rem;
+  }
+
+  .notification-item h6 {
+    font-size: 0.88rem;
+  }
+
+  .notification-item .text-muted {
+    font-size: 0.8rem;
+  }
+
+  .info-box {
+    padding: 0.9rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .profile-image {
+    width: 135px;
+    height: 135px;
+  }
+
+  .upload-label {
+    padding: 2.4rem 1.6rem;
+  }
+
+  .upload-label div {
+    font-size: 0.95rem;
+  }
+
+  .upload-label small {
+    font-size: 0.8rem;
+  }
+
+  .permission-header {
+    min-width: 110px;
+  }
+}
+
+/* Tablet (992px) */
+@media (max-width: 992px) {
+  .sticky-sidebar {
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-item {
+    font-size: 0.82rem;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .settings-section .card-body {
+    padding: 1.25rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.8rem;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.7rem 0.5rem;
+  }
+
+  .profile-image {
+    width: 130px;
+    height: 130px;
+  }
+
+  .upload-label {
+    padding: 2.2rem 1.5rem;
+  }
+}
+
+/* Tablet/Small Desktop (768px) */
+@media (max-width: 768px) {
+  .admin-settings-bg {
+    padding-top: 0.75rem;
+  }
+
+  .sticky-sidebar {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5rem 0;
+    position: relative;
+    top: auto;
+    margin-bottom: 1.35rem;
+    gap: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .sticky-sidebar::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .sticky-sidebar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 2px;
+  }
+
+  .sidebar-item {
+    flex-shrink: 0;
+    flex-direction: column;
+    text-align: center;
+    padding: 0.7rem 0.95rem;
+    width: auto;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    font-size: 0.8rem;
+  }
+
+  .sidebar-item:hover {
+    padding-left: 0.95rem;
+    background-color: #f8f9fa;
+  }
+
+  .sidebar-item.active {
+    border-left: none;
+    border-bottom-color: #2563eb;
+    background-color: #eff6ff;
+  }
+
+  .sidebar-item span {
+    display: block;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+  }
+
+  .settings-section .card {
+    margin-bottom: 1rem;
+    border-radius: 9px;
+  }
+
+  .settings-section .card-header {
+    padding: 0.95rem;
+  }
+
+  .settings-section .card-header h5 {
+    font-size: 0.9rem;
+  }
+
+  .settings-section .card-header small {
+    font-size: 0.7rem;
+  }
+
+  .settings-section .card-body {
+    padding: 1.1rem;
+  }
+
+  .settings-section .form-control {
+    padding: 0.7rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .settings-section .form-floating > label {
+    font-size: 0.8rem;
+  }
+
+  .settings-section .form-check {
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+  }
+
+  .settings-section .form-check-input {
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .settings-section .form-switch .form-check-input {
+    width: 2.3em;
+    height: 1.25em;
+  }
+
+  .settings-section .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.6rem 0.4rem;
+  }
+
+  .settings-section .table thead th {
+    font-size: 0.75rem;
+  }
+
+  .settings-section .btn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-box {
+    padding: 0.8rem 0.95rem;
+    font-size: 0.8rem;
+  }
+
+  .info-box .text-info {
+    margin-top: 1px;
+  }
+
+  .notification-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+
+  .notification-item h6 {
+    font-size: 0.85rem;
+  }
+
+  .notification-item .text-muted {
+    font-size: 0.75rem;
+  }
+
+  .logo-preview .profile-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .upload-label {
+    padding: 2rem 1.4rem;
+  }
+
+  .upload-label div {
+    font-size: 0.9rem;
+  }
+
+  .upload-label small {
+    font-size: 0.75rem;
+  }
+
+  .change-btn {
+    margin-top: 0.8rem;
+  }
+
+  .permission-header {
+    min-width: 75px;
+  }
+
+  .settings-section .btn-primary {
+    background-color: #2563eb;
+  }
+
+  .settings-section .btn-primary:hover:not(:disabled) {
+    background-color: #1d4ed8;
+  }
+
+  .collapse-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    gap: 0.5rem;
+  }
+}
+
+/* Mobile (576px) */
+@media (max-width: 576px) {
+  .admin-settings-bg {
+    padding-top: 0.5rem;
+  }
+
+  .sticky-sidebar {
+    overflow-x: auto;
+    padding: 0.4rem 0;
+    margin-bottom: 1rem;
+    gap: 0.3rem;
+  }
+
+  .sidebar-item {
+    flex-shrink: 0;
+    flex-direction: column;
+    text-align: center;
+    padding: 0.6rem 0.8rem;
+    width: auto;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    font-size: 0.75rem;
+  }
+
+  .sidebar-item:hover {
+    padding-left: 0.8rem;
+  }
+
+  .sidebar-item.active {
+    border-bottom-color: #2563eb;
+  }
+
+  .sidebar-item span {
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
+  }
+
+  .settings-section .card {
+    margin-bottom: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .settings-section .card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .settings-section .card-header {
+    padding: 0.8rem;
+    background: #f9fafb;
+  }
+
+  .settings-section .card-header h5 {
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .settings-section .card-header small {
+    font-size: 0.65rem;
+  }
+
+  .settings-section .card-body {
+    padding: 0.9rem;
+  }
+
+  .settings-section .form-control {
+    padding: 0.6rem 0.65rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+
+  .settings-section .form-floating > label {
+    font-size: 0.75rem;
+  }
+
+  .settings-section .form-check {
+    padding: 0.35rem 0;
+    font-size: 0.8rem;
+  }
+
+  .settings-section .form-check-input {
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 3px;
+  }
+
+  .settings-section .form-switch .form-check-input {
+    width: 2.2em;
+    height: 1.2em;
+    border-radius: 0.8em;
+  }
+
+  .settings-section .form-check-label {
+    font-size: 0.8rem;
+  }
+
+  .settings-section .table-responsive {
+    font-size: 0.75rem;
+  }
+
+  .settings-section .table {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+  }
+
+  .settings-section .table-bordered {
+    border: 1px solid #e5e7eb;
+  }
+
+  .settings-section .table-bordered th,
+  .settings-section .table-bordered td {
+    padding: 0.5rem 0.3rem;
+    border-color: #e5e7eb;
+  }
+
+  .settings-section .table thead th {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.3rem;
+  }
+
+  .settings-section .table tbody td {
+    font-size: 0.75rem;
+  }
+
+  .settings-section .btn {
+    width: 100%;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+    border-radius: 6px;
+  }
+
+  .settings-section .btn-primary {
+    background-color: #2563eb;
+    padding: 0.55rem 0.9rem;
+  }
+
+  .settings-section .btn-outline-secondary {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .info-box {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.75rem;
+    border-left: 3px solid #2563eb;
+    gap: 0.6rem;
+  }
+
+  .info-box .text-info {
+    margin-top: 1px;
+    font-size: 1rem;
+  }
+
+  .notification-item {
+    padding: 0.8rem;
+  }
+
+  .notification-item h6 {
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .notification-item .text-muted {
+    font-size: 0.7rem;
+  }
+
+  .logo-preview .profile-image {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #e5e7eb;
+  }
+
+  .upload-label {
+    padding: 1.6rem 1.2rem;
+    border-radius: 10px;
+  }
+
+  .upload-label div {
+    font-size: 0.85rem;
+  }
+
+  .upload-label small {
+    font-size: 0.7rem;
+  }
+
+  .change-btn {
+    margin-top: 0.7rem;
+  }
+
+  .permission-header {
+    min-width: 65px;
+  }
+
+  .permission-cell {
+    background-color: #f9fafb;
+  }
+
+  .permission-cell .form-check {
+    justify-content: center;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .collapse-header {
+    gap: 0.4rem;
+  }
+
+  .collapse-header h5,
+  .collapse-header small {
+    margin: 0;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY & UTILITY CLASSES
+   ======================================== */
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-info {
+  color: #2563eb;
+}
+
+/* Tooltip styling (inherited from Bootstrap) */
+.tooltip-inner {
+  background-color: #1f2937;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.settings-section {
+  animation: slideInRight 0.3s ease;
+}
+
+/* Loading spinner animation */
+.spinner-border-sm {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  .admin-settings-bg {
+    background: white;
+  }
+
+  .sticky-sidebar {
+    display: none;
+  }
+
+  .settings-section .btn {
+    display: none;
+  }
+
+  .settings-section .card {
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+
+  .settings-section .card-header {
+    background-color: #f9fafb;
+  }
+}
