@@ -1,3 +1,4 @@
+````markdown
 # AdminSettings Quick Reference
 
 ## 🚀 Quick Start
@@ -391,3 +392,5 @@ Visit `http://localhost:5173/admin/settings` in browser
 **Version:** 1.0.0  
 **Last Updated:** March 24, 2026  
 **Status:** Production Ready
+
+````

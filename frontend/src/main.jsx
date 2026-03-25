@@ -6,8 +6,8 @@ import App from './App.jsx';
 import './styles/Typography.css';
 import './styles/variables.css';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>
 )
