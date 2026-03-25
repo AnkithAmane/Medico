@@ -1,3 +1,4 @@
+````markdown
 # Medico Admin Dashboard - Complete Implementation Guide
 
 ## Project Overview
@@ -372,3 +373,5 @@ Thumbs.db
 ---
 
 Generated: March 23, 2026
+
+````

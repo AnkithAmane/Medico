@@ -1,3 +1,4 @@
+````markdown
 # AdminSettings Module - Visual Overview & Features
 
 ## 🎯 Overview
@@ -510,3 +511,5 @@ Border Gray:      #e5e7eb (Form borders, table borders)
 ---
 
 **Version:** 1.0.0 | **Status:** ✅ Production Ready | **Created:** March 24, 2026
+
+````
