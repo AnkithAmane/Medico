@@ -1,37 +1,37 @@
-// App Component - The Router (connects all pages)
-import React from 'react';
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import AdminDashboard from './pages/Admin/AdminDashboard';
-import AdminAppointments from './pages/Admin/AdminAppointments';
-import AdminDoctors from './pages/Admin/AdminDoctors';
-import AdminPatients from './pages/Admin/AdminPatients';
-import AdminReport from './pages/Admin/AdminReport';
-import AdminSettings from './pages/Admin/AdminSettings';
-import DoctorDashboard from './pages/Doctor/DoctorDashboard';
-import PatientDashboard from './pages/Patient/PatientDashboard';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+/* COMPONENT IMPORTS */
+import Landing_Page from "./Home/Landing_Page";
+import Patient_Auth from './Home/Patient_Auth';
+import Doctor_Auth from './Home/Doctor_Auth';
+import Admin_Auth from './Home/Admin_Auth';
+import Admin_Home from './Admin/AdminDashboard.jsx'
+/**
+ * MAIN APPLICATION COMPONENT
+ * Handles global routing for the Medico+ Ecosystem.
+ */
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/appointments" element={<AdminAppointments />} />
-        <Route path="/admin/doctors" element={<AdminDoctors />} />
-        <Route path="/admin/patients" element={<AdminPatients />} />
-        <Route path="/admin/reports" element={<AdminReport />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
-        <Route path="/doctor" element={<DoctorDashboard />} />
-        <Route path="/patient" element={<PatientDashboard />} />
+        /* --- PUBLIC ROUTES --- */
+        <Route path="/" element={<Landing_Page />} />
+        <Route path="/landing_page" element={<Landing_Page />} />
+
+        /* --- AUTHENTICATION ROUTES --- */
+        <Route path="/patient_auth" element={<Patient_Auth />} />
+        <Route path="/doctor_auth" element={<Doctor_Auth />} />
+        <Route path="/admin_auth" element={<Admin_Auth />} />
+
+        /* --- DASHBOARD / HOME ROUTES --- */
+        {/* These connect to the navigate() calls in your SignInForm */}
+        <Route path="/patient_home" element={<Landing_Page />} /> {/* Patient Home */}
+        <Route path="/doctor_home" element={<Doctor_Auth />} />  {/* Doctor Home */}
+        <Route path="/admin_home" element={<Admin_Home />} />   {/* Admin Home */}
+
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;
