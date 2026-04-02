@@ -26,7 +26,7 @@ const SignInForm = ({ logo, portalName, setShowForgotPassword, role }) => {
         navigate("/doctor_home");
         break;
       case "Admin":
-        navigate("/admin_home");
+        navigate("/admin");
         break;
       default:
         console.error("No role detected");
