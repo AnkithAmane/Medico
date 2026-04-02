@@ -1,0 +1,118 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0; /* Removed padding to fit inside Admin_Home main container */
+  background: transparent; /* Changed to transparent to match layout */
+  height: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* TOP SECTION */
+.top-section {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr; /* Better ratio for charts */
+  gap: 20px;
+}
+
+.left-column { display: flex; flex-direction: column; gap: 20px; }
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+.stat-card h3 { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+.stat-card p { font-size: 26px; font-weight: 800; color: #007acc; margin: 0; }
+
+/* CHARTS GRID */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.chart-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  height: 220px; /* Locked height to prevent scroll */
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card h3 { font-size: 12px; margin-bottom: 10px; color: #1e293b; font-weight: 700; }
+.chart-wrap { flex: 1; position: relative; width: 100%; }
+
+/* CALENDAR WIDGET UI */
+.calendar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.widget-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 15px;
+    color: #007acc;
+}
+
+.live-time-group { display: flex; flex-direction: column; }
+.live-time { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
+.live-date { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+
+.cal-month-header { text-align: center; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; color: #1e293b; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+.cal-day-label { font-size: 0.65rem; font-weight: 700; color: #94a3b8; }
+.cal-date { font-size: 0.75rem; padding: 6px; border-radius: 8px; color: #475569; }
+.cal-date.current { background: #007acc; color: #fff; font-weight: 700; }
+
+/* EVENTS LIST */
+.events-section { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; margin-top: 15px; }
+.event-card {
+  background: linear-gradient(135deg, #007acc, #00d2ff);
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* BOTTOM SECTION */
+.bottom-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.info-card { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; }
+
+.availability-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.availability-table th { text-align: left; color: #94a3b8; padding-bottom: 10px; }
+.availability-table td { padding: 10px 0; border-top: 1px solid #f1f5f9; }
+
+.status.available { color: #16a34a; font-weight: 700; }
+.status.not-available { color: #dc2626; font-weight: 700; }
+
+.patients-list { list-style: none; padding: 0; margin: 0; }
+.patients-list li { padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #475569; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1200px) {
+    .top-section { grid-template-columns: 1fr; }
+}
