@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import profileImg from "../../Assets/Images/Doctor/doctor_profile1.webp";
 import data from "../../Assets/Data/doctorsData.json";
+import Link from "@mui/material/Link";
 import {
   FaThLarge,
   FaCalendarAlt,
@@ -28,6 +30,8 @@ import Settings from "../Other/Settings.jsx";
 import "./DoctorHome.css";
  
 function DoctorHome() {
+    const navigate = useNavigate();
+  
   // current module shown on the right side
   const [currModule, setCurrModule] = useState("Dashboard");
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
@@ -82,11 +86,8 @@ function DoctorHome() {
         return <Settings />;
       case "Logout":
         // placeholder action; you can plug in real logic later
-        return (
-          <p style={{ padding: "12px 4px" }}>
-            You clicked Logout (wire actual logic later)
-          </p>
-        );
+        navigate("/doctor_auth");
+        break;
       default:
         return null;
     }
