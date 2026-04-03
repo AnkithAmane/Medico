@@ -15,6 +15,7 @@ import Event_Management from './Admin/Events_Management/Event_Management';
 import Statistics from './Admin/stats/Stats';
 import AvailabilityManagement from './Admin/Availability_Management/Availability';
 import DepartmentManagement from './Admin/Department_Management/departments';
+import DoctorHome from './Doctors/Doctor_Home/DoctorHome';
 /**
  * MAIN APPLICATION COMPONENT
  * Handles global routing for the Medico+ Ecosystem.
@@ -35,7 +36,7 @@ function App() {
         /* --- DASHBOARD / HOME ROUTES --- */
         {/* These connect to the navigate() calls in your SignInForm */}
         <Route path="/patient_home" element={<Landing_Page />} /> {/* Patient Home */}
-        <Route path="/doctor_home" element={<Doctor_Auth />} />  {/* Doctor Home */}
+        <Route path="/doctor_home" element={<DoctorHome />} />  {/* Doctor Home */}
         <Route path="/admin" element={<Admin_Home />}>
     {/* This is the key: it makes Admin_Dashboard the default view */}
     <Route index element={<Admin_Dashboard />} /> 
