@@ -1,0 +1,356 @@
+/* ==================================================
+   Reviews – Blue Theme (Same as ScheduleAvailability)
+   ================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+.doctor-rev {
+  padding: 24px;
+  background: #f8fbff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* ================= HEADER & KPIs ================= */
+
+.doctor-rev__header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.doctor-rev__kpis {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .doctor-rev__kpis {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* KPI cards */
+.doctor-rev__kpi,
+.doctor-rev__kpiDist {
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border: 1px solid #dbe9ff;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow:
+    0 8px 22px rgba(7, 123, 248, 0.18),
+    0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* KPI numbers */
+.doctor-rev__kpiNum {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #0d47a1;
+}
+
+.doctor-rev__kpiLabel {
+  color: #607d8b;
+}
+
+.doctor-rev__stars {
+  color: #ffb300;
+  font-size: 1.1rem;
+}
+
+.rev__stars span {
+  color: #ffb300;
+}
+
+/* ================= DISTRIBUTION ================= */
+
+.doctor-rev__barRow {
+  display: grid;
+  grid-template-columns: 36px 1fr 40px;
+  gap: 10px;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.doctor-rev__bar {
+  height: 10px;
+  background: #e3f2fd;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.doctor-rev__barFill {
+  height: 100%;
+  background: linear-gradient(90deg, #64b5f6, #1e88e5);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* ================= FILTER CONTROLS ================= */
+
+.doctor-rev__controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.doctor-rev__input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #bbdefb;
+  background: #ffffff;
+  font-size: 0.9rem;
+}
+
+.doctor-rev__input:focus {
+  outline: none;
+  border-color: #64b5f6;
+  box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.3);
+}
+
+/* ================= REVIEW LIST ================= */
+
+.doctor-rev__list {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  gap: 18px;
+  padding-right: 8px;
+}
+
+/* Smooth scrollbar */
+.doctor-rev__list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.doctor-rev__list::-webkit-scrollbar-thumb {
+  background: linear-gradient(#90caf9, #64b5f6);
+  border-radius: 10px;
+}
+
+/* ================= REVIEW CARD ================= */
+
+.doctor-rev__card {
+  position: relative;
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border: 1px solid #dbe9ff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow:
+    0 8px 22px rgba(7, 123, 248, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Left accent strip */
+.doctor-rev__card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+  width: 5px;
+  background: #1e88e5;
+  border-radius: 5px;
+  opacity: 0.35;
+}
+
+.doctor-rev__card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 30px rgba(7, 123, 248, 0.3),
+    0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ================= TOP ROW ================= */
+
+.doctor-rev__rowTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+}
+
+.doctor-rev__patient {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.doctor-rev__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #1e88e5;
+  background: #ffffff;
+}
+
+.doctor-rev__name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0d47a1;
+}
+
+.doctor-rev__meta {
+  font-size: 0.85rem;
+  color: #607d8b;
+}
+
+/* ================= CONTENT ================= */
+
+.doctor-rev__title {
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #263238;
+}
+
+.doctor-rev__comment {
+  margin-top: 6px;
+  color: #37474f;
+  line-height: 1.5;
+  font-size: 0.92rem;
+}
+
+/* ================= REPLY ================= */
+
+.doctor-rev__reply {
+  margin-top: 16px;
+  background: #f1f8ff;
+  border-left: 4px solid #1e88e5;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.doctor-rev__replyHead {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #0d47a1;
+}
+
+/* ================= ACTIONS ================= */
+
+.doctor-rev__actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.doctor-rev__badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.doctor-rev__badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #ffffff;
+  border: 1px solid #bbdefb;
+  color: #0d47a1;
+}
+
+.doctor-rev__badge--new {
+  background: #e3f2fd;
+}
+
+.doctor-rev__badge--replied {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.doctor-rev__badge--resolved {
+  background: #ede7f6;
+  color: #4527a0;
+}
+
+.doctor-rev__badge--flagged {
+  background: #fbe9e7;
+  color: #bf360c;
+}
+
+/* ================= BUTTONS ================= */
+
+.doctor-rev__buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.doctor-rev__btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #bbdefb;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.doctor-rev__btn:hover {
+  background: #e3f2fd;
+  transform: translateY(-1px);
+}
+
+.doctor-rev__btn--primary {
+  background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  color: #ffffff;
+  border-color: #1e88e5;
+}
+
+.doctor-rev__btn--danger {
+  background: linear-gradient(135deg, #ef5350, #e53935);
+  color: #ffffff;
+  border-color: #e53935;
+}
+
+/* ================= MODAL ================= */
+
+.doctor-rev__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.doctor-rev__sheet {
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border-radius: 18px;
+  padding: 20px;
+  width: min(520px, 92vw);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 640px) {
+  .doctor-rev {
+    height: auto;
+  }
+
+  .doctor-rev__rowTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .doctor-rev__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
