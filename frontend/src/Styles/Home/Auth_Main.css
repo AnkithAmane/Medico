@@ -1,0 +1,191 @@
+/* KEYFRAMES */
+@keyframes resizePulse { 
+    from { transform: scale(0.8); opacity: 0.2; } 
+    to { transform: scale(1.4); opacity: 0.4; } 
+}
+
+@keyframes showPanel { 
+    0%, 49.99% { opacity: 0; z-index: 1; } 
+    50%, 100% { opacity: 1; z-index: 5; } 
+}
+
+/* MAIN LAYOUT */
+.hospital-intro {
+    margin: 0; 
+    overflow: hidden; 
+    height: 100vh;
+    height: 100dvh;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    position: relative;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* DECORATIVE BACKGROUND */
+.background-layer { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 1; 
+}
+
+.bg-image { 
+    position: absolute; 
+    width: 150px; 
+    opacity: 0; 
+}
+
+.bg-image.resize { 
+    animation: resizePulse 4s infinite alternate; 
+}
+
+/* INTRO ANIMATIONS */
+.ambulance-intro {
+    position: absolute; 
+    left: -450px; 
+    top: 52%; 
+    transform: translateY(-50%); 
+    width: 550px;
+    transition: left 0.5s ease-in-out, opacity 1s ease; 
+    z-index: 5;
+    pointer-events: none;
+}
+
+.auth-wrapper { 
+    width: 0; 
+    height: 0; 
+    opacity: 0; 
+    overflow: hidden; 
+    transition: all 1s ease; 
+    z-index: 10; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-wrapper.active { 
+    width: 800px; 
+    height: 600px; 
+    opacity: 1; 
+}
+
+/* AUTH CONTAINER */
+.auth-container {
+    position: relative; 
+    overflow: hidden; 
+    width: 800px; 
+    max-width: 100%; 
+    min-height: 550px;
+    height: 550px;
+    transition: all 0.6s ease-in-out; 
+    z-index: 10;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+}
+
+/* OVERLAY SYSTEM */
+.overlay-container {
+    position: absolute; 
+    top: 0; 
+    left: 50%; 
+    width: 50%; 
+    height: 100%;
+    overflow: hidden; 
+    transition: transform 0.6s ease-in-out; 
+    z-index: 100;
+}
+
+.right-panel-active .overlay-container { 
+    transform: translateX(-100%); 
+}
+
+.overlay {
+    background: var(--grad-linear); 
+    color: #ffffff; 
+    position: relative; 
+    left: -100%;
+    height: 100%; 
+    width: 200%; 
+    transition: transform 0.6s ease-in-out;
+}
+/* OVERLAY TYPOGRAPHY STYLING */
+.overlay-panel h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-panel p {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    margin: 20px 0 30px;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 85%; 
+}
+
+.overlay-panel h1 span {
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+.right-panel-active .overlay { 
+    transform: translateX(50%); 
+}
+
+.overlay-panel {
+    position: absolute; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex-direction: column; 
+    text-align: center; 
+    top: 0; 
+    height: 100%; 
+    width: 50%; 
+    padding: 0 40px; 
+    box-sizing: border-box;
+}
+
+.overlay-left { left: 0; }
+.overlay-right { right: 0; }
+
+/* COMPONENTS */
+.ghost-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px; 
+    border: 2px solid #ffffff; 
+    background: transparent; 
+    color: #ffffff;
+    font-size: 13px; 
+    font-weight: 600; 
+    height: 45px;
+    padding: 0 40px; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    line-height: 1;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.ghost-btn:hover { 
+    background: rgba(255, 255, 255, 0.2); 
+    transform: scale(1.05); 
+}

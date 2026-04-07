@@ -1,0 +1,186 @@
+* {
+  box-sizing: border-box;
+}
+
+/* ✅ PAGE WRAPPER */
+.doctor-appt {
+  min-height: 100vh;
+  padding: clamp(16px, 3vw, 24px);
+  background: #f8fbff;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= SUMMARY ================= */
+.doctor-appt__summary {
+  display: flex;
+  gap: clamp(12px, 2vw, 18px);
+  margin-bottom: 22px;
+}
+
+.doctor-appt__summaryCard {
+  flex: 1;
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border: 1px solid #dbe9ff;
+  border-radius: 18px;
+  padding: clamp(14px, 2vw, 16px);
+  text-align: center;
+  box-shadow:
+    0 6px 16px rgba(7, 123, 248, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.doctor-appt__summaryCard .count {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: #0d47a1;
+}
+
+.doctor-appt__summaryCard .label {
+  font-size: 0.85rem;
+  color: #607d8b;
+}
+
+/* ================= TABS ================= */
+.doctor-appt__tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.doctor-appt__tab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #bbdefb;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.doctor-appt__tab.is-active {
+  background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  color: #ffffff;
+  border-color: #1e88e5;
+}
+
+/* ================= LIST ================= */
+.doctor-appt__list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(16px, 3vw, 22px);
+  background: #f8fbff;
+  align-content: flex-start;
+}
+
+/* ================= CARD ================= */
+.doctor-appt__card {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: clamp(14px, 3vw, 16px);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border: 1px solid #dbe9ff;
+  box-shadow:
+    0 6px 16px rgba(7, 123, 248, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= PHOTO ================= */
+.doctor-appt__photo img {
+  width: clamp(40px, 5vw, 44px);
+  height: clamp(40px, 5vw, 44px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #1e88e5;
+  background: #ffffff;
+}
+
+/* ================= INFO ================= */
+.doctor-appt__info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.doctor-appt__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d47a1;
+}
+
+.doctor-appt__id {
+  font-size: 0.8rem;
+  color: #607d8b;
+}
+
+.doctor-appt__time {
+  font-size: 0.8rem;
+  color: #37474f;
+  margin-top: 4px;
+}
+
+/* ================= EYE ICON ================= */
+.doctor-appt__eye {
+  cursor: pointer;
+  color: #1e88e5;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.doctor-appt__eye:hover {
+  background: #e3f2fd;
+}
+
+/* ================= EMPTY STATE ================= */
+.doctor-appt__empty {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border: 1px dashed #bbdefb;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  color: #607d8b;
+  padding: clamp(20px, 4vw, 28px);
+  text-align: center;
+}
+
+/* ================= MODAL ================= */
+.doctor-appt__modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 16px;
+}
+
+.doctor-appt__sheet {
+  background: linear-gradient(180deg, #f4f9ff, #ffffff);
+  border-radius: 20px;
+  padding: 20px;
+  width: min(480px, 100%);
+}
+
+.doctor-appt__sheet h3 {
+  color: #0d47a1;
+  margin-bottom: 12px;
+}
+
+.doctor-appt__sheet textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #bbdefb;
+  resize: vertical;
+}

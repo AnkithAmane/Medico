@@ -1,0 +1,93 @@
+/* Background tint from your image */
+.search-page-bg {
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    min-height: 100vh;
+    padding-bottom: 50px;
+    overflow-y: auto;
+}
+
+.search-hero-section {
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* The White Floating Card */
+.search-card-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 850px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.search-header-text {
+    font-size: 2rem;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* Row alignment for inputs and buttons */
+.search-controls-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.search-input-box {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Toggle Styling */
+.toggle-container {
+    display: flex;
+    background: #f3f4f6;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.view-btn {
+    border: none;
+    padding: 8px 15px;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    background: transparent;
+    color: #6b7280;
+}
+
+.view-btn.active {
+    background: white;
+    color: #764ba2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* The Purple Action Button from your image */
+.search-action-btn {
+    background-color: #7266d8;
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.search-action-btn:hover {
+    background-color: #5e52c4;
+    transform: translateY(-1px);
+}
