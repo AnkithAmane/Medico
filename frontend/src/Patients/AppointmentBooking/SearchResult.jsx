@@ -2,7 +2,7 @@ import hospitalData from "../../Assets/Data/PatientData/DoctorData.jsx";
 import AppointmentForm from "./AppointmentForm.jsx";
 import { useState } from "react";
 import './SearchResult.css';
-import doctorImage from "../../Assets/Images/Doctor/Arjunreddy.jpg";
+import doctorImage from "../../Assets/Images/Doctor/PDoctor.png";
 
 export default function SearchResult({location,department}){
     const [selectedDoctor, setSelectedDoctor] = useState(null);
