@@ -85,7 +85,7 @@
 .book-btn {
   width: 100%;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(to right, #87ceeb, #1e90ff);
   color: white;
   border: none;
   border-radius: 6px;
@@ -120,7 +120,7 @@
   flex-grow: 1;
 }
 
-/* --- Updated Search Results Container --- */
+
 .search-results-container {
   max-width: 1400px;
   margin: 2rem auto;
