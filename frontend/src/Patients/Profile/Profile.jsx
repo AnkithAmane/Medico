@@ -171,18 +171,9 @@ export default function Profile({ userId }) {
               />
             </div>
             
-           
-             
 
-            
-
-
-
-
-            
           </div>
         </div>
-
         <div className="section">
           <h3>Contact Information</h3>
           <div className="form-flex">

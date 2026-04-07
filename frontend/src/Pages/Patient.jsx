@@ -12,6 +12,7 @@ import Navbar from '../Patients/Navbar/Navbar';
 export default function Patient() {
   return (
     <>
+    {localStorage.setItem("patientId", "PAT000000001")}
       <Navbar />
       <div className="patience-content-wrapper"> 
         <Routes>

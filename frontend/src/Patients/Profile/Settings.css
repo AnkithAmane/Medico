@@ -1,3 +1,5 @@
+/*settings Styling */
+
 .settings_container {
   padding: 20px;
   max-width: 1000px;
@@ -214,6 +216,7 @@ input:checked + .slider:before {
   transform: translateY(-1px);
 }
  
+/* Responsive Design for Mobile */
 @media (max-width: 768px) {
   .setting_item {
     flex-direction: column;
