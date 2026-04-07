@@ -1,0 +1,254 @@
+.doctor-profile_container {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+ 
+ 
+.doctor-profile_content {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+ 
+.doctor-profile_image_section {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+ 
+.doctor-image_container {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+ 
+.doctor-profile_main_image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid #077bf8;
+  box-shadow: 0 8px 25px rgba(7, 123, 248, 0.3);
+  transition: all 0.3s ease;
+}
+ 
+.doctor-profile_main_image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(7, 123, 248, 0.4);
+}
+ 
+.doctor_basic_info {
+  text-align: center;
+}
+ 
+.doctor_basic_info h2 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 700;
+}
+ 
+.doctor_basic_info .qualification {
+  margin: 0 0 8px 0;
+  color: #077bf8;
+  font-size: 16px;
+  font-weight: 600;
+}
+ 
+.doctor_basic_info .specialization {
+  margin: 0;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+ 
+.doctor-profile_details_section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+ 
+.doctor-details_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+ 
+.doctor-detail_card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+ 
+.doctor-detail_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+ 
+.doctor-card_header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #077bf8, #5fa9f8);
+  color: white;
+}
+ 
+.doctor-card_icon {
+  font-size: 20px;
+  opacity: 0.9;
+}
+ 
+.doctor-card_header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+ 
+.doctor-card_content {
+  padding: 25px;
+}
+ 
+.doctor-form_group {
+  margin-bottom: 20px;
+}
+ 
+.doctor-form_group:last-child {
+  margin-bottom: 0;
+}
+ 
+.doctor-form_group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.doctor-form_group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #495057;
+  background: #fff;
+}
+ 
+.doctor-profile_actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+ 
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+ 
+.btn-primary {
+  background: #077bf8;
+  color: #fff;
+}
+ 
+.btn-secondary {
+  background: #6c757d;
+  color: #fff;
+}
+ 
+.doctor-form_value {
+  margin: 0;
+  color: #6c757d;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+ 
+.doctor-form_value:last-child {
+  border-bottom: none;
+}
+ 
+.doctor-working_hours {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+ 
+.doctor-hour_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+ 
+.doctor-hour_item:last-child {
+  border-bottom: none;
+}
+ 
+.doctor-hour_item .day {
+  font-weight: 600;
+  color: #495057;
+}
+ 
+.doctor-hour_item .time {
+  color: #077bf8;
+  font-weight: 500;
+}
+ 
+.doctor-hour_item .time.emergency {
+  color: #dc3545;
+}
+ 
+@media (max-width: 1200px) {
+  .doctor-profile_content {
+    grid-template-columns: 1fr;
+  }
+ 
+  .doctor-profile_image_section {
+    order: -1;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+ 
+@media (max-width: 768px) {
+  .doctor-profile_container {
+    padding: 20px;
+  }
+ 
+  .doctor-profile_header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+ 
+  .doctor-details_grid {
+    grid-template-columns: 1fr;
+  }
+ 
+  .doctor-profile_content {
+    gap: 20px;
+  }
+ 
+  .doctor-card_content {
+    padding: 20px;
+  }
+}

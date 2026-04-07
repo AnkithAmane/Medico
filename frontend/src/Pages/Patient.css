@@ -1,0 +1,6 @@
+.patience-content-wrapper {
+  background: linear-gradient(135deg, #e0f7fa, #ffffff);
+  min-height: 100vh;
+  overflow-y: auto;
+  padding: 20px;
+}
