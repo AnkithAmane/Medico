@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import "./AppointmentForm.css";
 import patienceData from "../../Assets/Data/PatientData/PatienceData";
 import hospitalData from "../../Assets/Data/PatientData/DoctorData";
 import PaymentConfirmation from "./PaymentConfirmation";
-
+import "./AppointmentForm.css";
 
 const updatePatientAppointmentData = (patientId, newAppointment) => {
   // Storing patient appointments in localStorage
@@ -361,7 +360,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
             </div>
           )}
 
-          <button type="submit" className="submit-btn">
+          <button type="submit" className="p_submit-btn">
             📅 Confirm Appointment
           </button>
         </form>
