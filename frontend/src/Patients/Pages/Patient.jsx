@@ -1,14 +1,15 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom'; // Added Navigate
 import './Patient.css';
-import Profile from '../Patients/Profile/Profile';
-import ContactPage from '../Pages/Contact';
-import AppointmentData from '../Patients/AppointmentData/AppointmentData';
-import MedicationTests from '../Patients/TestsAndMedicines/MedicationTests';
-import Settings from '../Patients/Profile/Settings';
-import Search from '../Patients/AppointmentBooking/AppointmentBooking'; // Check this path
-import Navbar from '../Patients/Navbar/Navbar';
+import Profile from '../Profile/Profile'
+import ContactPage from './Contact';
+import AppointmentData from '../AppointmentData/AppointmentData';
+import MedicationTests from '../TestsAndMedicines/MedicationTests';
+import Settings from '../Profile/Settings';
+import Search from '../AppointmentBooking/AppointmentBooking'; // Check this path
+import Navbar from '../Navbar/Navbar';
 
+// import 'bootstrap/dist/css/bootstrap.min.css';
 export default function Patient() {
   return (
     <>
