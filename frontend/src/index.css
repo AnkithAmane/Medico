@@ -1,0 +1,19 @@
+/* ADD THIS AT THE TOP OF YOUR GLOBAL CSS */
+* {
+    margin: 0px;
+    padding: 0;
+    box-sizing: border-box;
+    /* Forces Chrome to render text exactly like Edge */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevents Chrome from auto-scaling text on mobile/small screens */
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    /* Prevents tiny layout shifts in Chrome */
+    overflow-x: hidden; 
+}

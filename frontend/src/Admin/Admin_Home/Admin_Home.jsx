@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-/* Vector Icons for high-performance rendering */
 import { 
   LayoutDashboard, CalendarDays, UserRound, Users, 
-  Wallet, BarChart3, PartyPopper, Clock, Settings, LogOut, Bell, Search, ChevronLeft, ChevronRight 
+  Wallet, BarChart3, PartyPopper, Clock, Settings, 
+  LogOut, Bell, Search, ChevronLeft, ChevronRight 
 } from "lucide-react"; 
 import "./Admin_Home.css";
 
 export default function Admin_Home() {
+  // --- 1. STATE & ROUTING ---
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
 
+  // --- 2. NAVIGATION CONFIGURATION ---
   const navOptions = [
     { id: 1, label: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
     { id: 2, label: "Appointments", path: "/admin/a_m", icon: <CalendarDays size={20} /> },
@@ -23,6 +25,7 @@ export default function Admin_Home() {
     { id: 9, label: "Departments", path: "/admin/d", icon: <Settings size={20} /> },
   ];
 
+  // --- 3. HANDLERS ---
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to end your session at Medico+?")) {
       navigate("/");
@@ -31,7 +34,8 @@ export default function Admin_Home() {
 
   return (
     <div className="med_light_layout">
-      {/* SIDEBAR: Performance optimized width transition */}
+      
+      {/* --- SIDEBAR MODULE --- */}
       <aside className={`med_sidebar ${isCollapsed ? "collapsed" : ""}`}>
         <div className="med_sidebar_toggle_zone">
           <button className="med_toggle_btn" onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -48,10 +52,10 @@ export default function Admin_Home() {
             >
               <span className="med_nav_icon">{opt.icon}</span>
               
-              {/* JSX Strict Conditional: Label won't render if collapsed */}
+              {/* Strict Conditional Rendering for Smooth Transitions */}
               {!isCollapsed && <span className="med_nav_label">{opt.label}</span>}
               
-              {/* Tooltip only shows when collapsed */}
+              {/* Collapsed State Tooltip */}
               {isCollapsed && <div className="med_nav_tooltip">{opt.label}</div>}
             </NavLink>
           ))}
@@ -65,11 +69,11 @@ export default function Admin_Home() {
         </div>
       </aside>
 
-      {/* MAIN VIEWPORT */}
+      {/* --- MAIN CONTENT MODULE --- */}
       <main className="med_main_viewport">
-        {/* HEADER: Balanced Logo, Search, and Profile */}
+        
+        {/* TOPBAR HEADER */}
         <header className="med_top_header">
-          
           <div className="med_header_left">
             <div className="med_brand_header">
               <span className="med_plus_icon">✚</span>
@@ -93,7 +97,6 @@ export default function Admin_Home() {
             <div className="med_admin_profile_hub">
               <div className="med_profile_meta">
                 <span className="med_admin_name">Mahanth Reddy</span>
-                <span className="med_admin_role">Super Admin</span>
               </div>
               <div className="med_avatar_container">
                 <img src="/assets/admin_profile.png" alt="Admin" />
@@ -102,10 +105,11 @@ export default function Admin_Home() {
           </div>
         </header>
 
-        {/* This displays the Dashboard (or other pages) */}
+        {/* DYNAMIC PAGE OUTLET */}
         <section className="med_page_container">
           <Outlet />
         </section>
+
       </main>
     </div>
   );

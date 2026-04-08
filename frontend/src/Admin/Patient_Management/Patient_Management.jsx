@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { 
   Search, Plus, X, Scale, Ruler, User, Phone, Tag, 
-  Clock, Calendar, ChevronDown, ChevronUp, Activity, Download, Filter
+  Clock, Calendar, ChevronDown, ChevronUp, Activity, Download, Filter,
+  ChevronLeft, ChevronRight, Mail
 } from "lucide-react";
+
+import patientsData from "../../Assets/Data/patient.json";
+import appointmentsData from "../../Assets/Data/appointment.json";
 import "./Patient_Management.css";
 
 export default function Patient_Management() {
-  // --- GLOBAL STATE ---
+  // --- 1. GLOBAL STATE ---
   const [searchTerm, setSearchTerm] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterAgeRange, setFilterAgeRange] = useState("");
@@ -14,48 +18,18 @@ export default function Patient_Management() {
   const [editMode, setEditMode] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   
-  // --- APPOINTMENT SECTION STATE ---
+  // --- 2. PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 15;
+
+  // --- 3. APPOINTMENT SECTION STATE ---
   const [showAllAppts, setShowAllAppts] = useState(false);
   const [apptSearch, setApptSearch] = useState(""); 
-  const [apptMonthFilter, setApptMonthFilter] = useState(""); // Format: YYYY-MM
+  const [apptMonthFilter, setApptMonthFilter] = useState(""); 
 
-  // --- DYNAMIC DATA ---
-  const [patients, setPatients] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      age: 32,
-      gender: "Male",
-      height: "175 cm",
-      weight: "82 kg",
-      contact: "+91-9876543210",
-      disease: "Hypertension",
-      photo: "https://i.pravatar.cc/150?u=john",
-      appointments: [
-        { date: "2026-03-15", reason: "Cardiology Consultation", status: "Completed" },
-        { date: "2026-02-20", reason: "General Check-up", status: "Completed" },
-        { date: "2026-01-10", reason: "Blood Pressure Monitoring", status: "Completed" },
-        { date: "2025-11-05", reason: "Initial Screening", status: "Completed" },
-        { date: "2025-09-12", reason: "Follow-up Lab Results", status: "Completed" },
-      ]
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      age: 12,
-      gender: "Female",
-      height: "145 cm",
-      weight: "40 kg",
-      contact: "+91-9876543211",
-      disease: "General Pediatrics",
-      photo: "https://i.pravatar.cc/150?u=priya",
-      appointments: [
-        { date: "2026-03-01", reason: "Monthly Growth Check", status: "Completed" },
-      ]
-    }
-  ]);
+  const [patients] = useState(patientsData);
 
-  // --- CLINICAL HELPERS ---
+  // --- 4. CLINICAL HELPERS & BMI ENGINE ---
   const getAgeClass = (age) => {
     if (age < 13) return "Child";
     if (age < 20) return "Teen";
@@ -66,7 +40,7 @@ export default function Patient_Management() {
   const calculateBMI = (weightStr, heightStr) => {
     const w = parseFloat(weightStr);
     const h = parseFloat(heightStr) / 100;
-    if (!w || !h || h === 0) return null;
+    if (!w || !h || h === 0) return { bmi: "N/A", category: "Unknown", color: "#94a3b8" };
     const bmi = (w / (h * h)).toFixed(1);
     let category = "Normal";
     let color = "#22c55e"; 
@@ -76,34 +50,57 @@ export default function Patient_Management() {
     return { bmi, category, color };
   };
 
-  // --- SMART SEARCH & FILTER LOGIC ---
-  const filteredPatients = patients.filter((p) => {
-    const s = searchTerm.toLowerCase();
-    const matchesSearch = 
-      (p.name || "").toLowerCase().includes(s) ||
-      `#pt-00${p.id}`.includes(s) ||
-      (p.contact || "").includes(s) ||
-      (p.disease || "").toLowerCase().includes(s);
+  // --- 5. LOGIC: DATA RETRIEVAL ---
+  const getPatientAppointments = (patientName) => {
+    return appointmentsData.filter(a => (a.patient || "") === patientName);
+  };
 
-    const matchesGender = filterGender ? p.gender === filterGender : true;
-    let matchesAge = true;
-    if (filterAgeRange === "0-18") matchesAge = p.age <= 18;
-    else if (filterAgeRange === "19-40") matchesAge = p.age >= 19 && p.age <= 40;
-    else if (filterAgeRange === "41-60") matchesAge = p.age >= 41 && p.age <= 60;
-    else if (filterAgeRange === "60+") matchesAge = p.age > 60;
+  const filteredPatients = useMemo(() => {
+    return patients.filter((p) => {
+      const s = searchTerm.toLowerCase();
+      const patientName = (p.name || "").toLowerCase();
+      const patientContact = (p.contact || "");
+      const patientDisease = (p.disease || "").toLowerCase();
+      const patientId = `#pt-${p.id}`.toLowerCase();
 
-    return matchesSearch && matchesGender && matchesAge;
-  });
+      const matchesSearch = 
+        patientName.includes(s) ||
+        patientId.includes(s) ||
+        patientContact.includes(s) ||
+        patientDisease.includes(s);
 
-  // --- APPOINTMENT FILTER LOGIC ---
+      const matchesGender = filterGender ? p.gender === filterGender : true;
+      let matchesAge = true;
+      if (filterAgeRange === "0-18") matchesAge = p.age <= 18;
+      else if (filterAgeRange === "19-40") matchesAge = p.age >= 19 && p.age <= 40;
+      else if (filterAgeRange === "41-60") matchesAge = p.age >= 41 && p.age <= 60;
+      else if (filterAgeRange === "60+") matchesAge = p.age > 60;
+
+      return matchesSearch && matchesGender && matchesAge;
+    });
+  }, [searchTerm, filterGender, filterAgeRange, patients]);
+
+  const totalPages = Math.ceil(filteredPatients.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentPatients = filteredPatients.slice(indexOfFirstRow, indexOfLastRow);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const getFilteredAppts = () => {
     if (!selectedPatient) return [];
-    const all = selectedPatient.appointments.filter(a => {
-      const matchesSearch = a.reason.toLowerCase().includes(apptSearch.toLowerCase()) || a.date.includes(apptSearch);
+    const patientAppts = getPatientAppointments(selectedPatient.name);
+    const filtered = patientAppts.filter(a => {
+      const matchesSearch = (a.notes || "").toLowerCase().includes(apptSearch.toLowerCase()) || 
+                           (a.doctor || "").toLowerCase().includes(apptSearch.toLowerCase()) || 
+                           a.date.includes(apptSearch);
       const matchesMonth = apptMonthFilter ? a.date.startsWith(apptMonthFilter) : true;
       return matchesSearch && matchesMonth;
     });
-    return showAllAppts ? all : all.slice(0, 3);
+    return showAllAppts ? filtered : filtered.slice(0, 3);
   };
 
   return (
@@ -111,36 +108,35 @@ export default function Patient_Management() {
       {!selectedPatient || editMode ? (
         <div className="med_main_list_view">
           
-          {/* QUICK STATS OVERVIEW */}
+          {/* TOP ANALYTICS STRIP */}
           <div className="med_quick_stats_row">
             <div className="med_mini_stat_card">
               <div className="stat_icon_circle blue"><User size={20}/></div>
               <div className="stat_info">
                 <label>Total Patients</label>
-                <h3>{patients.length.toString().padStart(2, '0')}</h3>
+                <h3>{patients.length}</h3>
               </div>
             </div>
             <div className="med_mini_stat_card">
               <div className="stat_icon_circle red"><Activity size={20}/></div>
               <div className="stat_info">
-                <label>Critical Records</label>
-                <h3 className="red_text">0{patients.filter(p => p.age > 60).length}</h3>
+                <label>Senior Citizens</label>
+                <h3 className="red_text">{patients.filter(p => p.age >= 60).length}</h3>
               </div>
             </div>
             <div className="med_mini_stat_card">
               <div className="stat_icon_circle green"><Calendar size={20}/></div>
               <div className="stat_info">
-                <label>New This Month</label>
-                <h3 className="green_text">12</h3>
+                <label>Pediatric Care</label>
+                <h3 className="green_text">{patients.filter(p => p.age <= 12).length}</h3>
               </div>
             </div>
           </div>
 
-          {/* HEADER SECTION */}
           <div className="med_section_header">
             <div className="med_branding">
               <h1 className="med_title_elite">Patient <span className="highlight">Directory</span></h1>
-              <p className="med_subtitle">Advanced Clinical Database Management</p>
+              <p className="med_subtitle">{filteredPatients.length} matching records</p>
             </div>
             <div className="med_action_group">
               <button className="med_btn_outline"><Download size={16}/> Export CSV</button>
@@ -150,7 +146,7 @@ export default function Patient_Management() {
             </div>
           </div>
 
-          {/* FILTER BAR WITH SMART SEARCH */}
+          {/* GLOBAL FILTERS */}
           <div className="med_filter_bar">
             <div className="med_search_box smart_search">
               <Search size={18} color="#007acc" />
@@ -158,16 +154,16 @@ export default function Patient_Management() {
                 type="text" 
                 placeholder="Search Name, ID, Phone or Disease..." 
                 value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
+                onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}} 
               />
             </div>
             <div className="med_dropdown_group">
-              <select className="med_select_filter" value={filterGender} onChange={(e) => setFilterGender(e.target.value)}>
+              <select className="med_select_filter" value={filterGender} onChange={(e) => {setFilterGender(e.target.value); setCurrentPage(1);}}>
                 <option value="">All Genders</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-              <select className="med_select_filter" value={filterAgeRange} onChange={(e) => setFilterAgeRange(e.target.value)}>
+              <select className="med_select_filter" value={filterAgeRange} onChange={(e) => {setFilterAgeRange(e.target.value); setCurrentPage(1);}}>
                 <option value="">All Ages</option>
                 <option value="0-18">Under 18</option>
                 <option value="19-40">19 - 40 Yrs</option>
@@ -177,7 +173,7 @@ export default function Patient_Management() {
             </div>
           </div>
 
-          {/* DIRECTORY TABLE */}
+          {/* MAIN REGISTRY */}
           <div className="med_table_container">
             <table className="med_table">
               <thead>
@@ -190,12 +186,12 @@ export default function Patient_Management() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPatients.map((p) => (
+                {currentPatients.map((p) => (
                   <tr key={p.id}>
                     <td>
                       <div className="med_cell_user">
-                        <img src={p.photo} alt="" />
-                        <div><b>{p.name}</b><span>#PT-00{p.id}</span></div>
+                        <img src={p.photo || "https://i.pravatar.cc/150"} alt="" />
+                        <div><b>{p.name}</b><span>#PT-{p.id.toString().padStart(3, '0')}</span></div>
                       </div>
                     </td>
                     <td className="med_text_bold">{p.age} Yrs <small className="age_pill">{getAgeClass(p.age)}</small></td>
@@ -209,23 +205,44 @@ export default function Patient_Management() {
               </tbody>
             </table>
           </div>
+
+          {/* PAGINATION */}
+          <div className="med_pagination_bar">
+            <div className="pag_info">
+              Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filteredPatients.length)}</b> of <b>{filteredPatients.length}</b>
+            </div>
+            <div className="pag_buttons">
+              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft size={16}/></button>
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                  return (
+                    <button key={i} className={`pag_num_btn ${currentPage === page ? 'active' : ''}`} onClick={() => handlePageChange(page)}>{page}</button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return <span key={i} className="pag_ellipsis">...</span>;
+                }
+                return null;
+              })}
+              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight size={16}/></button>
+            </div>
+          </div>
         </div>
       ) : (
-        /* --- REFINED DETAIL VIEW --- */
+        /* --- WORKSPACE: PATIENT CLINICAL CASE --- */
         <div className="med_detail_view">
           <div className="med_detail_nav">
              <button className="med_btn_close" onClick={() => setSelectedPatient(null)}>Close Profile</button>
           </div>
 
           <div className="sa_patient_profile_container">
-            {/* 1. CLINICAL INFO PANEL */}
             <div className="med_card_refined info_panel_v3">
                 <div className="profile_main_side">
-                  <img src={selectedPatient.photo} alt="Profile" className="large_avatar" />
+                  <img src={selectedPatient.photo || "https://i.pravatar.cc/150"} alt="Profile" className="large_avatar" />
                   <div className="profile_titles">
                     <h2 className="patient_name_v3">{selectedPatient.name}</h2>
                     <div className="id_condition_row">
-                      <span className="id_badge">ID: #PT-00{selectedPatient.id}</span>
+                      <span className="id_badge">ID: #PT-{selectedPatient.id}</span>
                       <span className="diagnosis_badge"><Activity size={12}/> {selectedPatient.disease}</span>
                     </div>
                   </div>
@@ -251,39 +268,22 @@ export default function Patient_Management() {
                 </div>
             </div>
 
-            {/* 2. APPOINTMENT HISTORY WITH CALENDAR FILTER */}
             <div className="med_card_refined appointment_history_card">
                <div className="appt_header_main">
                   <div className="title_with_icon">
                     <Clock size={20} className="blue_text" />
-                    <h4>Clinical Visits</h4>
+                    <h4>Clinical Visits Registry</h4>
                   </div>
                   
                   <div className="appt_controls">
                     <div className="appt_mini_filter calendar_style">
                       <Filter size={14} color="#007acc" />
-                      <input 
-                        type="month" 
-                        value={apptMonthFilter} 
-                        onChange={(e) => {
-                          setApptMonthFilter(e.target.value);
-                          setShowAllAppts(true);
-                        }} 
-                      />
-                      {apptMonthFilter && (
-                        <button className="clear_month" onClick={() => setApptMonthFilter("")}>
-                          <X size={12} />
-                        </button>
-                      )}
+                      <input type="month" value={apptMonthFilter} onChange={(e) => { setApptMonthFilter(e.target.value); setShowAllAppts(true); }} />
+                      {apptMonthFilter && <button className="clear_month" onClick={() => setApptMonthFilter("")}><X size={12} /></button>}
                     </div>
                     <div className="appt_mini_search">
                       <Search size={14} color="#94a3b8" />
-                      <input 
-                        type="text" 
-                        placeholder="Search visits..." 
-                        value={apptSearch}
-                        onChange={(e) => {setApptSearch(e.target.value); setShowAllAppts(true);}}
-                      />
+                      <input type="text" placeholder="Search visits..." value={apptSearch} onChange={(e) => {setApptSearch(e.target.value); setShowAllAppts(true);}} />
                     </div>
                   </div>
                </div>
@@ -293,20 +293,25 @@ export default function Patient_Management() {
                     getFilteredAppts().map((appt, idx) => (
                       <div key={idx} className="appt_row_item">
                          <div className="date_box"><Calendar size={14}/> {appt.date}</div>
-                         <div className="reason_box"><b>{appt.reason}</b></div>
+                         <div className="reason_box">
+                            <b>{appt.doctor}</b>
+                            <p style={{margin:0, fontSize: '0.8rem', color:'#64748b'}}>{appt.notes || "Routine Visit"}</p>
+                         </div>
                          <div className="status_box">
-                           <span className="status_badge"><span className="status_dot"></span> {appt.status}</span>
+                           <span className={`status_badge ${appt.status.toLowerCase()}`}>
+                              <span className="status_dot"></span> {appt.status}
+                           </span>
                          </div>
                       </div>
                     ))
                   ) : (
-                    <div className="no_records_simple">No records found for the selected month/search.</div>
+                    <div className="no_records_simple">No clinical history found matching filters.</div>
                   )}
                </div>
 
-               {selectedPatient.appointments.length > 3 && !apptSearch && !apptMonthFilter && (
+               {getPatientAppointments(selectedPatient.name).length > 3 && !apptSearch && !apptMonthFilter && (
                  <button className="view_more_btn" onClick={() => setShowAllAppts(!showAllAppts)}>
-                   {showAllAppts ? <><ChevronUp size={16}/> Show Recent Only</> : <><ChevronDown size={16}/> Full History ({selectedPatient.appointments.length})</>}
+                   {showAllAppts ? <><ChevronUp size={16}/> Show Recent Only</> : <><ChevronDown size={16}/> Full History ({getPatientAppointments(selectedPatient.name).length})</>}
                  </button>
                )}
             </div>
@@ -314,7 +319,7 @@ export default function Patient_Management() {
         </div>
       )}
 
-      {/* MODAL FORM */}
+      {/* ADMINISTRATION MODAL */}
       {showForm && (
         <div className="med_modal_overlay">
           <div className="sa_centered_form_card">
