@@ -1,5 +1,5 @@
 import { useState } from "react";
-import hospitalData from "../../Assets/Data/PatientData/DoctorData.jsx";
+import hospitalData from "../../../Assets/Data/PatientData/DoctorData.jsx";
 import SearchResult from "./SearchResult.jsx";
 import './AppointmentBooking.css';
 

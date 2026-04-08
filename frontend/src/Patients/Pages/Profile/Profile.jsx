@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import patienceData from '../../Assets/Data/PatientData/PatienceData';
+import patienceData from '../../../Assets/Data/PatientData/PatienceData';
 import './Profile.css';
 
 export default function Profile({ userId }) {

@@ -100,13 +100,16 @@
 .profile-content {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 40px;
 }
 
 .section {
   padding: 20px;
   background: #f9f9f9;
   border-radius: 6px;
+
+  margin: auto;
+  margin-bottom:10px;
   border-left: 4px solid #667eea;
   height: auto;
 }
