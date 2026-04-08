@@ -16,7 +16,6 @@ import Statistics from './Admin/stats/Stats';
 import AvailabilityManagement from './Admin/Availability_Management/Availability';
 import DepartmentManagement from './Admin/Department_Management/departments';
 import DoctorHome from './Doctors/Doctor_Home/DoctorHome';
-import Patient from './Patients/Pages/Patient'
 /**
  * MAIN APPLICATION COMPONENT
  * Handles global routing for the Medico+ Ecosystem.
