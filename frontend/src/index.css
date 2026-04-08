@@ -1,3 +1,4 @@
+
 /* ADD THIS AT THE TOP OF YOUR GLOBAL CSS */
 * {
     margin: 0px;
@@ -16,4 +17,5 @@ html, body {
     height: 100%;
     /* Prevents tiny layout shifts in Chrome */
     overflow-x: hidden; 
+
 }

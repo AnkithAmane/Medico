@@ -1,0 +1,144 @@
+/* Navbar Custom Styling */
+
+.navbar {
+  background: white !important;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  color: #007acc !important; /* FIXED: Changed from white to blue so it's visible */
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.nav-link {
+  color: #007acc !important;
+  font-weight: 600; /* Increased from 500 to 600 */
+  letter-spacing: 0.3px; /* Added slight spacing for readability */
+  margin: 0 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.dropdown-item{
+  font-weight: bold;
+}
+
+
+
+/* FIXED: Prevent text from turning white and disappearing on a white background */
+.nav-link:hover,
+.nav-link.active {
+  color: #1e90ff !important; /* Lighter blue on hover */
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #1e90ff; /* FIXED: Blue underline instead of white */
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.navbar-toggler {
+  border-color: rgba(0, 122, 204, 0.3); /* FIXED: Subtle blue border */
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 122, 204, 0.25);
+}
+
+/* FIXED: Hamburger SVG icon changed from white to blue (#007acc) */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23007acc' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Mobile collapsible menu classes */
+.navbar-collapse.hide-mobile {
+  display: none;
+}
+.navbar-collapse.show-mobile {
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .navbar-collapse.hide-mobile,
+  .navbar-collapse.show-mobile {
+    display: flex !important;
+  }
+  .navbar-nav {
+    flex-direction: row;
+  }
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .navbar-nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    background: white; /* FIXED: Matches main navbar */
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Added shadow so it pops out over content */
+  }
+  .nav-link {
+    margin: 0.25rem 0 !important;
+    padding: 0.6rem 0.8rem;
+    background: rgba(0, 122, 204, 0.05); /* FIXED: Subtle light blue background for mobile links */
+    border-radius: 6px;
+  }
+  .nav-link.btn {
+    margin-left: 0 !important;
+  }
+  .navbar-toggler {
+    margin-left: auto;
+  }
+  .desktop-profile {
+    display: none !important;
+  }
+  .logout-bottom {
+    margin-top: auto;
+    border-top: 1px solid rgba(0, 122, 204, 0.2);
+    padding-top: 0.5rem;
+  }
+}
+
+.pProfile {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007acc; /* Added border to tie it into the blue theme */
+}
+
+.pprofileDropdown {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 120px;
+  padding: 10px;
+  background: white; /* FIXED: Changed from blue gradient to match navbar */
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  color: #007acc; /* FIXED: Blue text */
+  z-index: 1000; /* Cleaned up duplicate z-index */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}

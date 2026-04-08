@@ -90,30 +90,30 @@
 }
 
 .input-group {
-    position: relative;
-    width: 90%;
-    margin-bottom: 15px;
+    position: relative !important;
+    width: 90% !important;
+    margin-bottom: 15px !important;
 }
 
 .input-group input {
-    width: 100%;
-    height: 45px;
-    padding: 0 12px 0 45px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    font-size: 14px;
-    box-sizing: border-box;
-    background-color: #f8fafc;
-    transition: all 0.3s ease;
-    line-height: normal;
-    appearance: none;
-    -webkit-appearance: none;
+    width: 100% !important;
+    height: 45px !important;
+    padding: 0 12px 0 45px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+    background-color: #f8fafc !important;
+    transition: all 0.3s ease !important;
+    line-height: normal !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
 }
 
 .input-group input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-glow);
+    outline: none !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
 }
 
 .input-icon {
