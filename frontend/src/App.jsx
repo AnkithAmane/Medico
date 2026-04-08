@@ -22,6 +22,7 @@ import DoctorHome from './Doctors/Doctor_Home/DoctorHome';
  */
 function App() {
   return (
+    
     <BrowserRouter>
       <Routes>
         /* --- PUBLIC ROUTES --- */
@@ -35,7 +36,8 @@ function App() {
 
         /* --- DASHBOARD / HOME ROUTES --- */
         {/* These connect to the navigate() calls in your SignInForm */}
-        <Route path="/patient_home" element={<Landing_Page />} /> {/* Patient Home */}
+        <Route path="/patient_home/*" element={<Patient />} /> 
+       
         <Route path="/doctor_home" element={<DoctorHome />} />  {/* Doctor Home */}
         <Route path="/admin" element={<Admin_Home />}>
     {/* This is the key: it makes Admin_Dashboard the default view */}
