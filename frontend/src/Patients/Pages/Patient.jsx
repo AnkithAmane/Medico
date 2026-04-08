@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom'; // Added Navigate
 import './Patient.css';
-import Profile from '../Profile/Profile'
+import Profile from './Profile/Profile'; 
 import ContactPage from './Contact';
-import AppointmentData from '../AppointmentData/AppointmentData';
-import MedicationTests from '../TestsAndMedicines/MedicationTests';
-import Settings from '../Profile/Settings';
-import Search from '../AppointmentBooking/AppointmentBooking'; // Check this path
-import Navbar from '../Navbar/Navbar';
+import AppointmentData from '../Components/AppointmentData/AppointmentData';
+import MedicationTests from '../Components/TestsAndMedicines/MedicationTests';
+import Settings from './Profile/Settings';
+import Search from '../Components/AppointmentBooking/AppointmentBooking'; // Check this path
+import Navbar from '../Components/Navbar/Navbar';
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 export default function Patient() {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import patienceData from "../../Assets/Data/PatientData/PatienceData";
-import hospitalData from "../../Assets/Data/PatientData/DoctorData";
+import patienceData from "../../../Assets/Data/PatientData/PatienceData";
+import hospitalData from "../../../Assets/Data/PatientData/DoctorData";
 import PaymentConfirmation from "./PaymentConfirmation";
 import "./AppointmentForm.css";
 
