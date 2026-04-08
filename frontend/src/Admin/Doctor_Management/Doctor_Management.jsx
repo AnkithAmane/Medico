@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import "./Doctor_Management.css";
+import React, { useState, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import { 
   Search, Plus, Download, Calendar, Activity, 
-  ChevronDown, ChevronUp, ChevronRight, X, User, BookOpen, Briefcase
+  ChevronRight, X, User, BookOpen, Briefcase, ChevronLeft
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -14,9 +13,15 @@ import {
   Legend,
 } from "chart.js";
 
+// --- DATA IMPORTS ---
+import doctorsData from "../../Assets/Data/doctor.json";
+import appointmentsData from "../../Assets/Data/appointment.json";
+import "./Doctor_Management.css";
+
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function Doctor_Management() {
+  // --- 1. STATE MANAGEMENT ---
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDept, setFilterDept] = useState("");
   const [filterAvail, setFilterAvail] = useState("");
@@ -25,87 +30,77 @@ export default function Doctor_Management() {
   const [editDoctor, setEditDoctor] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllLeaves, setShowAllLeaves] = useState(false); 
-  const rowsPerPage = 5;
+  const [historyTab, setHistoryTab] = useState("Recent");
+  const [doctors, setDoctors] = useState(doctorsData);
 
-  const [doctors, setDoctors] = useState([
-    {
-      id: 1,
-      name: "Dr. Ramesh",
-      degrees: "MBBS, MD",
-      department: "Cardiology",
-      availability: "Available",
-      leaves: ["2026-01-10", "2026-01-15", "2026-02-20", "2026-03-01", "2026-03-12", "2026-03-25"],
-      totalAppointments: 120,
-      totalPatients: 500,
-      photo: "https://i.pravatar.cc/150?u=ramesh",
-      performanceStats: [40, 55, 30, 65],
-      appointmentHistory: [
-        { patient: "Aditya Verma", date: "2026-03-25" },
-        { patient: "Sita Iyer", date: "2026-03-24" },
-        { patient: "Rahul G", date: "2026-03-23" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Dr. Priya",
-      degrees: "MBBS, MS",
-      department: "Orthopedics",
-      availability: "Not Available",
-      leaves: ["2026-03-10", "2026-03-11"],
-      totalAppointments: 80,
-      totalPatients: 300,
-      photo: "https://i.pravatar.cc/150?u=priya",
-      performanceStats: [20, 35, 25, 40],
-      appointmentHistory: [
-        { patient: "Kiran Dev", date: "2026-03-25" },
-      ],
-    },
-  ]);
+  const rowsPerPage = 10;
 
-  const filteredDoctors = doctors.filter((doc) => {
-    return (
-      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filterDept ? doc.department === filterDept : true) &&
-      (filterAvail ? doc.availability === filterAvail : true)
-    );
-  });
+  // --- 2. LOGIC: FILTERING & PAGINATION ---
+  const filteredDoctors = useMemo(() => {
+    return doctors.filter((doc) => {
+      const doctorName = (doc.name || "").toLowerCase();
+      const searchMatch = doctorName.includes(searchTerm.toLowerCase());
+      const deptMatch = filterDept ? doc.department === filterDept : true;
+      const availMatch = filterAvail ? doc.availability === filterAvail : true;
+      return searchMatch && deptMatch && availMatch;
+    });
+  }, [doctors, searchTerm, filterDept, filterAvail]);
 
+  const totalPages = Math.ceil(filteredDoctors.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentDoctors = filteredDoctors.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.ceil(filteredDoctors.length / rowsPerPage);
+
+  // --- 3. LOGIC: CLINICAL ANALYTICS ---
+  const getFilteredDoctorAppointments = (doctorName) => {
+    if (!doctorName) return [];
+    const targetStatus = historyTab === "Recent" ? "Completed" : "Upcoming";
+    return appointmentsData
+      .filter(appt => (appt.doctor || "") === doctorName && appt.status === targetStatus)
+      .sort((a, b) => historyTab === "Recent" 
+          ? new Date(b.date) - new Date(a.date) 
+          : new Date(a.date) - new Date(b.date)
+      ).slice(0, 5);
+  };
 
   const getPerformanceData = (stats) => ({
     labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-    datasets: [
-      {
+    datasets: [{
         label: "Patients Treated",
-        data: stats,
+        data: stats || [0, 0, 0, 0],
         backgroundColor: "#007acc",
         borderRadius: 5,
         hoverBackgroundColor: "#00d2ff",
-      },
-    ],
+    }],
   });
 
-  /* --- FORM LOGIC --- */
+  // --- 4. ACTION HANDLERS ---
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleEditClick = (doc) => {
+    setEditDoctor(doc);
+    setShowForm(true);
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const doctorData = {
-      id: editDoctor ? editDoctor.id : Date.now(),
+      id: editDoctor ? editDoctor.id : `DOC-${doctors.length + 1}`,
       name: formData.get("name"),
-      degrees: formData.get("degrees"),
       department: formData.get("department"),
-      availability: formData.get("availability"),
-      photo: editDoctor ? editDoctor.photo : "https://via.placeholder.com/150",
+      degrees: editDoctor?.degrees || "MD",
+      availability: editDoctor?.availability || "Available",
+      photo: editDoctor ? editDoctor.photo : "https://i.pravatar.cc/150",
       leaves: editDoctor ? editDoctor.leaves : [],
-      totalAppointments: Number(formData.get("totalAppointments")),
-      totalPatients: Number(formData.get("totalPatients")),
+      totalAppointments: Number(formData.get("totalAppointments") || 0),
+      totalPatients: Number(formData.get("totalPatients") || 0),
       performanceStats: editDoctor ? editDoctor.performanceStats : [10, 20, 30, 40],
-      appointmentHistory: editDoctor ? editDoctor.appointmentHistory : []
     };
-
+    
     if (editDoctor) {
       setDoctors(doctors.map(d => d.id === editDoctor.id ? doctorData : d));
     } else {
@@ -115,13 +110,10 @@ export default function Doctor_Management() {
     setEditDoctor(null);
   };
 
-  const handleEditClick = (doc) => {
-    setEditDoctor(doc);
-    setShowForm(true);
-  };
-
   return (
     <div className="med_page_fade_in">
+      
+      {/* MODULE A: SPECIALIST DIRECTORY (LIST VIEW) */}
       {!selectedDoctor && (
         <div className="med_main_list_view">
           <div className="med_section_header">
@@ -140,15 +132,24 @@ export default function Doctor_Management() {
           <div className="med_filter_bar">
             <div className="med_search_box">
               <Search size={18} color="#94a3b8" />
-              <input type="text" placeholder="Search specialists..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <input 
+                type="text" 
+                placeholder="Search specialists..." 
+                value={searchTerm} 
+                onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}} 
+              />
             </div>
             <div className="med_dropdown_group">
-              <select className="med_select_filter" value={filterDept} onChange={(e) => setFilterDept(e.target.value)}>
+              <select className="med_select_filter" value={filterDept} onChange={(e) => {setFilterDept(e.target.value); setCurrentPage(1);}}>
                 <option value="">All Departments</option>
                 <option value="Cardiology">Cardiology</option>
                 <option value="Orthopedics">Orthopedics</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Gastroenterology">Gastroenterology</option>
+                <option value="General Medicine">General Medicine</option>
               </select>
-              <select className="med_select_filter" value={filterAvail} onChange={(e) => setFilterAvail(e.target.value)}>
+              <select className="med_select_filter" value={filterAvail} onChange={(e) => {setFilterAvail(e.target.value); setCurrentPage(1);}}>
                 <option value="">All Status</option>
                 <option value="Available">Available</option>
                 <option value="Not Available">Not Available</option>
@@ -173,8 +174,8 @@ export default function Doctor_Management() {
                   <tr key={doc.id}>
                     <td>
                       <div className="med_cell_user">
-                        <img src={doc.photo} alt="" />
-                        <div><b>{doc.name}</b><span>{doc.degrees}</span></div>
+                        <img src={doc.photo || "https://i.pravatar.cc/150"} alt="" />
+                        <div><b>{doc.name}</b><span>{doc.degrees || "MD"}</span></div>
                       </div>
                     </td>
                     <td className="med_text_bold">{doc.department}</td>
@@ -183,8 +184,8 @@ export default function Doctor_Management() {
                         {doc.availability}
                       </span>
                     </td>
-                    <td>{doc.totalAppointments}</td>
-                    <td className="med_text_bold">{doc.totalPatients}</td>
+                    <td>{doc.totalAppointments || 0}</td>
+                    <td className="med_text_bold">{doc.totalPatients || 0}</td>
                     <td>
                       <button className="med_btn_manage" onClick={() => setSelectedDoctor(doc)}>View</button>
                     </td>
@@ -193,9 +194,33 @@ export default function Doctor_Management() {
               </tbody>
             </table>
           </div>
+
+          <div className="med_pagination_bar">
+            <div className="pag_info">
+              Showing <b>{indexOfFirstRow + 1}</b> to <b>{Math.min(indexOfLastRow, filteredDoctors.length)}</b> of <b>{filteredDoctors.length}</b> specialists
+            </div>
+            <div className="pag_buttons">
+              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                <ChevronLeft size={16}/>
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
+                <button 
+                  key={i} 
+                  className={`pag_num_btn ${currentPage === i + 1 ? "active" : ""}`} 
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                <ChevronRight size={16}/>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
+      {/* MODULE B: DOCTOR WORKSPACE (PROFILE VIEW) */}
       {selectedDoctor && (
         <div className="doctor-detail-container">
           <div className="detail-header">
@@ -204,37 +229,40 @@ export default function Doctor_Management() {
           </div>
 
           <div className="profile-section">
-            <img src={selectedDoctor.photo} alt={selectedDoctor.name} className="profile-photo-large" />
+            <img src={selectedDoctor.photo || "https://i.pravatar.cc/150"} alt={selectedDoctor.name} className="profile-photo-large" />
             <div className="profile-info">
               <h2>{selectedDoctor.name}</h2>
-              <p>Degrees: {selectedDoctor.degrees}</p>
+              <p>Degrees: {selectedDoctor.degrees || "N/A"}</p>
               <p>Department: {selectedDoctor.department}</p>
               <p>Availability: {selectedDoctor.availability}</p>
             </div>
             <div className="profile-stats">
-              <div className="stat-box"><h3>{selectedDoctor.totalAppointments}</h3><p>Total Appointments</p></div>
-              <div className="stat-box"><h3>{selectedDoctor.totalPatients}</h3><p>Total Patients</p></div>
+              <div className="stat-box"><h3>{selectedDoctor.totalAppointments || 0}</h3><p>Total Appointments</p></div>
+              <div className="stat-box"><h3>{selectedDoctor.totalPatients || 0}</h3><p>Total Patients</p></div>
             </div>
           </div>
 
           <div className="middle-section">
             <div className="appointments-list">
               <div className="list-header-flex">
-                <h3>Recent Patient Consultations</h3>
-                <span className="med_label_micro">Last 5 Sessions</span>
+                <h3>Consultation Registry</h3>
+                <div className="med_sub_filter_toggle">
+                  <button className={`sub_tab ${historyTab === "Recent" ? "active" : ""}`} onClick={() => setHistoryTab("Recent")}>Recent</button>
+                  <button className={`sub_tab ${historyTab === "Upcoming" ? "active" : ""}`} onClick={() => setHistoryTab("Upcoming")}>Upcoming</button>
+                </div>
               </div>
               <ul className="sa_elite_list">
-                {selectedDoctor.appointmentHistory.slice(0, 5).map((appt, idx) => (
+                {getFilteredDoctorAppointments(selectedDoctor.name).map((appt, idx) => (
                   <li key={idx} className="sa_list_item_refined">
                     <div className="sa_item_left">
-                      <div className="sa_patient_avatar_mini">{appt.patient.charAt(0)}</div>
+                      <div className="sa_patient_avatar_mini">{(appt.patient || "P").charAt(0)}</div>
                       <div className="sa_patient_info">
                         <span className="p_name">{appt.patient}</span>
                         <span className="p_date">{appt.date}</span>
                       </div>
                     </div>
                     <div className="sa_item_right">
-                      <span className="sa_status_pill_mini">Completed</span>
+                      <span className={`sa_status_pill_mini ${appt.status.toLowerCase()}`}>{appt.status}</span>
                       <ChevronRight size={14} color="#cbd5e1" />
                     </div>
                   </li>
@@ -243,25 +271,10 @@ export default function Doctor_Management() {
             </div>
             
             <div className="charts-section sa_chart_viz_pro">
-                <div className="chart-header">
-                    <h3>Performance Analytics</h3>
-                    <div className="chart_legend_custom">
-                        <div className="legend_item"><span className="dot blue"></span> Load</div>
-                    </div>
-                </div>
-                <div className="sa_chart_wrapper_glass">
-                    <Bar 
-                        data={getPerformanceData(selectedDoctor.performanceStats)} 
-                        options={{ 
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
-                            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                        }
-                        }} 
-                    />
-                </div>
+              <div className="chart-header"><h3>Performance Analytics</h3></div>
+              <div className="sa_chart_wrapper_glass">
+                <Bar data={getPerformanceData(selectedDoctor.performanceStats)} options={{ maintainAspectRatio: false, plugins: { legend: { display: false } }}} />
+              </div>
             </div>
           </div>
 
@@ -269,18 +282,14 @@ export default function Doctor_Management() {
             <div className="sa_leaves_header_flex">
               <h3>Leaves Taken</h3>
               <button className="view_more_btn" onClick={() => setShowAllLeaves(!showAllLeaves)}>
-                {showAllLeaves ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
-                {showAllLeaves ? " Show Less" : " View More"}
+                {showAllLeaves ? "Show Less" : "View More"}
               </button>
             </div>
             <div className="leaves-grid">
-              {(showAllLeaves ? selectedDoctor.leaves : selectedDoctor.leaves.slice(0, 5)).map((date, idx) => (
+              {(showAllLeaves ? selectedDoctor.leaves : (selectedDoctor.leaves || []).slice(0, 5)).map((date, idx) => (
                 <div key={idx} className="leave-box-elite">
                    <div className="leave_icon_bg"><Calendar size={14} color="#007acc" /></div>
-                   <div className="leave_text_group">
-                      <b>Leave {idx + 1}</b>
-                      <span>{date}</span>
-                   </div>
+                   <div className="leave_text_group"><b>Leave {idx + 1}</b><span>{date}</span></div>
                 </div>
               ))}
             </div>
@@ -288,7 +297,7 @@ export default function Doctor_Management() {
         </div>
       )}
 
-      {/* --- CENTERED MODAL FORMS --- */}
+      {/* MODULE C: ADMINISTRATION MODAL (ADD/EDIT) */}
       {showForm && (
         <div className="sa_modal_overlay">
           <div className="sa_centered_form_card">
@@ -299,11 +308,7 @@ export default function Doctor_Management() {
             <form onSubmit={handleFormSubmit} className="sa_form_grid">
               <div className="sa_input_box">
                 <label><User size={14}/> Full Name</label>
-                <input name="name" defaultValue={editDoctor?.name} placeholder="e.g. Dr. Ramesh Babu" required />
-              </div>
-              <div className="sa_input_box">
-                <label><BookOpen size={14}/> Degrees</label>
-                <input name="degrees" defaultValue={editDoctor?.degrees} placeholder="e.g. MBBS, MD" required />
+                <input name="name" defaultValue={editDoctor?.name} required />
               </div>
               <div className="sa_input_box">
                 <label><Briefcase size={14}/> Department</label>
@@ -311,28 +316,12 @@ export default function Doctor_Management() {
                   <option value="Cardiology">Cardiology</option>
                   <option value="Orthopedics">Orthopedics</option>
                   <option value="Neurology">Neurology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Gastroenterology">Gastroenterology</option>
                   <option value="General Medicine">General Medicine</option>
                 </select>
               </div>
-              <div className="sa_input_box">
-                <label><Activity size={14}/> Availability</label>
-                <select name="availability" defaultValue={editDoctor?.availability || "Available"}>
-                  <option value="Available">Available</option>
-                  <option value="Not Available">Not Available</option>
-                </select>
-              </div>
-              <div className="sa_input_box">
-                <label>Total Appointments</label>
-                <input name="totalAppointments" type="number" defaultValue={editDoctor?.totalAppointments || 0} />
-              </div>
-              <div className="sa_input_box">
-                <label>Total Patients</label>
-                <input name="totalPatients" type="number" defaultValue={editDoctor?.totalPatients || 0} />
-              </div>
-              <div className="sa_form_actions_centered">
-                <button type="submit" className="sa_btn_submit_pro">{editDoctor ? "Update Profile" : "Onboard Specialist"}</button>
-                <button type="button" className="sa_btn_cancel_pro" onClick={() => setShowForm(false)}>Discard</button>
-              </div>
+              <button type="submit" className="sa_btn_submit_pro">Save Specialist</button>
             </form>
           </div>
         </div>
