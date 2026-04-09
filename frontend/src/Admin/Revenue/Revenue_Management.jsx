@@ -12,6 +12,10 @@ import {
   Filler
 } from "chart.js";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
+
+// --- DATA IMPORTS ---
+import appointmentsData from "../../Assets/Data/appointment.json";
+import patientsData from "../../Assets/Data/patient.json";
 import "./Revenue_Management.css";
 
 ChartJS.register(
@@ -20,7 +24,10 @@ ChartJS.register(
 );
 
 export default function Revenue_Management() {
+  // --- 1. FILTERS & TIMING STATE ---
+  const [trendView, setTrendView] = useState("Month"); 
   const [trendWeek, setTrendWeek] = useState("2026-W14");
+  const [trendYear, setTrendYear] = useState("2026"); 
   const [deptMonth, setDeptMonth] = useState("2026-04");
   const [patientView, setPatientView] = useState("Age");
   const [lastSynced, setLastSynced] = useState(new Date().toLocaleTimeString());
@@ -32,62 +39,133 @@ export default function Revenue_Management() {
     return () => clearInterval(interval);
   }, []);
 
-  const trendData = useMemo(() => ({
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        label: "Current",
-        data: [6500, 7800, 4200, 9100, 6400, 10200, 8300],
-        borderColor: "#007acc",
-        backgroundColor: "rgba(0, 122, 204, 0.08)",
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-      },
-      {
-        label: "Prev",
-        data: [5800, 7000, 4500, 8200, 6000, 9500, 7800],
-        borderColor: "rgba(0, 122, 204, 0.2)",
-        borderDash: [5, 5],
-        fill: false,
-        pointRadius: 0,
-      }
-    ]
-  }), [trendWeek]);
+  // --- 2. REVENUE CALCULATION HELPERS ---
+  const FEE_MAP = { "Emergency": 1500, "Follow-up": 300, "Routine": 500 };
+  const getFee = (type) => FEE_MAP[type] || 500;
 
-  const deptData = useMemo(() => ({
-    labels: ["Cardio", "Ortho", "Neuro", "Peds", "Gen"],
-    datasets: [
-      {
-        label: "Actual",
-        data: [52000, 38000, 31000, 22000, 15000],
-        backgroundColor: "#007acc",
-        borderRadius: 5,
-      },
-      {
-        label: "Target",
-        data: [55000, 35000, 35000, 20000, 18000],
-        backgroundColor: "rgba(0, 122, 204, 0.1)",
-        borderRadius: 5,
+  const isDateInWeek = (dateStr, weekStr) => {
+    const d = new Date(dateStr);
+    const [year, week] = weekStr.split("-W");
+    const firstDayOfYear = new Date(year, 0, 1);
+    const days = Math.floor((d - firstDayOfYear) / (24 * 60 * 60 * 1000));
+    const weekNum = Math.ceil((days + firstDayOfYear.getDay() + 1) / 7);
+    return d.getFullYear().toString() === year && weekNum.toString().padStart(2, '0') === week;
+  };
+
+  // --- 3. REVENUE HUB ANALYTICS LOGIC ---
+  const stats = useMemo(() => {
+    let lifetime = 0, yearTotal = 0, monthTotal = 0;
+    const deptMap = {};
+
+    appointmentsData.forEach(appt => {
+      const fee = getFee(appt.type);
+      lifetime += fee;
+      if (appt.date.startsWith(trendYear)) {
+        yearTotal += fee;
+        if (appt.date.startsWith(deptMonth)) monthTotal += fee;
       }
-    ]
-  }), [deptMonth]);
+      const dName = appt.department || "General";
+      deptMap[dName] = (deptMap[dName] || 0) + fee;
+    });
+
+    return {
+      lifetime: (lifetime / 100000).toFixed(1),
+      year: (yearTotal / 100000).toFixed(1),
+      month: (monthTotal / 1000).toFixed(1),
+      highestDept: Object.entries(deptMap).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A",
+      avg: ((yearTotal / 4) / 100000).toFixed(1)
+    };
+  }, [deptMonth, trendYear]);
+
+  // --- 4. DYNAMIC TREND ENGINE ---
+  const trendData = useMemo(() => {
+    if (trendView === "Week") {
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const currentWeek = [0, 0, 0, 0, 0, 0, 0];
+      
+      appointmentsData.forEach(appt => {
+        if (isDateInWeek(appt.date, trendWeek)) {
+          const dayIdx = (new Date(appt.date).getDay() + 6) % 7;
+          currentWeek[dayIdx] += getFee(appt.type);
+        }
+      });
+
+      return {
+        labels: days,
+        datasets: [{
+          label: `Weekly Revenue (${trendWeek})`,
+          data: currentWeek,
+          borderColor: "#007acc",
+          backgroundColor: "rgba(0, 122, 204, 0.08)",
+          fill: true,
+          tension: 0.4,
+        }]
+      };
+    } else {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const yearlyMonthlyData = Array(12).fill(0);
+
+      appointmentsData.forEach(appt => {
+        if (appt.date.startsWith(trendYear)) {
+          const monthIdx = parseInt(appt.date.split("-")[1]) - 1;
+          yearlyMonthlyData[monthIdx] += getFee(appt.type);
+        }
+      });
+
+      return {
+        labels: months,
+        datasets: [{
+          label: `Monthly Revenue (${trendYear})`,
+          data: yearlyMonthlyData,
+          borderColor: "#007acc",
+          backgroundColor: "rgba(0, 122, 204, 0.08)",
+          fill: true,
+          tension: 0.4,
+        }]
+      };
+    }
+  }, [trendView, trendWeek, trendYear]);
+
+  const topDoctors = useMemo(() => {
+    const docMap = {};
+    appointmentsData.forEach(a => {
+      docMap[a.doctor] = (docMap[a.doctor] || 0) + getFee(a.type);
+    });
+    return Object.entries(docMap).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, rev]) => ({
+        name,
+        rev: `₹${(rev / 1000).toFixed(1)}K`,
+        dept: appointmentsData.find(a => a.doctor === name)?.department || "Specialist"
+      }));
+  }, []);
+
+  const deptData = useMemo(() => {
+    const depts = ["Cardiology", "Orthopedics", "Neurology", "Pediatrics", "Gastroenterology"];
+    const filtered = appointmentsData.filter(a => a.date.startsWith(deptMonth));
+    const totals = depts.map(d => filtered.filter(a => a.department === d).reduce((s, c) => s + getFee(c.type), 0));
+
+    return {
+      labels: ["Cardio", "Ortho", "Neuro", "Peds", "Gastro"],
+      datasets: [
+        { label: "Actual", data: totals, backgroundColor: "#007acc", borderRadius: 5 },
+        { label: "Target", data: totals.map(v => v === 0 ? 5000 : v * 1.2), backgroundColor: "rgba(0, 122, 204, 0.1)", borderRadius: 5 }
+      ]
+    };
+  }, [deptMonth]);
 
   const patientData = useMemo(() => {
     const isAge = patientView === "Age";
-    const labels = isAge ? ["Adults", "Children", "Seniors"] : ["Male", "Female", "Other"];
-    const colors = ["#007acc", "#00d2ff", "#1e293b"];
-    const values = isAge ? [420000, 180000, 150000] : [380000, 360000, 10000];
-    
+    const values = isAge ? [
+      patientsData.filter(p => p.age >= 19 && p.age < 60).length,
+      patientsData.filter(p => p.age < 19).length,
+      patientsData.filter(p => p.age >= 60).length
+    ] : [
+      patientsData.filter(p => p.gender === "Male").length,
+      patientsData.filter(p => p.gender === "Female").length,
+      0
+    ];
     return {
-      labels,
-      colors,
-      datasets: [{
-        data: values,
-        backgroundColor: colors,
-        hoverOffset: 15,
-        borderWidth: 0,
-      }]
+      labels: isAge ? ["Adults", "Children", "Seniors"] : ["Male", "Female", "Other"],
+      datasets: [{ data: values, backgroundColor: ["#007acc", "#00d2ff", "#1e293b"], borderWidth: 0 }]
     };
   }, [patientView]);
 
@@ -105,54 +183,76 @@ export default function Revenue_Management() {
         </div>
       </header>
 
-      {/* STATS */}
+      {/* REVENUE STATS OVERVIEW */}
       <div className="sa_stats_bento">
         <div className="sa_stat_card primary">
           <div className="sa_pulse_ring"></div>
           <span className="sa_label">Lifetime Total</span>
-          <h2 className="sa_value">₹84.2L</h2>
+          <h2 className="sa_value">₹{stats.lifetime}L</h2>
         </div>
         <div className="sa_stat_card">
-          <span className="sa_label">This Year</span>
-          <h2 className="sa_value">₹12.4L</h2>
+          <span className="sa_label">Yearly {trendYear}</span>
+          <h2 className="sa_value">₹{stats.year}L</h2>
           <div className="sa_pill_up">+18% ↑</div>
         </div>
         <div className="sa_stat_card">
-          <span className="sa_label">This Month</span>
-          <h2 className="sa_value">₹2.1L</h2>
+          <span className="sa_label">Selected Month</span>
+          <h2 className="sa_value">₹{stats.month}K</h2>
         </div>
         <div className="sa_stat_card highlight">
           <span className="sa_label">Highest Dept</span>
-          <h2 className="sa_value">Cardiology</h2>
+          <h2 className="sa_value" style={{fontSize: '1rem'}}>{stats.highestDept}</h2>
         </div>
         <div className="sa_stat_card">
           <span className="sa_label">Avg Monthly</span>
-          <h2 className="sa_value">₹1.8L</h2>
+          <h2 className="sa_value">₹{stats.avg}L</h2>
         </div>
       </div>
 
-      {/* ROW 1 */}
+      {/* TREND & LEADERBOARD MODULE */}
       <div className="sa_bento_row_sync">
         <div className="sa_bento_item span_2">
           <div className="sa_card_head">
-            <h3>Revenue Trend</h3>
+            <div className="sa_title_with_toggle">
+              <h3>Revenue Trend</h3>
+              <div className="sa_mini_tabs">
+                <button className={trendView === "Month" ? "active" : ""} onClick={() => setTrendView("Month")}>Year-Wise</button>
+                <button className={trendView === "Week" ? "active" : ""} onClick={() => setTrendView("Week")}>Week-Wise</button>
+              </div>
+            </div>
             <div className="sa_calendar_input">
-              <input type="week" value={trendWeek} onChange={(e) => setTrendWeek(e.target.value)} />
+              {trendView === "Week" ? (
+                <input type="week" value={trendWeek} onChange={(e) => setTrendWeek(e.target.value)} />
+              ) : (
+                <select 
+                  className="sa_year_select" 
+                  value={trendYear} 
+                  onChange={(e) => setTrendYear(e.target.value)}
+                  style={{ 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '10px', 
+                    padding: '4px 10px', 
+                    fontSize: '0.75rem', 
+                    color: '#007acc', 
+                    fontWeight: '600' 
+                  }}
+                >
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                </select>
+              )}
             </div>
           </div>
           <div className="sa_canvas_holder">
-            <Line data={trendData} options={{ responsive: true, maintainAspectRatio: false }} />
+            <Line data={trendData} options={{ responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } } } }} />
           </div>
         </div>
 
         <div className="sa_bento_item">
           <div className="sa_card_head"><h3>Top Contributors</h3></div>
           <div className="sa_doc_leaderboard">
-            {[
-              { name: "Dr. Aditya", dept: "Cardio", rev: "₹2.4L" },
-              { name: "Dr. Vikram", dept: "Ortho", rev: "₹1.8L" },
-              { name: "Dr. Sneha", dept: "Neuro", rev: "₹1.2L" }
-            ].map((doc, i) => (
+            {topDoctors.map((doc, i) => (
               <div key={i} className="sa_list_row sa_drill_down">
                 <div className="sa_list_info"><strong>{doc.name}</strong><span>{doc.dept}</span></div>
                 <div className="sa_list_val">{doc.rev}</div>
@@ -162,9 +262,8 @@ export default function Revenue_Management() {
         </div>
       </div>
 
-      {/* ROW 2: REDUCED HEIGHT SYNC */}
+      {/* DEMOGRAPHICS & DEPT PERFORMANCE MODULE */}
       <div className="sa_bento_row_sync">
-        {/* PATIENT ANALYTICS (1/3) */}
         <div className="sa_bento_item sa_patient_compact_card">
           <div className="sa_card_head">
             <h3>Demographics</h3>
@@ -173,29 +272,25 @@ export default function Revenue_Management() {
               <button className={patientView === "Gender" ? "active" : ""} onClick={() => setPatientView("Gender")}>Gen</button>
             </div>
           </div>
-
           <div className="sa_patient_center_content">
             <div className="sa_chart_focus_container_reduced">
               <Doughnut data={patientData} options={{ cutout: '80%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
               <div className="sa_center_insight">
-                <span className="sa_insight_label">Total</span>
-                <strong className="sa_insight_val">₹7.5L</strong>
+                <span className="sa_insight_label">Registry</span>
+                <strong className="sa_insight_val">{patientsData.length}</strong>
               </div>
             </div>
           </div>
-
           <div className="sa_single_line_legend">
             {patientData.labels.map((label, idx) => (
               <div key={idx} className="sa_legend_pill">
-                <span className="sa_dot" style={{ backgroundColor: patientData.colors[idx] }}></span>
+                <span className="sa_dot" style={{ backgroundColor: ["#007acc", "#00d2ff", "#1e293b"][idx] }}></span>
                 <span className="sa_pill_text">{label}</span>
-                <span className="sa_pill_perc">{((patientData.datasets[0].data[idx] / 750000) * 100).toFixed(0)}%</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* DEPT PERFORMANCE (2/3) */}
         <div className="sa_bento_item span_2 sa_dept_compact_card">
           <div className="sa_card_head">
             <h3>Dept. Performance</h3>

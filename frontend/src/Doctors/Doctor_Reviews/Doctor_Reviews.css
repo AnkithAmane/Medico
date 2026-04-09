@@ -1,0 +1,362 @@
+/* ============================================================
+   MEDICO+ ELITE: SENTIMENT GOVERNANCE STYLESHEET
+   Architecture: Bento Analytics, Feedback Registry & Response Modal
+   ============================================================ */
+
+.med_reviews_elite {
+    padding: 30px;
+    background: #f8fbff;
+    min-height: 100vh;
+}
+
+/* --- 1. BENTO ANALYTICS BAR --- */
+.med_bento_analytics_bar {
+    display: grid;
+    grid-template-columns: 240px 1fr 200px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.bento_stat_node {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.bento_label { 
+    font-size: 0.65rem; 
+    font-weight: 800; 
+    color: #94a3b8; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    margin-bottom: 8px; 
+}
+
+.bento_val_flex { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+.bento_val_flex h2 { 
+    font-size: 2.5rem; 
+    font-weight: 800; 
+    color: #1e293b; 
+    margin: 0; 
+}
+
+/* Middle Progress Module */
+.bento_stat_node.charts { 
+    border-left: 1px solid #f1f5f9; 
+    border-right: 1px solid #f1f5f9; 
+    background: #fafbfc; 
+}
+
+.bento_progress_row { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    margin-bottom: 4px; 
+}
+
+.bento_star_idx { 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    color: #64748b; 
+    width: 25px; 
+}
+
+.bento_bar_track { 
+    flex: 1; 
+    height: 6px; 
+    background: #e2e8f0; 
+    border-radius: 10px; 
+    overflow: hidden; 
+}
+
+.bento_bar_fill { 
+    height: 100%; 
+    background: #007acc; 
+    border-radius: 10px; 
+}
+
+/* Total Registry Node */
+.bento_stat_node.total h2 { 
+    font-size: 2.5rem; 
+    font-weight: 800; 
+    color: #007acc; 
+    margin: 0; 
+}
+
+.bento_bg_icon { 
+    position: absolute; 
+    right: 15px; 
+    bottom: 15px; 
+    opacity: 0.05; 
+    font-size: 4rem; 
+    color: #007acc; 
+}
+
+/* --- 2. COMMAND CENTER CONTROLS --- */
+.med_registry_controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.med_search_elite {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 14px;
+    width: 450px;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.med_search_elite input { 
+    border: none; 
+    outline: none; 
+    font-size: 0.9rem; 
+    width: 100%; 
+    color: #1e293b; 
+}
+
+.med_filter_actions { 
+    display: flex; 
+    gap: 10px; 
+}
+
+.med_filter_actions select {
+    padding: 10px 18px; 
+    border-radius: 12px; 
+    border: 1px solid #e2e8f0;
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    color: #475569; 
+    background: white; 
+    outline: none;
+}
+
+/* --- 3. FEEDBACK STACK & CARDS --- */
+.med_elite_feedback_stack { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+}
+
+.med_elite_review_card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.med_elite_review_card:hover { 
+    border-color: #007acc; 
+    box-shadow: 0 10px 25px rgba(0,122,204,0.06); 
+}
+
+.elite_card_head { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.identity_group { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+}
+
+.elite_avatar { 
+    width: 48px; 
+    height: 48px; 
+    background: #f0f7ff; 
+    color: #007acc; 
+    border-radius: 14px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-weight: 800; 
+    font-size: 1.2rem; 
+    border: 1px solid #e0f2fe;
+}
+
+.elite_meta strong { 
+    font-size: 1rem; 
+    color: #1e293b; 
+    display: block; 
+}
+
+.elite_meta span { 
+    font-size: 0.75rem; 
+    color: #94a3b8; 
+    font-weight: 600; 
+}
+
+.elite_card_body h4 { 
+    font-size: 1.1rem; 
+    color: #1e293b; 
+    margin-bottom: 8px; 
+    font-weight: 700; 
+}
+
+.elite_card_body p { 
+    font-size: 0.95rem; 
+    color: #475569; 
+    line-height: 1.6; 
+}
+
+/* Practitioner Reply Context */
+.elite_reply_context {
+    margin-top: 20px; 
+    background: #f8fafc; 
+    border-radius: 14px; 
+    padding: 20px; 
+    border: 1px dashed #cbd5e1;
+}
+
+.context_header { 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    color: #007acc; 
+    text-transform: uppercase; 
+    margin-bottom: 8px; 
+}
+
+.elite_reply_context p { 
+    font-size: 0.9rem; 
+    color: #1e293b; 
+    margin: 0; 
+    font-style: italic; 
+}
+
+/* Card Footer & Pills */
+.elite_card_footer {
+    margin-top: 25px; 
+    padding-top: 20px; 
+    border-top: 1px solid #f1f5f9;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.elite_status_pill { 
+    padding: 5px 14px; 
+    border-radius: 8px; 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    background: #f1f5f9; 
+    color: #64748b; 
+}
+
+.elite_status_pill.replied { background: #e0f2fe; color: #007acc; }
+.elite_status_pill.resolved { background: #f0fdf4; color: #15803d; }
+.elite_status_pill.flagged { background: #fef2f2; color: #ef4444; }
+
+.elite_meta_pill { 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    color: #94a3b8; 
+    margin-left: 10px; 
+}
+
+.action_group { 
+    display: flex; 
+    gap: 15px; 
+}
+
+.elite_action_link {
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    background: transparent; 
+    border: none;
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    color: #64748b; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.elite_action_link:hover { 
+    color: #007acc; 
+}
+
+.elite_action_link.flag.active { 
+    color: #ef4444; 
+}
+
+/* --- 4. RESPONSE MODAL --- */
+.med_elite_reply_modal {
+    background: white; 
+    border-radius: 24px; 
+    padding: 40px; 
+    width: 550px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal_header_elite h3 { 
+    font-size: 1.2rem; 
+    color: #1e293b; 
+    margin: 0; 
+    font-weight: 800; 
+}
+
+.modal_header_elite { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 30px; 
+}
+
+.modal_body_elite label { 
+    font-size: 0.75rem; 
+    font-weight: 800; 
+    color: #94a3b8; 
+    text-transform: uppercase; 
+    display: block; 
+    margin-bottom: 10px; 
+}
+
+.modal_body_elite textarea {
+    width: 100%; 
+    padding: 20px; 
+    border-radius: 16px; 
+    border: 1px solid #e2e8f0;
+    background: #f8fafc; 
+    font-size: 0.95rem; 
+    outline: none; 
+    font-family: inherit; 
+    resize: none;
+}
+
+.modal_footer_elite { 
+    margin-top: 30px; 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 15px; 
+}
+
+.med_btn_lite { 
+    padding: 12px 25px; 
+    border-radius: 12px; 
+    border: 1px solid #e2e8f0; 
+    background: white; 
+    font-weight: 700; 
+    color: #64748b; 
+    cursor: pointer; 
+}

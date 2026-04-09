@@ -96,7 +96,6 @@
 .med_table tbody tr { transition: background 0.2s ease; cursor: pointer; }
 .med_table tbody tr:hover { background-color: #f1f5f9; }
 
-/* Table Content Components */
 .med_cell_user { display: flex; align-items: center; gap: 12px; }
 .med_cell_user img { width: 38px; height: 38px; border-radius: 12px; object-fit: cover; }
 .med_cell_user b { display: block; color: var(--med-text); }
@@ -108,6 +107,9 @@
 .med_cell_time .time { font-size: 0.75rem; color: var(--med-text-muted); }
 
 .med_status.upcoming { color: #16a34a; font-weight: 700; }
+.med_status.completed { color: #007acc; font-weight: 700; }
+.med_status.cancelled { color: #ef4444; font-weight: 700; }
+
 .med_tag { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
 .med_tag.emergency { background: #fff1f2; color: #e11d48; }
 
@@ -137,7 +139,6 @@
     background: white; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--med-border);
 }
 
-/* Bento Grid Structure */
 .med_bento_grid_refined {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -169,7 +170,6 @@
 .c_time_block label { font-size: 0.65rem; color: var(--med-text-muted); text-transform: uppercase; font-weight: 800; }
 .c_value { font-size: 1.15rem; font-weight: 800; color: var(--med-text); margin-top: 4px; letter-spacing: -0.5px; }
 
-/* Clinical Notes Styling */
 .med_compact_notes { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
 .med_compact_notes label { font-size: 0.65rem; font-weight: 800; color: var(--med-text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 0.5px; }
 .med_compact_notes p { 
@@ -236,9 +236,8 @@
 .med_form_row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 /* ==========================================================================
-   5. BUTTON SYSTEM (Master Button Styles)
+   5. BUTTON SYSTEM
    ========================================================================== */
-/* 5A. PRIMARY CTA (NEW BOOKING) */
 .med_btn_primary {
     background: var(--med-gradient); color: white; border: none;
     padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
@@ -249,7 +248,6 @@
 .med_btn_primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 122, 204, 0.25); filter: brightness(1.05); }
 .med_btn_primary:hover svg { transform: rotate(90deg); }
 
-/* 5B. OUTLINE BUTTON (EXPORT) */
 .med_btn_outline {
     background: white; border: 1px solid var(--med-border); padding: 10px 18px; 
     border-radius: 12px; color: var(--med-text-muted); font-size: 0.85rem; font-weight: 600;
@@ -257,7 +255,6 @@
 }
 .med_btn_outline:hover { border-color: var(--med-primary); color: var(--med-primary); background: #f0f9ff; }
 
-/* 5C. TABLE ACTION BUTTONS */
 .med_btn_manage {
     background: white; border: 1px solid var(--med-border); padding: 6px 14px;
     border-radius: 8px; color: var(--med-primary); font-weight: 700; font-size: 0.75rem;
@@ -265,7 +262,6 @@
 }
 .med_btn_manage:hover { background: var(--med-primary); color: white; box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2); }
 
-/* 5D. HISTORY ACTION BUTTONS */
 .med_btn_view_small {
     background: white; border: 1px solid var(--med-border); padding: 6px 12px;
     border-radius: 8px; color: var(--med-primary); font-size: 0.75rem; font-weight: 700;
@@ -273,7 +269,6 @@
 }
 .med_btn_view_small:hover { background: var(--med-primary); color: white; border-color: var(--med-primary); }
 
-/* 5E. MODAL BUTTONS */
 .med_btn_submit_final {
     background: var(--med-gradient); color: white; border: none; padding: 18px;
     border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer;
@@ -286,129 +281,56 @@
    6. RESPONSIVE & UTILS
    ========================================================================== */
 .text_right { text-align: right; }
+.med_flex_center { display: flex; align-items: center; justify-content: center; }
 
 @media (max-width: 1024px) {
     .med_bento_grid_refined { grid-template-columns: 1fr; grid-template-areas: "doc" "appt" "patient" "history"; }
     .med_modal_content { width: 90%; padding: 30px; }
-}/* ==========================================================================
-   6. RESPONSIVE & UTILS (Continued)
-   ========================================================================== */
+}
 
-/* Mobile Refinements */
 @media (max-width: 768px) {
-    /* Header & Filter Stack */
-    .med_section_header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .med_action_group {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .med_filter_bar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 15px;
-    }
-
-    .med_search_box {
-        width: 100%;
-    }
-
-    .med_dropdown_group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    /* Table Column Consolidation */
-    .med_table th:nth-child(2),
-    .med_table td:nth-child(2),
-    .med_table th:nth-child(4),
-    .med_table td:nth-child(4) {
-        display: none; /* Hide Specialist & Category on mobile */
-    }
-
-    /* Bento Adjustments for Mobile */
-    .med_doc_identity_row {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .med_doc_meta_grid {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .med_patient_mini_layout {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-
-    .p_meta_grid_mini {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
+    .med_section_header { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .med_action_group { width: 100%; justify-content: space-between; }
+    .med_filter_bar { flex-direction: column; align-items: stretch; padding: 15px; }
+    .med_search_box { width: 100%; }
+    .med_dropdown_group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .med_table th:nth-child(2), .med_table td:nth-child(2), .med_table th:nth-child(4), .med_table td:nth-child(4) { display: none; }
+    .med_doc_identity_row { flex-direction: column; text-align: center; }
+    .med_doc_meta_grid { flex-direction: column; gap: 10px; align-items: center; }
+    .med_patient_mini_layout { flex-direction: column; gap: 15px; text-align: center; }
+    .p_meta_grid_mini { justify-content: center; flex-wrap: wrap; }
 }
 
-/* CUSTOM MEDICAL SCROLLBARS */
-.med_table_container::-webkit-scrollbar,
-.med_page_container::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+/* Scrollbars */
+.med_table_container::-webkit-scrollbar { width: 6px; height: 6px; }
+.med_table_container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+.med_table_container::-webkit-scrollbar-thumb:hover { background: var(--med-primary); }
+
+/* Pagination Styling */
+.med_pagination_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid var(--med-border);
+    border-radius: 0 0 20px 20px;
 }
 
-.med_table_container::-webkit-scrollbar-track,
-.med_page_container::-webkit-scrollbar-track {
-    background: transparent;
+.pag_info { font-size: 0.85rem; color: #64748b; }
+.pag_buttons { display: flex; gap: 5px; }
+.pag_nav_btn, .pag_num_btn {
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--med-border); background: white; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #64748b;
 }
 
-.med_table_container::-webkit-scrollbar-thumb,
-.med_page_container::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
-    border-radius: 10px;
-}
+.pag_num_btn.active { background: var(--med-primary); color: white; border-color: var(--med-primary); }
+.pag_nav_btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.pag_nav_btn:hover:not(:disabled), .pag_num_btn:hover:not(.active) { background: #f1f5f9; color: var(--med-primary); }
 
-.med_table_container::-webkit-scrollbar-thumb:hover,
-.med_page_container::-webkit-scrollbar-thumb:hover {
-    background: var(--med-primary);
-}
-
-/* HELPER UTILITIES */
-.text_right { text-align: right; }
-.med_flex_center { display: flex; align-items: center; justify-content: center; }
-
-/* Print Support for Clinical Records */
+/* Print Support */
 @media print {
-    .med_sidebar, .med_top_header, .med_filter_bar, .med_back_btn, .med_action_group {
-        display: none !important;
-    }
-    .med_card_refined {
-        box-shadow: none !important;
-        border: 1px solid #eee !important;
-        break-inside: avoid;
-    }
-    .med_detail_view {
-        animation: none !important;
-    }
+    .med_sidebar, .med_top_header, .med_filter_bar, .med_back_btn, .med_action_group { display: none !important; }
+    .med_card_refined { box-shadow: none !important; border: 1px solid #eee !important; break-inside: avoid; }
 }
-/* Added for Status Dropdown consistency */
-.med_select_filter {
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px solid var(--med-border);
-    background: #f8fafc;
-    font-size: 0.8rem;
-    color: var(--med-text);
-    font-weight: 600;
-}
-
-/* Specific status colors for the table */
-.med_status.upcoming { color: #16a34a; font-weight: 700; }
-.med_status.completed { color: #007acc; font-weight: 700; }
-.med_status.cancelled { color: #ef4444; font-weight: 700; }

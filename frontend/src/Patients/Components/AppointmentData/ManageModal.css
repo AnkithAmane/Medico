@@ -1,0 +1,176 @@
+/* THEME VARIABLES - Ensuring consistency with main app */
+:root {
+  --medico-gradient: linear-gradient(to right, #00aaff, #1e90ff);
+  --theme-blue: #1e90ff;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+}
+
+/* FULL SCREEN OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #87ceeb, #1e90ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* High z-index to stay above everything */
+  backdrop-filter: blur(4px); /* Modern glass blur effect */
+}
+
+/* MODAL BOX */
+
+
+/* ANIMATION */
+@keyframes modalPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* HEADER AREA */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #333 !important;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* BODY CONTENT */
+.modal-body {
+  padding: 10px 0;
+}
+
+.theme-text-accent {
+  color: var(--theme-purple);
+}
+
+/* ACTION BUTTONS */
+.modal-action-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+/* Gradient Reschedule Button */
+.modal-action-btn.reschedule {
+  background: var(--medico-gradient);
+  color: white;
+  box-shadow: 0 4px 10px rgba(118, 75, 162, 0.2);
+}
+
+/* Soft Red Cancel Button */
+.modal-action-btn.cancel {
+  background: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #feb2b2;
+}
+
+.modal-action-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.modal-action-btn.cancel:hover {
+  background: #feb2b2;
+  color: #fff;
+}
+
+/* RECORDS SECTION STYLES */
+.records-container {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.records-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.records-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.records-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.records-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.records-section {
+  padding: 15px;
+  background: #f9f9f9;
+  border-left: 4px solid var(--theme-purple);
+  border-radius: var(--radius-sm);
+}
+
+.records-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.prescription-item,
+.test-item {
+  border-left: 3px solid var(--theme-purple);
+  padding-left: 12px !important;
+}
+
+.prescription-item p,
+.test-item p {
+  margin-bottom: 0.5rem;
+}
+
+.prescription-item strong,
+.test-item strong {
+  color: #333;
+}
+
+.test-item .text-muted {
+  font-size: 0.85rem;
+}
+
+.btn-back {
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.btn-back:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}

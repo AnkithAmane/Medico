@@ -1,68 +1,207 @@
+/* ============================================================
+   1. GLOBAL DASHBOARD ARCHITECTURE
+   ============================================================ */
 .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 0; /* Removed padding to fit inside Admin_Home main container */
-  background: transparent; /* Changed to transparent to match layout */
-  height: 100%;
-  box-sizing: border-box;
-  animation: fadeIn 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0;
+    background: transparent;
+    height: 100vh;
+    box-sizing: border-box;
+    animation: fadeIn 0.6s ease-in-out;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-/* TOP SECTION */
+.dashboard-container::-webkit-scrollbar {
+    display: none;
+}
+
 .top-section {
-  display: grid;
-  grid-template-columns: 2.5fr 1fr; /* Better ratio for charts */
-  gap: 20px;
+    display: grid;
+    grid-template-columns: 2.8fr 1.2fr;
+    gap: 15px;
 }
 
-.left-column { display: flex; flex-direction: column; gap: 20px; }
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
+/* ============================================================
+   2. STATS & ANALYTICS MODULES
+   ============================================================ */
 .stats-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
 .stat-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 15px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
-.stat-card h3 { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px; }
-.stat-card p { font-size: 26px; font-weight: 800; color: #007acc; margin: 0; }
 
-/* CHARTS GRID */
+.stat-card h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.stat-card p {
+    font-size: 22px;
+    font-weight: 800;
+    color: #007acc;
+    margin: 0;
+}
+
 .charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
 .chart-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-  height: 220px; /* Locked height to prevent scroll */
-  display: flex;
-  flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    height: 235px;
+    display: flex;
+    flex-direction: column;
+    contain: content;
 }
 
-.chart-card h3 { font-size: 12px; margin-bottom: 10px; color: #1e293b; font-weight: 700; }
-.chart-wrap { flex: 1; position: relative; width: 100%; }
+.chart-header-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
 
-/* CALENDAR WIDGET UI */
+.chart-header-ui h3 {
+    font-size: 12px;
+    color: #1e293b;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inline-tag {
+    font-size: 9px;
+    font-weight: 700;
+    color: #007acc;
+    background: #f0f7ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 122, 204, 0.1);
+}
+
+.view-btn {
+    background: #f1f5f9;
+    border: none;
+    color: #007acc;
+    border-radius: 6px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.chart-wrap {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ============================================================
+   3. PIE CHART & LEGEND SYSTEM
+   ============================================================ */
+.chart-wrap-pie {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 20px;
+    padding: 5px 0;
+}
+
+.pie-container {
+    flex: 1;
+    height: 130px;
+    max-width: 130px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
+}
+
+.pie-legend-slim {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.legend-item-compact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 2px 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: 0.2s ease;
+}
+
+.legend-item-compact:last-child {
+    border-bottom: none;
+}
+
+.legend-item-compact:hover {
+    border-bottom-color: #007acc;
+    transform: translateX(3px);
+}
+
+.dot-mini {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.txt-mini {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    text-transform: capitalize;
+}
+
+.txt-mini strong {
+    color: #1e293b;
+    font-weight: 800;
+    background: #f8fafc;
+    padding: 0 6px;
+    border-radius: 4px;
+}
+
+/* ============================================================
+   4. TIME & CALENDAR WIDGETS
+   ============================================================ */
 .calendar-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 20px;
 }
 
 .widget-header {
@@ -75,44 +214,335 @@
     color: #007acc;
 }
 
-.live-time-group { display: flex; flex-direction: column; }
-.live-time { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
-.live-date { font-size: 0.75rem; color: #64748b; font-weight: 500; }
-
-.cal-month-header { text-align: center; font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; color: #1e293b; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-.cal-day-label { font-size: 0.65rem; font-weight: 700; color: #94a3b8; }
-.cal-date { font-size: 0.75rem; padding: 6px; border-radius: 8px; color: #475569; }
-.cal-date.current { background: #007acc; color: #fff; font-weight: 700; }
-
-/* EVENTS LIST */
-.events-section { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; margin-top: 15px; }
-.event-card {
-  background: linear-gradient(135deg, #007acc, #00d2ff);
-  color: #fff;
-  padding: 10px 15px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 8px;
+.live-time-group {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
 }
 
-/* BOTTOM SECTION */
-.bottom-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.info-card { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 15px; }
+.live-time {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+}
 
-.availability-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.availability-table th { text-align: left; color: #94a3b8; padding-bottom: 10px; }
-.availability-table td { padding: 10px 0; border-top: 1px solid #f1f5f9; }
+.live-date-single-line {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+}
 
-.status.available { color: #16a34a; font-weight: 700; }
-.status.not-available { color: #dc2626; font-weight: 700; }
+.full-date-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+}
 
-.patients-list { list-style: none; padding: 0; margin: 0; }
-.patients-list li { padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #475569; }
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.cal-day-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.cal-date {
+    font-size: 0.7rem;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.cal-date.current {
+    background: #007acc;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 122, 204, 0.2);
+}
+
+/* ============================================================
+   5. UPCOMING EVENTS REGISTRY
+   ============================================================ */
+.events-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 15px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.events-section .modern-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
+}
+
+.events-section .header-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.events-section h3 {
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 800;
+    margin: 0;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.event-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    margin-bottom: 5px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+    background: #ffffff;
+    border-color: #007acc;
+    box-shadow: 0 6px 15px rgba(0, 122, 204, 0.08);
+}
+
+.event-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    background: #007acc;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.event-date-badge span:first-child {
+    font-size: 14px;
+}
+
+.event-date-badge span:last-child {
+    font-size: 8px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    opacity: 0.9;
+}
+
+.event-card.blue .event-date-badge {
+    background: #36a2eb;
+}
+
+.event-card.pink .event-date-badge {
+    background: #ff6384;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.event-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.event-time {
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* ============================================================
+   6. MODERN STATUS REGISTRIES
+   ============================================================ */
+.bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 5px;
+    padding-bottom: 40px;
+}
+
+.info-card-modern {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.modern-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-info h3 {
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 800;
+    margin: 0;
+}
+
+.modern-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modern-item-card {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.modern-item-card:hover {
+    transform: translateX(5px);
+    border-color: #007acc;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 122, 204, 0.05);
+}
+
+.modern-item-card:active {
+    transform: scale(0.98);
+    transition: 0.1s;
+}
+
+.item-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-avatar {
+    width: 32px;
+    height: 32px;
+    background: #e2e8f0;
+    color: #64748b;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-avatar.blue {
+    background: #f0f7ff;
+    color: #007acc;
+}
+
+.item-details strong {
+    display: block;
+    font-size: 12px;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.item-details span {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.modern-badge {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+}
+
+.bg-green {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.bg-red {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.modern-time-tag {
+    font-size: 10px;
+    font-weight: 800;
+    color: #007acc;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* ============================================================
+   7. UTILITIES & BUTTONS
+   ============================================================ */
+.text-btn {
+    background: none;
+    border: none;
+    color: #007acc;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+}
+
+.text-btn:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 @media (max-width: 1200px) {
     .top-section { grid-template-columns: 1fr; }
+    .bottom-section { grid-template-columns: 1fr; }
 }

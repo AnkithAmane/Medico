@@ -1,5 +1,6 @@
-/* stats.css */
-
+/* ============================================================
+   1. GLOBAL FOUNDATIONS & ANIMATIONS
+   ============================================================ */
 .sa_revenue_wrapper {
     padding: 30px;
     background-color: #f8fafc;
@@ -8,7 +9,15 @@
     color: #1e293b;
 }
 
-/* --- HEADER & NAVIGATION --- */
+@keyframes sa_pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ============================================================
+   2. HEADER & NAVIGATION SYSTEM
+   ============================================================ */
 .sa_revenue_header {
     display: flex;
     justify-content: space-between;
@@ -57,7 +66,9 @@
     transition: 0.2s;
 }
 
-/* --- DYNAMIC STATS BENTO --- */
+/* ============================================================
+   3. STATS BENTO TILES (TOP SECTION)
+   ============================================================ */
 .sa_stats_bento {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -83,7 +94,20 @@
 .sa_label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 .sa_value { font-size: 1.6rem; font-weight: 800; margin: 5px 0; }
 
-/* --- BENTO GRID SYSTEM --- */
+.sa_pulse_ring {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: sa_pulse 2s infinite;
+}
+
+/* ============================================================
+   4. BENTO GRID SYSTEM
+   ============================================================ */
 .sa_bento_row_sync {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -91,10 +115,17 @@
     margin-bottom: 25px;
 }
 
+.sa_bento_row_equal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
 .sa_bento_item {
     background: white;
     border-radius: 28px;
-    padding: 20px; /* Tighter padding */
+    padding: 20px;
     border: 1px solid #f1f5f9;
     box-shadow: 0 4px 20px rgba(0,0,0,0.02);
     display: flex;
@@ -102,8 +133,11 @@
 }
 
 .sa_bento_item.span_2 { grid-column: span 2; }
+.sa_bento_row_equal .sa_bento_item { min-height: 310px; }
 
-/* --- CHART HEIGHTS & CONTAINERS --- */
+/* ============================================================
+   5. CHART HEADERS & CONTAINERS
+   ============================================================ */
 .sa_card_head {
     display: flex;
     justify-content: space-between;
@@ -113,10 +147,11 @@
 }
 
 .sa_card_head h3 { font-size: 0.95rem; margin: 0; font-weight: 700; color: #1e293b; }
+.sa_bento_row_equal .sa_card_head h3 { font-size: 0.85rem; white-space: nowrap; }
 
 .sa_canvas_holder_reduced {
     flex: 1;
-    min-height: 210px; /* Reduced as requested */
+    min-height: 210px;
     position: relative;
     width: 100%;
 }
@@ -128,7 +163,7 @@
 }
 
 .sa_chart_focus_mini {
-    height: 160px; /* Reduced donut height */
+    height: 160px;
     width: 100%;
     position: relative;
     display: flex;
@@ -136,7 +171,9 @@
     align-items: center;
 }
 
-/* --- FILTERS --- */
+/* ============================================================
+   6. FILTERS & TAB SYSTEMS
+   ============================================================ */
 .sa_calendar_input_v2 {
     border: 1px solid #e2e8f0;
     padding: 6px 12px;
@@ -152,7 +189,9 @@
 .sa_mini_tabs button { border: none; background: transparent; padding: 6px 14px; font-size: 0.7rem; font-weight: 700; cursor: pointer; border-radius: 8px; }
 .sa_mini_tabs button.active { background: white; color: #007acc; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
 
-/* --- HORIZONTAL RATINGS --- */
+/* ============================================================
+   7. RATINGS & REVIEWS MODULE
+   ============================================================ */
 .sa_ratings_distribution {
     display: flex;
     flex-direction: column;
@@ -178,7 +217,9 @@
     cursor: pointer;
 }
 
-/* --- DOCTOR PROFILE & SYNC --- */
+/* ============================================================
+   8. DOCTOR PROFILE & METRICS
+   ============================================================ */
 .sa_best_doctor_profile { display: flex; flex-direction: column; align-items: center; padding: 5px 0; }
 .sa_doc_identity { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .sa_doc_identity img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #f0f9ff; }
@@ -191,9 +232,9 @@
 .sa_info_box span { display: block; font-size: 0.55rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
 .sa_info_box strong { font-size: 0.85rem; color: #007acc; }
 
-.sa_sync_indicator { font-size: 0.65rem; color: #10b981; font-weight: 700; font-style: italic; text-transform: uppercase; }
-
-/* --- LEGENDS --- */
+/* ============================================================
+   9. LEGENDS & SUMMARIES
+   ============================================================ */
 .sa_custom_legend_grid {
     display: flex;
     justify-content: center;
@@ -209,7 +250,6 @@
 .sa_pill_text { font-size: 0.7rem; font-weight: 600; color: #64748b; }
 .sa_pill_text strong { color: #1e293b; margin-left: 3px; }
 
-/* --- APPOINTMENT VOLUME DE-CLUTTER --- */
 .sa_vol_summary_compact {
     display: flex;
     align-items: baseline;
@@ -222,53 +262,13 @@
 .sa_vol_label { font-size: 0.75rem; color: #94a3b8; font-weight: 700; }
 .sa_vol_value_mini { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
 
-/* --- MISC --- */
-.sa_pulse_ring {
-    position: absolute; top: 15px; right: 15px; width: 8px; height: 8px;
-    background: #10b981; border-radius: 50%; animation: sa_pulse 2s infinite;
-}
-
-@keyframes sa_pulse {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
+/* ============================================================
+   10. RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 1200px) {
     .sa_stats_bento { grid-template-columns: repeat(3, 1fr); }
     .sa_bento_row_sync { grid-template-columns: 1fr; }
     .sa_bento_item.span_2 { grid-column: span 1; }
-}/* 50/50 SPLIT FOR APPOINTMENT TOP ROW */
-.sa_bento_row_equal {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Exact half width */
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-/* Ensure labels don't wrap in the half-width view */
-.sa_bento_row_equal .sa_card_head h3 {
-    font-size: 0.85rem;
-    white-space: nowrap;
-}
-
-/* Mobile Responsiveness for the equal row */
-@media (max-width: 1024px) {
-    .sa_bento_row_equal {
-        grid-template-columns: 1fr; /* Stack on smaller screens */
-    }
-}
-/* 50/50 SPLIT FOR APPOINTMENT TOP ROW */
-.sa_bento_row_equal {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-/* Ensure consistent height across categories */
-.sa_bento_row_equal .sa_bento_item {
-    min-height: 310px;
 }
 
 @media (max-width: 1024px) {
