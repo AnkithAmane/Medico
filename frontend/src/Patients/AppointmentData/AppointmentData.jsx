@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import patientData from "../../Assets/Data/PatientData/PatienceData"; 
 import ManageModal from "./ManageModal"; 
 import "./AppointmentData.css";
@@ -6,19 +6,65 @@ import "./AppointmentData.css";
 function AppointmentData() {
   const [view, setView] = useState("upcoming");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedApp, setSelectedApp] = useState(null); 
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [allAppointments, setAllAppointments] = useState([]);
 
-  // Extract all appointments from patients and flatten them
-  const allAppointments = patientData.patients.flatMap((patient) =>
-    (patient.appointmentData || []).map((apt) => ({
-      ...apt,
-      patientId: patient.patientId,
-      patientName: patient.name,
-      appointmentDate: apt.date,
-      timeSlot: apt.time,
-      reasonForVisit: apt.reasonForVisit || apt.specialization || "General Checkup",
-    }))
-  );
+  // Listen for appointment booked events and refresh data
+  useEffect(() => {
+    const handleAppointmentBooked = () => {
+      // Trigger a re-render by updating the refresh trigger
+      setRefreshTrigger(prev => prev + 1);
+    };
+
+    window.addEventListener('appointmentBooked', handleAppointmentBooked);
+    return () => window.removeEventListener('appointmentBooked', handleAppointmentBooked);
+  }, []);
+
+  // Get current patient ID
+  const patientId = localStorage.getItem("patientId");
+
+  // Update appointments whenever refreshTrigger changes
+  useEffect(() => {
+    // Extract all appointments from patients and flatten them
+    const baseAppointments = patientData.patients.flatMap((patient) =>
+      (patient.appointmentData || []).map((apt) => ({
+        ...apt,
+        patientId: patient.patientId,
+        patientName: patient.name,
+        appointmentDate: apt.date,
+        timeSlot: apt.time,
+        reasonForVisit: apt.reasonForVisit || apt.specialization || "General Checkup",
+        status: apt.status || "Upcoming", // Ensure status exists
+      }))
+    );
+
+    // Add patient's localStorage appointments for current patient
+    let allApts = [...baseAppointments];
+    if (patientId) {
+      const patientAppointmentsKey = `patientAppointments_${patientId}`;
+      const storedAppointments = JSON.parse(localStorage.getItem(patientAppointmentsKey) || '[]');
+      
+      // Find current patient
+      const currentPatient = patientData.patients.find(p => p.patientId === patientId);
+      if (currentPatient) {
+        const storedApts = storedAppointments.map((apt) => ({
+          ...apt,
+          patientId: currentPatient.patientId,
+          patientName: currentPatient.name,
+          appointmentDate: apt.date,
+          timeSlot: apt.time,
+          reasonForVisit: apt.reasonForVisit || "General Checkup",
+          status: apt.status || "Upcoming", // Ensure status exists
+        }));
+        // Remove duplicates and merge
+        allApts = [...baseAppointments, ...storedApts];
+      }
+    }
+
+    console.log('All appointments loaded:', allApts); // Debug log
+    setAllAppointments(allApts);
+  }, [refreshTrigger, patientId]);
 
   // Filter appointments based on view and search term
   const filteredAppointments = allAppointments.filter((item) => {

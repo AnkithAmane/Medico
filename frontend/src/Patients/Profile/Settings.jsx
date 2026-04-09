@@ -28,7 +28,7 @@ export default function Settings() {
       </div>
  
       <div className="settings_content">
-        {/* Notifications Settings */}
+        
         <div className="settings_section">
           <div className="section_header">
             <FaBell className="section_icon" />
@@ -97,7 +97,7 @@ export default function Settings() {
           </div>
         </div>
  
-        {/* Appearance Settings */}
+        
         <div className="settings_section">
           <div className="section_header">
             <FaPalette className="section_icon" />
@@ -122,7 +122,7 @@ export default function Settings() {
           </div>
         </div>
  
-        {/* Language Settings */}
+      
         <div className="settings_section">
           <div className="section_header">
             <FaLanguage className="section_icon" />
@@ -148,7 +148,7 @@ export default function Settings() {
           </div>
         </div>
  
-        {/* Security Settings */}
+        
         <div className="settings_section">
           <div className="section_header">
             <FaShieldAlt className="section_icon" />
@@ -161,7 +161,7 @@ export default function Settings() {
           </div>
         </div>
  
-        {/* Action Buttons */}
+        
         <div className="settings_actions">
           <button className="save_btn">Save Changes</button>
           <button className="reset_btn">Reset to Default</button>

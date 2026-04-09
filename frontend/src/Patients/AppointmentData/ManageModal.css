@@ -55,7 +55,7 @@
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
-  color: #aaa;
+  color: #333 !important;
   transition: color 0.2s;
 }
 

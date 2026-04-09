@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import  availableTests  from '../../Assets/Data/PatientData/TestData1';
-import Medicines from './Medicines';
-import CartModal from './CartModal';
+import PMedicines from './Medicines';
+import PCartModal from './CartModal';
 import './MedicationTests.css';
 
-const MedicationTests = () => {
+const PMedicationTests = () => {
   const [itemsToShow, setItemsToShow] = useState(8); // Show 2 rows of 4 items initially
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -55,7 +55,7 @@ const MedicationTests = () => {
 
     <div className="med-test-page">
       <section className="medicines-section">
-        <Medicines
+        <PMedicines
           onAddToCart={handleAddToCart}
           onOpenCart={openCart}
           cartCount={totalCount}
@@ -65,7 +65,7 @@ const MedicationTests = () => {
             Buy Items ({totalCount})
           </button>
         </div>
-        <CartModal isOpen={isCartOpen} onClose={closeCart} cartItems={cartItems} onRemove={handleRemoveFromCart} onOrderSuccess={handleClearCart} />
+        <PCartModal isOpen={isCartOpen} onClose={closeCart} cartItems={cartItems} onRemove={handleRemoveFromCart} onOrderSuccess={handleClearCart} />
       </section>
       <header className="page-header">
         <h1>Medical Tests & Scans</h1>

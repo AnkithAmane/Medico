@@ -4,6 +4,39 @@ import patienceData from "../../Assets/Data/PatientData/PatienceData";
 import hospitalData from "../../Assets/Data/PatientData/DoctorData";
 import PaymentConfirmation from "./PaymentConfirmation";
 
+
+const updatePatientAppointmentData = (patientId, newAppointment) => {
+  // Storing patient appointments in localStorage
+  const patientAppointmentsKey = `patientAppointments_${patientId}`;
+  const existingAppointments = JSON.parse(localStorage.getItem(patientAppointmentsKey) || '[]');
+  
+  
+  const appointmentToAdd = {
+    date: newAppointment.date,
+    time: newAppointment.time,
+    doctorName: newAppointment.doctorName,
+    reasonForVisit: newAppointment.healthIssues || "General Checkup",
+    status: "Upcoming",
+    bookedAt: newAppointment.bookedAt,
+    consultationFee: newAppointment.consultationFee
+  };
+  
+  existingAppointments.push(appointmentToAdd);
+  localStorage.setItem(patientAppointmentsKey, JSON.stringify(existingAppointments));
+  
+  
+  const patient = patienceData.patients.find(p => p.patientId === patientId);
+  if (patient) {
+    if (!patient.appointmentData) {
+      patient.appointmentData = [];
+    }
+    patient.appointmentData.push(appointmentToAdd);
+  }
+  
+  
+  window.dispatchEvent(new CustomEvent('appointmentBooked', { detail: appointmentToAdd }));
+};
+
 export default function AppointmentForm({ doctorName, onBookingComplete, onBack }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -22,18 +55,18 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
   const [pendingAppointment, setPendingAppointment] = useState(null);
 
   useEffect(() => {
-    // Get patient ID from localStorage
+    
     const patientId = localStorage.getItem("patientId");
     
     if (patientId) {
-      // Find patient data from PatienceData
+     
       const patient = patienceData.patients.find(
         (p) => p.patientId === patientId
       );
       
       if (patient) {
         setPatientData(patient);
-        // Pre-fill form with patient data
+        
         setFormData((prev) => ({
           ...prev,
           name: patient.name,
@@ -43,7 +76,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
       }
     }
 
-    // Get doctor consultation fee
+   
     const doctor = hospitalData.hospital_staff.find(
       (doc) => doc.name === doctorName
     );
@@ -95,7 +128,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
       return false;
     }
 
-    // Check if date is not in the past
+    
     const selectedDate = new Date(formData.date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -108,6 +141,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
   };
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -116,12 +150,12 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
       return;
     }
 
-    // Get existing appointments from localStorage
+
     const appointments = JSON.parse(
       localStorage.getItem("appointments") || "[]"
     );
 
-    // Create unique key for doctor + date + time
+   
     const slotKey = `${doctorName}-${formData.date}-${formData.time}`;
 
     // Count appointments for this slot
@@ -129,13 +163,13 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
       (apt) => apt.slotKey === slotKey
     ).length;
 
-    // Check if slot is full (max 1 booking)
+    
     if (slotBookings >= 1) {
       setError("This time slot is fully booked. Please select another time.");
       return;
     }
 
-    // Create appointment object but don't save yet
+    
     const newAppointment = {
       id: Date.now(),
       doctorName,
@@ -158,21 +192,27 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
   const handlePaymentConfirm = () => {
     if (!pendingAppointment) return;
 
-    // Get existing appointments from localStorage
+    
     const appointments = JSON.parse(
       localStorage.getItem("appointments") || "[]"
     );
 
-    // Save to localStorage
+    
     appointments.push(pendingAppointment);
     localStorage.setItem("appointments", JSON.stringify(appointments));
 
+    
+    const patientId = localStorage.getItem("patientId");
+    if (patientId) {
+      updatePatientAppointmentData(patientId, pendingAppointment);
+    }
+
     setShowPaymentModal(false);
     setSuccess(
-      `✅ Appointment booked successfully with Dr. ${doctorName} on ${formData.date} at ${formData.time}`
+      `✅ Appointment booked successfully with ${doctorName} on ${formData.date} at ${formData.time}`
     );
 
-    // Reset form
+    
     setFormData({
       name: patientData?.name || "",
       age: patientData?.age || "",
@@ -182,7 +222,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
       time: "",
     });
 
-    // Call callback after 2 seconds
+    
     setTimeout(() => {
       if (onBookingComplete) {
         onBookingComplete(pendingAppointment);
@@ -314,7 +354,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
             </div>
           </div>
           <br />
-          {/* Display Consultation Fee - Simplified */}
+          
           {consultationFee > 0 && (
             <div className="fee-info">
               Consultation Fee: <span className="fee-value">₹{consultationFee}</span>
@@ -327,7 +367,7 @@ export default function AppointmentForm({ doctorName, onBookingComplete, onBack 
         </form>
       </div>
 
-      {/* Payment Confirmation Modal */}
+      
       {showPaymentModal && pendingAppointment && (
         <PaymentConfirmation
           doctorName={doctorName}

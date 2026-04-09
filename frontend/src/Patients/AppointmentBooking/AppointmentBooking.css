@@ -1,4 +1,4 @@
-/* Search Component Styling */
+/* AppointmentBooking Component Styling */
 
 .search-container {
   background: linear-gradient(135deg, #e0f7fa, #ffffff);
@@ -75,6 +75,7 @@
   transform: translateY(0);
 }
 
+/*Responsive Design for Mobile */
 @media screen and (max-width: 768px) {
   .search-filters-row {
     grid-template-columns: 1fr;

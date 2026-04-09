@@ -25,7 +25,12 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container-fluid">
         <NavLink className="navbar-brand fw-bold" to="/" onClick={handleMenuClose}>
-          🏥 Medico
+          <div className="med_header_left">
+            <div className="med_brand_header">
+              <span className="med_plus_icon">✚</span>
+              <span className="med_brand_name">MEDICO<span className="highlight">PLUS</span></span>
+            </div>
+            </div>
         </NavLink>
         <button
           className="navbar-toggler"
@@ -39,7 +44,7 @@ export default function Navbar() {
         </button>
         <div className={`navbar-collapse ${menuOpen ? 'show-mobile' : 'hide-mobile'}`} id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            {/* Mobile profile options */}
+           
             <li className="nav-item mobile-only">
               <NavLink className="nav-link" to="profile" onClick={handleMenuClose}>
                 View Profile
@@ -72,14 +77,14 @@ export default function Navbar() {
               </NavLink>
             </li>
 
-            {/* Logout at bottom for mobile */}
+            
             <li className="nav-item mobile-only logout-bottom">
               <a className="nav-link" onClick={handleLogout}>
                 Logout
               </a>
             </li>
 
-            {/* Desktop profile button */}
+            
             <li className="nav-item desktop-profile">
               <a className="nav-link btn btn-primary text-white ms-2" onClick={handleprofile}>
                 <img className="pProfile" src={Image} alt="Profile" />
