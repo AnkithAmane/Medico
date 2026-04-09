@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useOutletContext } from "react-router-dom"; // Hook to receive global search
 import { 
   Search, Plus, X, Scale, Ruler, User, Phone, Tag, 
   Clock, Calendar, ChevronDown, ChevronUp, Activity, Download, Filter,
@@ -10,8 +11,9 @@ import appointmentsData from "../../Assets/Data/appointment.json";
 import "./Patient_Management.css";
 
 export default function Patient_Management() {
-  // --- 1. GLOBAL STATE ---
-  const [searchTerm, setSearchTerm] = useState("");
+  // --- 1. GLOBAL STATE & CONTEXT ---
+  const { searchTerm: globalSearch } = useOutletContext(); // Receive from Admin_Home
+  const [localSearch, setLocalSearch] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterAgeRange, setFilterAgeRange] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -57,17 +59,21 @@ export default function Patient_Management() {
 
   const filteredPatients = useMemo(() => {
     return patients.filter((p) => {
-      const s = searchTerm.toLowerCase();
       const patientName = (p.name || "").toLowerCase();
       const patientContact = (p.contact || "");
       const patientDisease = (p.disease || "").toLowerCase();
       const patientId = `#pt-${p.id}`.toLowerCase();
 
-      const matchesSearch = 
-        patientName.includes(s) ||
-        patientId.includes(s) ||
-        patientContact.includes(s) ||
-        patientDisease.includes(s);
+      // Check Global Top-Bar Search
+      const matchesGlobal = 
+        patientName.includes(globalSearch.toLowerCase()) ||
+        patientId.includes(globalSearch.toLowerCase()) ||
+        patientDisease.includes(globalSearch.toLowerCase());
+
+      // Check Local Input Search
+      const matchesLocal = 
+        patientName.includes(localSearch.toLowerCase()) ||
+        patientContact.includes(localSearch.toLowerCase());
 
       const matchesGender = filterGender ? p.gender === filterGender : true;
       let matchesAge = true;
@@ -76,9 +82,9 @@ export default function Patient_Management() {
       else if (filterAgeRange === "41-60") matchesAge = p.age >= 41 && p.age <= 60;
       else if (filterAgeRange === "60+") matchesAge = p.age > 60;
 
-      return matchesSearch && matchesGender && matchesAge;
+      return matchesGlobal && matchesLocal && matchesGender && matchesAge;
     });
-  }, [searchTerm, filterGender, filterAgeRange, patients]);
+  }, [globalSearch, localSearch, filterGender, filterAgeRange, patients]);
 
   const totalPages = Math.ceil(filteredPatients.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -95,8 +101,8 @@ export default function Patient_Management() {
     const patientAppts = getPatientAppointments(selectedPatient.name);
     const filtered = patientAppts.filter(a => {
       const matchesSearch = (a.notes || "").toLowerCase().includes(apptSearch.toLowerCase()) || 
-                           (a.doctor || "").toLowerCase().includes(apptSearch.toLowerCase()) || 
-                           a.date.includes(apptSearch);
+                            (a.doctor || "").toLowerCase().includes(apptSearch.toLowerCase()) || 
+                            a.date.includes(apptSearch);
       const matchesMonth = apptMonthFilter ? a.date.startsWith(apptMonthFilter) : true;
       return matchesSearch && matchesMonth;
     });
@@ -136,7 +142,10 @@ export default function Patient_Management() {
           <div className="med_section_header">
             <div className="med_branding">
               <h1 className="med_title_elite">Patient <span className="highlight">Directory</span></h1>
-              <p className="med_subtitle">{filteredPatients.length} matching records</p>
+              <p className="med_subtitle">
+                {globalSearch && `Searching: "${globalSearch}" | `}
+                {filteredPatients.length} matching records
+              </p>
             </div>
             <div className="med_action_group">
               <button className="med_btn_outline"><Download size={16}/> Export CSV</button>
@@ -152,9 +161,9 @@ export default function Patient_Management() {
               <Search size={18} color="#007acc" />
               <input 
                 type="text" 
-                placeholder="Search Name, ID, Phone or Disease..." 
-                value={searchTerm} 
-                onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}} 
+                placeholder="Filter by Name, Phone or Disease..." 
+                value={localSearch} 
+                onChange={(e) => {setLocalSearch(e.target.value); setCurrentPage(1);}} 
               />
             </div>
             <div className="med_dropdown_group">
@@ -170,6 +179,11 @@ export default function Patient_Management() {
                 <option value="41-60">41 - 60 Yrs</option>
                 <option value="60+">60+ Yrs</option>
               </select>
+              {(globalSearch || localSearch) && (
+                <button className="med_clear_btn" onClick={() => {setLocalSearch(""); setCurrentPage(1);}}>
+                  <X size={14} /> Clear
+                </button>
+              )}
             </div>
           </div>
 
@@ -186,47 +200,58 @@ export default function Patient_Management() {
                 </tr>
               </thead>
               <tbody>
-                {currentPatients.map((p) => (
-                  <tr key={p.id}>
-                    <td>
-                      <div className="med_cell_user">
-                        <img src={p.photo || "https://i.pravatar.cc/150"} alt="" />
-                        <div><b>{p.name}</b><span>#PT-{p.id.toString().padStart(3, '0')}</span></div>
-                      </div>
-                    </td>
-                    <td className="med_text_bold">{p.age} Yrs <small className="age_pill">{getAgeClass(p.age)}</small></td>
-                    <td>{p.gender}</td>
-                    <td><span className="med_disease_tag">{p.disease}</span></td>
-                    <td className="text_right">
-                      <button className="med_btn_manage" onClick={() => {setSelectedPatient(p); setApptSearch(""); setApptMonthFilter(""); setShowAllAppts(false);}}>View Case</button>
+                {currentPatients.length > 0 ? (
+                  currentPatients.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <div className="med_cell_user">
+                          <img src={p.photo || "https://i.pravatar.cc/150"} alt="" />
+                          <div><b>{p.name}</b><span>#PT-{p.id.toString().padStart(3, '0')}</span></div>
+                        </div>
+                      </td>
+                      <td className="med_text_bold">{p.age} Yrs <small className="age_pill">{getAgeClass(p.age)}</small></td>
+                      <td>{p.gender}</td>
+                      <td><span className="med_disease_tag">{p.disease}</span></td>
+                      <td className="text_right">
+                        <button className="med_btn_manage" onClick={() => {setSelectedPatient(p); setApptSearch(""); setApptMonthFilter(""); setShowAllAppts(false);}}>View Case</button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="med_no_results">
+                      <Activity size={32} />
+                      <p>No clinical records found matching your search.</p>
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
 
           {/* PAGINATION */}
-          <div className="med_pagination_bar">
-            <div className="pag_info">
-              Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filteredPatients.length)}</b> of <b>{filteredPatients.length}</b>
+          {totalPages > 1 && (
+            <div className="med_pagination_bar">
+              <div className="pag_info">
+                Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filteredPatients.length)}</b> of <b>{filteredPatients.length}</b>
+              </div>
+              <div className="pag_buttons">
+                <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft size={16}/></button>
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1;
+                  if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                    return (
+                      <button key={i} className={`pag_num_btn ${currentPage === page ? 'active' : ''}`} onClick={() => handlePageChange(page)}>{page}</button>
+                    );
+                  } else if (page === currentPage - 2 || page === currentPage + 2) {
+                    return <span key={i} className="pag_ellipsis">...</span>;
+                  }
+                  return null;
+                })}
+                <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight size={16}/></button>
+              </div>
             </div>
-            <div className="pag_buttons">
-              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft size={16}/></button>
-              {[...Array(totalPages)].map((_, i) => {
-                const page = i + 1;
-                if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                  return (
-                    <button key={i} className={`pag_num_btn ${currentPage === page ? 'active' : ''}`} onClick={() => handlePageChange(page)}>{page}</button>
-                  );
-                } else if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={i} className="pag_ellipsis">...</span>;
-                }
-                return null;
-              })}
-              <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight size={16}/></button>
-            </div>
-          </div>
+          )}
         </div>
       ) : (
         /* --- WORKSPACE: PATIENT CLINICAL CASE --- */

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useOutletContext } from "react-router-dom"; // Hook to receive search from Admin_Home
 import { Bar } from "react-chartjs-2";
 import { 
   Search, Plus, Download, Calendar, Activity, 
@@ -21,8 +22,11 @@ import "./Doctor_Management.css";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function Doctor_Management() {
-  // --- 1. STATE MANAGEMENT ---
-  const [searchTerm, setSearchTerm] = useState("");
+  // --- 1. RECEIVE GLOBAL SEARCH FROM ADMIN_HOME ---
+  const { searchTerm: globalSearch } = useOutletContext();
+
+  // --- 2. STATE MANAGEMENT ---
+  const [localSearch, setLocalSearch] = useState("");
   const [filterDept, setFilterDept] = useState("");
   const [filterAvail, setFilterAvail] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -35,23 +39,32 @@ export default function Doctor_Management() {
 
   const rowsPerPage = 10;
 
-  // --- 2. LOGIC: FILTERING & PAGINATION ---
+  // --- 3. LOGIC: UNIFIED FILTERING & PAGINATION ---
   const filteredDoctors = useMemo(() => {
     return doctors.filter((doc) => {
       const doctorName = (doc.name || "").toLowerCase();
-      const searchMatch = doctorName.includes(searchTerm.toLowerCase());
-      const deptMatch = filterDept ? doc.department === filterDept : true;
-      const availMatch = filterAvail ? doc.availability === filterAvail : true;
-      return searchMatch && deptMatch && availMatch;
+      const doctorDept = (doc.department || "").toLowerCase();
+
+      // Check against Global Top-Bar Search
+      const matchesGlobal = doctorName.includes(globalSearch.toLowerCase()) || 
+                            doctorDept.includes(globalSearch.toLowerCase());
+
+      // Check against Local Filter Box
+      const matchesLocal = doctorName.includes(localSearch.toLowerCase());
+
+      const matchesDept = filterDept ? doc.department === filterDept : true;
+      const matchesAvail = filterAvail ? doc.availability === filterAvail : true;
+
+      return matchesGlobal && matchesLocal && matchesDept && matchesAvail;
     });
-  }, [doctors, searchTerm, filterDept, filterAvail]);
+  }, [doctors, globalSearch, localSearch, filterDept, filterAvail]);
 
   const totalPages = Math.ceil(filteredDoctors.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentDoctors = filteredDoctors.slice(indexOfFirstRow, indexOfLastRow);
 
-  // --- 3. LOGIC: CLINICAL ANALYTICS ---
+  // --- 4. LOGIC: CLINICAL ANALYTICS ---
   const getFilteredDoctorAppointments = (doctorName) => {
     if (!doctorName) return [];
     const targetStatus = historyTab === "Recent" ? "Completed" : "Upcoming";
@@ -74,7 +87,7 @@ export default function Doctor_Management() {
     }],
   });
 
-  // --- 4. ACTION HANDLERS ---
+  // --- 5. ACTION HANDLERS ---
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -119,7 +132,10 @@ export default function Doctor_Management() {
           <div className="med_section_header">
             <div className="med_branding">
               <h1 className="med_title_elite">Medical <span className="highlight">Specialists</span></h1>
-              <p className="med_subtitle">{filteredDoctors.length} staff records found</p>
+              <p className="med_subtitle">
+                {globalSearch && `Results for "${globalSearch}" | `}
+                {filteredDoctors.length} staff records found
+              </p>
             </div>
             <div className="med_action_group">
               <button className="med_btn_outline"><Download size={16}/> Export CSV</button>
@@ -134,9 +150,9 @@ export default function Doctor_Management() {
               <Search size={18} color="#94a3b8" />
               <input 
                 type="text" 
-                placeholder="Search specialists..." 
-                value={searchTerm} 
-                onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}} 
+                placeholder="Filter within results..." 
+                value={localSearch} 
+                onChange={(e) => {setLocalSearch(e.target.value); setCurrentPage(1);}} 
               />
             </div>
             <div className="med_dropdown_group">
@@ -154,6 +170,11 @@ export default function Doctor_Management() {
                 <option value="Available">Available</option>
                 <option value="Not Available">Not Available</option>
               </select>
+              {(globalSearch || localSearch) && (
+                 <button className="med_clear_btn" onClick={() => {setLocalSearch(""); setCurrentPage(1);}}>
+                    <X size={14} /> Clear
+                 </button>
+              )}
             </div>
           </div>
 
@@ -170,27 +191,36 @@ export default function Doctor_Management() {
                 </tr>
               </thead>
               <tbody>
-                {currentDoctors.map((doc) => (
-                  <tr key={doc.id}>
-                    <td>
-                      <div className="med_cell_user">
-                        <img src={doc.photo || "https://i.pravatar.cc/150"} alt="" />
-                        <div><b>{doc.name}</b><span>{doc.degrees || "MD"}</span></div>
-                      </div>
-                    </td>
-                    <td className="med_text_bold">{doc.department}</td>
-                    <td>
-                      <span className={`med_status ${doc.availability === "Available" ? "upcoming" : "cancelled"}`}>
-                        {doc.availability}
-                      </span>
-                    </td>
-                    <td>{doc.totalAppointments || 0}</td>
-                    <td className="med_text_bold">{doc.totalPatients || 0}</td>
-                    <td>
-                      <button className="med_btn_manage" onClick={() => setSelectedDoctor(doc)}>View</button>
+                {currentDoctors.length > 0 ? (
+                  currentDoctors.map((doc) => (
+                    <tr key={doc.id}>
+                      <td>
+                        <div className="med_cell_user">
+                          <img src={doc.photo || "https://i.pravatar.cc/150"} alt="" />
+                          <div><b>{doc.name}</b><span>{doc.degrees || "MD"}</span></div>
+                        </div>
+                      </td>
+                      <td className="med_text_bold">{doc.department}</td>
+                      <td>
+                        <span className={`med_status ${doc.availability === "Available" ? "upcoming" : "cancelled"}`}>
+                          {doc.availability}
+                        </span>
+                      </td>
+                      <td>{doc.totalAppointments || 0}</td>
+                      <td className="med_text_bold">{doc.totalPatients || 0}</td>
+                      <td>
+                        <button className="med_btn_manage" onClick={() => setSelectedDoctor(doc)}>View</button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" style={{textAlign: 'center', padding: '2rem', color: '#64748b'}}>
+                        <Activity size={32} style={{marginBottom: '10px', opacity: 0.5}}/>
+                        <p>No specialists found matching your criteria.</p>
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -281,9 +311,6 @@ export default function Doctor_Management() {
           <div className="leaves-section">
             <div className="sa_leaves_header_flex">
               <h3>Leaves Taken</h3>
-              <button className="view_more_btn" onClick={() => setShowAllLeaves(!showAllLeaves)}>
-                {showAllLeaves ? "Show Less" : "View More"}
-              </button>
             </div>
             <div className="leaves-grid">
               {(showAllLeaves ? selectedDoctor.leaves : (selectedDoctor.leaves || []).slice(0, 5)).map((date, idx) => (
@@ -292,7 +319,11 @@ export default function Doctor_Management() {
                    <div className="leave_text_group"><b>Leave {idx + 1}</b><span>{date}</span></div>
                 </div>
               ))}
+              
             </div>
+            <button className="view_more_btnl" onClick={() => setShowAllLeaves(!showAllLeaves)}>
+                {showAllLeaves ? "Show Less" : "View More"}
+              </button>
           </div>
         </div>
       )}

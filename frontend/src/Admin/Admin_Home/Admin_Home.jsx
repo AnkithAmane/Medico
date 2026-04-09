@@ -6,10 +6,12 @@ import {
   LogOut, Bell, Search, ChevronLeft, ChevronRight 
 } from "lucide-react"; 
 import "./Admin_Home.css";
+import adminPic from "../../Assets/Images/Admin/default_admin.jpg"
 
 export default function Admin_Home() {
   // --- 1. STATE & ROUTING ---
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // State for global search
   const navigate = useNavigate();
 
   // --- 2. NAVIGATION CONFIGURATION ---
@@ -52,10 +54,8 @@ export default function Admin_Home() {
             >
               <span className="med_nav_icon">{opt.icon}</span>
               
-              {/* Strict Conditional Rendering for Smooth Transitions */}
               {!isCollapsed && <span className="med_nav_label">{opt.label}</span>}
               
-              {/* Collapsed State Tooltip */}
               {isCollapsed && <div className="med_nav_tooltip">{opt.label}</div>}
             </NavLink>
           ))}
@@ -84,7 +84,12 @@ export default function Admin_Home() {
           <div className="med_header_center">
             <div className="med_global_search_clean">
               <Search size={18} className="med_search_icon" />
-              <input type="text" placeholder="Search for patients, doctors, or records..." />
+              <input 
+                type="text" 
+                placeholder="Search for patients, doctors, or records..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Capture search input
+              />
             </div>
           </div>
 
@@ -96,10 +101,10 @@ export default function Admin_Home() {
             
             <div className="med_admin_profile_hub">
               <div className="med_profile_meta">
-                <span className="med_admin_name">Mahanth Reddy</span>
+                <span className="med_admin_name">Admin</span>
               </div>
               <div className="med_avatar_container">
-                <img src="/assets/admin_profile.png" alt="Admin" />
+                <img src={adminPic} alt="Admin" />
               </div>
             </div>
           </div>
@@ -107,7 +112,8 @@ export default function Admin_Home() {
 
         {/* DYNAMIC PAGE OUTLET */}
         <section className="med_page_container">
-          <Outlet />
+          {/* Passing the search term to child routes (Dashboard, Doctors, etc.) */}
+          <Outlet context={{ searchTerm }} />
         </section>
 
       </main>

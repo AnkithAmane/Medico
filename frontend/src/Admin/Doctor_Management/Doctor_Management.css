@@ -214,6 +214,8 @@
 .detail-header .close-btn {
     background: #c62828;
     color: #fff;
+    width: auto;
+    padding: 20px 15px;
 }
 
 .detail-header button:hover {
@@ -361,7 +363,24 @@
     transform: translateY(-4px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
-
+.view_more_btnl{
+    width: 30%;
+    margin-top: 20px;
+    padding: 14px;
+    background: #f8fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 14px;
+    color: #64748b;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.2s;
+    position: relative;
+    left: 35%;
+}
 @media (max-width: 1024px) {
     .profile-section {
         flex-direction: column;
@@ -590,7 +609,7 @@
 }
 
 .sa_chart_wrapper_glass {
-    height: 220px;
+    height: 100%;
     padding: 15px;
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px);

@@ -131,23 +131,23 @@
 }
 
 .med_logout_action {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    background: transparent;
+    width: 100%; 
+    padding: 14px; 
+    border: none; 
+    background: #fff1f2; 
     color: #be123c;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    border-radius: 16px; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 12px; 
     cursor: pointer;
-    transition: 0.3s;
 }
 
 .med_logout_action:hover { 
-    background: #fff1f2; 
-    border-radius: 12px; 
+    background: #be123c; 
+    color: #fff1f2;
 }
 
 /* --- 3. TOPBAR HEADER --- */
@@ -157,8 +157,8 @@
     border-bottom: 1px solid var(--med-border);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
+    justify-content: space-around;
+    padding: 0 50px;
 }
 
 /* Branding Unit */
@@ -199,8 +199,8 @@
     align-items: center;
     background: #f1f5f9;
     border-radius: 12px;
-    padding: 10px 20px;
-    width: 80%;
+    padding: 5px 0px 5px 20px;
+    width: 70%;
     max-width: 600px;
     gap: 12px;
     transition: 0.3s;
@@ -254,8 +254,8 @@
 .med_admin_profile_hub {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 5px 5px 5px 15px;
+    gap: 10px;
+    padding: 5px 1px 5px 15px;
     background: #f8fafc;
     border-radius: 50px;
     border: 1px solid var(--med-border);
@@ -268,21 +268,18 @@
 }
 
 .med_admin_name { 
-    font-size: 0.85rem; 
+    font-size: 1rem; 
+    font-style: italic;
     font-weight: 700; 
-    color: var(--med-text); 
-}
-
-.med_admin_role { 
-    font-size: 0.7rem; 
     color: var(--med-text-muted); 
 }
 
+
+
 .med_avatar_container img {
-    width: 40px; 
+    width: 50px; 
     height: 40px;
     border-radius: 50%;
-    border: 2px solid white;
     object-fit: cover;
 }
 

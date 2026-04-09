@@ -105,6 +105,7 @@ function Auth_Main({
                                         portalName={portalName} 
                                         setShowForgotPassword={setShowForgotPassword} 
                                         role={role} /* <--- CRITICAL: Connects the role to the button */
+                                        setIsRightPanelActive={setIsRightPanelActive}
                                     />
 
                                     {/* SLIDING OVERLAYS */}

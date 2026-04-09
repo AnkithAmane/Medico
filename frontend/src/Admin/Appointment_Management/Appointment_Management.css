@@ -21,7 +21,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
 }
 
 .med_title_elite { font-size: 1.6rem; color: var(--med-text); font-weight: 800; margin: 0; }
@@ -37,7 +36,7 @@
     align-items: center;
     background: var(--med-card);
     padding: 12px 20px;
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1px solid var(--med-border);
     margin-bottom: 20px;
     gap: 20px;

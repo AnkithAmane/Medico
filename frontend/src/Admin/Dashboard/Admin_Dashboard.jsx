@@ -56,13 +56,25 @@ export default function Admin_Dashboard() {
 
     const interval = setInterval(() => {
       if (d < targetD) setDoctors(++d);
-      if (p < targetP) setPatients((p += Math.ceil(targetP / 50)));
-      if (a < targetA) setAppointments(++a);
+
+      if (p < targetP) {
+        p += Math.ceil(targetP / 50);
+        setPatients(p > targetP ? targetP : p);
+      }
+
+      if (a < targetA) {
+        a += Math.ceil(targetA / 50);
+        setAppointments(a > targetA ? targetA : a);
+      }
+
       if (d >= targetD && p >= targetP && a >= targetA) {
+        setDoctors(targetD);
         setPatients(targetP);
+        setAppointments(targetA);
         clearInterval(interval);
       }
-    }, 15);
+    }, 20);
+
     return () => clearInterval(interval);
   }, []);
 

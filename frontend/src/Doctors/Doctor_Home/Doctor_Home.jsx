@@ -107,7 +107,7 @@ export default function DoctorHome() {
         <div className="sidebar_footer_actions">
           <button className="logout_btn_elite" onClick={handleLogout}>
             <LogOut size={20} />
-            {!isCollapsed && <span className="logout_text">Exit Portal</span>}
+            {!isCollapsed && <span className="logout_text">Logout</span>}
           </button>
         </div>
 
