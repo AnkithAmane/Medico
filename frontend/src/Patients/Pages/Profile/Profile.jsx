@@ -110,7 +110,7 @@ export default function Profile({ userId }) {
         <div className="section">
           <h3>Personal Information</h3>
           <div className="form-flex">
-            <div className="form-group">
+            <div className="profile-form-group">
               <label>Full Name</label>
               <input 
                 type="text" 
@@ -122,7 +122,7 @@ export default function Profile({ userId }) {
               />
             </div>
 
-            <div className="form-group">
+            <div className="profile-form-group">
               <label>Age</label>
               <input 
                 type="number" 
@@ -134,7 +134,7 @@ export default function Profile({ userId }) {
               />
             </div>
 
-            <div className="form-group">
+            <div className="profile-form-group">
               <label>Gender</label>
               {isEditing ? (
                 <select 
@@ -159,7 +159,7 @@ export default function Profile({ userId }) {
               )}
             </div>
 
-            <div className="form-group">
+            <div className="profile-form-group">
               <label>Email</label>
               <input 
                 type="email" 
@@ -176,8 +176,8 @@ export default function Profile({ userId }) {
         </div>
         <div className="section">
           <h3>Contact Information</h3>
-          <div className="form-flex">
-            <div className="form-group">
+          <div className="profile-form-flex">
+            <div className="profile-form-group">
               <label>Phone Number</label>
               <input 
                 type="tel" 
@@ -189,7 +189,7 @@ export default function Profile({ userId }) {
               />
             </div>
 
-            <div className="form-group">
+            <div className="profile-form-group">
               <label>Emergency Contact</label>
               <input 
                 type="tel" 
@@ -201,14 +201,14 @@ export default function Profile({ userId }) {
               />
             </div>
 
-            <div className="form-group full-width">
+            <div className="profile-form-group full-width">
               <label>Address</label>
               <textarea 
                 name="address"
                 value={formData.address || ''} 
                 onChange={handleInputChange}
                 readOnly={!isEditing}
-                className={isEditing ? 'editable' : 'readonly'}
+                className={isEditing ? 'editable profile-textarea' : 'readonly profile-textarea'} 
                 rows="3"
               />
             </div>

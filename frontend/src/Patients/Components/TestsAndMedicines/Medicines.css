@@ -51,7 +51,7 @@
 }
 
 .cart-header-btn {
-  background: #667eea;
+  background: var(--nav-gradient);
   color: #fff;
   border: none;
   border-radius: 10px;

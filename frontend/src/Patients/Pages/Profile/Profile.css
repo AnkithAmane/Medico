@@ -107,11 +107,11 @@
   padding: 20px;
   background: #f9f9f9;
   border-radius: 6px;
-
   margin: auto;
   margin-bottom:10px;
   border-left: 4px solid #667eea;
   height: auto;
+  width: 90%;
 }
 
 .section h3 {
@@ -129,7 +129,8 @@
 
 .form-group {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: left;
   gap: 15px;
 }
 
@@ -139,12 +140,13 @@
   gap: 8px;
 }
 
-.form-group label {
+.profile-form-group label {
   font-weight: 600;
   color: #333;
   font-size: 0.9rem;
   min-width: 120px;
   flex-shrink: 0;
+
 }
 
 input,
@@ -196,6 +198,29 @@ select.editable {
   cursor: pointer;
 }
 
+.profile-form-group {
+    min-width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .profile-form-group label:nth-child(1) {
+    width: 150px;
+  }
+
+  .profile-form-group:nth-child(3){
+    align-items: flex-start;
+
+  }
+
+  .profile-textarea {
+    padding: 0px 12px !important;
+  }
+  
+
 /* Responsive Design*/
 @media (max-width: 768px) {
   .profile-container {
@@ -222,7 +247,7 @@ select.editable {
     gap: 8px;
   }
 
-  .form-group label {
+  .profile-form-group {
     min-width: auto;
   }
 
@@ -231,4 +256,10 @@ select.editable {
   select {
     width: 100%;
   }
+}
+
+.profile-form-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
