@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import "../Styles/Home/Landing_Page.css";
+import "./Landing_Page.css";
 
 /* --- ASSET IMPORTS --- */
-import delhi from "../Assets/Images/Home/Delhi.png";
-import mumbai from "../Assets/Images/Home/Mumbai.png";
-import hyderabad from "../Assets/Images/Home/Hyderabad.png";
-import bangalore from "../Assets/Images/Home/Banglore.png";
-import chennai from "../Assets/Images/Home/Chennai.png";
-import kolkata from "../Assets/Images/Home/Kolkata.png";
-import hosp1 from "../Assets/Images/Home/Hospital_1.png";
-import hosp2 from "../Assets/Images/Home/Hospital_2.png";
-import hosp3 from "../Assets/Images/Home/Hospital_3.png";
-import hosp4 from "../Assets/Images/Home/Hospital_4.png";
+import delhi from "../../Assets/Images/Home/Delhi.png"
+import mumbai from "../../Assets/Images/Home/Mumbai.png";
+import hyderabad from "../../Assets/Images/Home/Hyderabad.png";
+import bangalore from "../../Assets/Images/Home/Banglore.png";
+import chennai from "../../Assets/Images/Home/Chennai.png";
+import kolkata from "../../Assets/Images/Home/Kolkata.png";
+import hosp1 from "../../Assets/Images/Home/Hospital_1.png";
+import hosp2 from "../../Assets/Images/Home/Hospital_2.png";
+import hosp3 from "../../Assets/Images/Home/Hospital_3.png";
+import hosp4 from "../../Assets/Images/Home/Hospital_4.png";
 
 function Landing_Page() {
     /* --- SLIDER LOGIC --- */
@@ -245,9 +245,9 @@ function Landing_Page() {
 
                     <div className="landing_page_feedback_list">
                         {[
-                            { review: "The AI diagnostics helped me a lot. Identified a blockage others missed.", name: "MS Dhoni" },
-                            { review: "Simple booking. Loved seeing my reports before reaching home.", name: "Rohith Sharma" },
-                            { review: "World-class facility. Staff made me feel at home during recovery.", name: "Virat Kohli" }
+                            { review: "The AI diagnostics helped me a lot. Identified a blockage others missed.", name: "Mahanth Reddy" },
+                            { review: "Simple booking. Loved seeing my reports before reaching home.", name: "Vijay Kumar" },
+                            { review: "World-class facility. Staff made me feel at home during recovery.", name: "Mohan Krishna" }
                         ].map((item, i) => (
                             <div key={i} className="landing_page_feedback_card">
                                 <div className="landing_page_quote_icon">“</div>

@@ -1,314 +1,852 @@
-/* ================================
-   Department Management - Base Layout
-   ================================ */
+/* ============================================
+   DEPARTMENT MANAGEMENT - STYLING SYSTEM
+   Organized, readable, and maintainable CSS
+   ============================================ */
 
-.department-container {
+/* ============================================
+   1. MAIN CONTAINER
+   ============================================ */
+
+.departments-container,
+.dept-container {
   padding: 32px;
-  background: linear-gradient(135deg, #f4f7fb, #e0f7fa);
+  background: linear-gradient(135deg, #f4f7fb 0%, #e0f7fa 100%);
   min-height: 100vh;
   font-family: 'Segoe UI', Roboto, sans-serif;
-  box-sizing: border-box;
   animation: fadeIn 0.6s ease-in-out;
 }
 
-.department-container h2 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #007acc;
-  margin-bottom: 28px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  letter-spacing: 0.5px;
-}
+/* ============================================
+   2. HEADER SECTION
+   ============================================ */
 
-/* ================================
-   Filters Bar
-   ================================ */
-
-.filters-bar {
+.dept-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 32px;
 }
 
-.filters-bar select {
-  padding: 12px 16px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 10px;
+.dept-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.dept-header h1 span {
+  color: #007acc; /* Accent color for branding */
+}
+
+.subtitle {
   font-size: 14px;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(8px);
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+  color: #666;
+  margin: 8px 0 0;
 }
 
-.filters-bar select:focus {
-  border-color: #007acc;
-  box-shadow: 0 0 8px rgba(0,122,204,0.3);
-}
+/* ============================================
+   3. BUTTONS
+   ============================================ */
 
-/* ================================
-   Add Department Form
-   ================================ */
-
-.add-department {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 36px;
-}
-
-.add-department input {
-  flex: 1;
-  min-width: 220px;
-  padding: 12px 16px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 10px;
-  font-size: 14px;
-  background: rgba(255,255,255,0.9);
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-.add-department input:focus {
-  border-color: #007acc;
-  box-shadow: 0 0 8px rgba(0,122,204,0.3);
-}
-
-.add-department button {
+.btn-add-large,
+.bpl {
   padding: 12px 20px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg,#007acc,#00c6ff);
-  color: #fff;
+  background: linear-gradient(135deg, #007acc 0%, #00c6ff 100%);
+  color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
 }
 
-.add-department button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+.btn-add-large:hover,
+.bpl:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 122, 204, 0.4);
 }
 
-/* ================================
-   Animations
-   ================================ */
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.btn-primary,
+.bp {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #007acc;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-/* ================================
-   Department List Grid
-   ================================ */
 
-.department-list {
+.btn-primary:hover,
+.bp:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-secondary,
+.bs {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover,
+.bs:hover {
+  background: #e0e0e0;
+}
+
+/* ============================================
+   4. STATS SECTION
+   ============================================ */
+
+.stats-section,
+.ms {
+  margin-bottom: 32px;
+}
+
+.stats-grid,
+.sg {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
 }
 
-.department-card {
-  background: rgba(255,255,255,0.95);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.stats-card,
+.sc {
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
 }
 
-.department-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+.stats-card:hover,
+.sc:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
-.department-card h4 {
-  font-size: 20px;
+.stats-value,
+.sv {
+  font-size: 24px;
   font-weight: 700;
-  color: #007acc;
+  margin: 0;
+}
+
+.stats-label,
+.sl {
+  font-size: 12px;
+  color: #999;
+  margin: 4px 0 0;
+}
+
+/* ============================================
+   5. FILTER & SORT SECTION
+   ============================================ */
+
+.filter-sort-section,
+.fs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-bar,
+.sb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  flex: 1;
+  min-width: 250px;
+  color: #666;
+}
+
+.search-bar input,
+.sb input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+}
+
+.controls-group,
+.cg {
+  display: flex;
+  gap: 12px;
+}
+
+.sort-select,
+.ss {
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ============================================
+   6. VIEW TOGGLE
+   ============================================ */
+
+.view-toggle,
+.vt {
+  display: flex;
+  gap: 6px;
+}
+
+.toggle-btn,
+.tb {
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover,
+.tb:hover {
+  border-color: #007acc;
+}
+
+.toggle-btn.active,
+.tb.active {
+  background: #007acc;
+  color: white;
+  border-color: #007acc;
+}
+
+/* ============================================
+   7. EMPTY STATE
+   ============================================ */
+
+.empty-state,
+.es {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state p,
+.es p {
+  font-size: 16px;
+  color: #666;
+  margin: 16px 0;
+}
+
+/* ============================================
+   8. GRID VIEW - CARD LAYOUT
+   ============================================ */
+
+.departments-grid,
+.dg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.department-card,
+.dept-card {
+  background: white;
+  border-left: 5px solid #007acc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.department-card:hover,
+.dept-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
 }
 
-.department-card p {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 8px;
-  line-height: 1.5;
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
 }
 
-/* ================================
-   Assign Doctor Section
-   ================================ */
+.department-head,
+.dh {
+  font-size: 14px;
+  color: #555;
+  margin: 8px 0;
+  font-weight: 500;
+}
 
-.assign-doctor {
+.department-details,
+.dd {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: #777;
+}
+
+/* ============================================
+   9. PROGRESS BAR
+   ============================================ */
+
+.progress-bar,
+.pb {
+  width: 100%;
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.progress-fill,
+.pf {
+  height: 100%;
+  background: linear-gradient(90deg, #007acc, #00c6ff);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   10. DEPARTMENT CONTACT
+   ============================================ */
+
+.department-contact,
+.dc {
+  font-size: 12px;
+  color: #888;
+  margin: 12px 0;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.department-contact p,
+.dc p {
+  margin: 4px 0;
+}
+
+/* ============================================
+   11. CARD ACTIONS
+   ============================================ */
+
+.card-actions,
+.ca {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.action-btn,
+.ab {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #f0f0f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* View Button */
+.action-btn.view,
+.ab.v {
+  background: #e3f2fd;
+  color: #007acc;
+}
+
+.action-btn.view:hover,
+.ab.v:hover {
+  background: #007acc;
+  color: white;
+}
+
+/* Edit Button */
+.action-btn.edit,
+.ab.e {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.action-btn.edit:hover,
+.ab.e:hover {
+  background: #ff9800;
+  color: white;
+}
+
+/* Delete Button */
+.action-btn.delete,
+.ab.d {
+  background: #ffebee;
+  color: #f44336;
+}
+
+.action-btn.delete:hover,
+.ab.d:hover {
+  background: #f44336;
+  color: white;
+}
+
+/* ============================================
+   12. TABLE VIEW
+   ============================================ */
+
+.table-container,
+.tc {
+  overflow-x: auto;
+  margin-bottom: 32px;
+}
+
+.departments-table,
+.dt {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.departments-table th,
+.dt th {
+  background: #f5f5f5;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.departments-table td,
+.dt td {
+  padding: 14px 12px;
+  font-size: 13px;
+  color: #555;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.departments-table tr:hover,
+.dt tr:hover {
+  background: #f9f9f9;
+}
+
+/* ============================================
+   13. TABLE BADGES
+   ============================================ */
+
+.badge-pill,
+.bp2 {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #e3f2fd;
+  color: #007acc;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hours-badge,
+.hb {
+  padding: 4px 10px;
+  background: #fff9c4;
+  color: #f57f17;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.budget-badge,
+.bb {
+  padding: 4px 10px;
+  background: #e1bee7;
+  color: #7b1fa2;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ============================================
+   14. STATUS BADGES
+   ============================================ */
+
+.status-badge,
+.sb {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-badge.status-active,
+.sb.active {
+  background: #4caf50;
+  color: white;
+}
+
+.status-badge.status-inactive,
+.sb.inactive {
+  background: #f44336;
+  color: white;
+}
+
+.status-badge.status-maintenance,
+.sb.maintenance {
+  background: #ff9800;
+  color: white;
+}
+
+/* ============================================
+   15. TABLE ACTION BUTTONS
+   ============================================ */
+
+.action-group,
+.ag {
+  display: flex;
+  gap: 6px;
+}
+
+.action-btn-small,
+.abs {
+  padding: 4px 6px;
+  border: none;
+  border-radius: 4px;
+  background: #f0f0f0;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+/* Edit Button Small */
+.action-btn-small.edit,
+.abs.e {
+  color: #ff9800;
+}
+
+.action-btn-small.edit:hover,
+.abs.e:hover {
+  background: #ff9800;
+  color: white;
+}
+
+/* Delete Button Small */
+.action-btn-small.delete,
+.abs.d {
+  color: #f44336;
+}
+
+.action-btn-small.delete:hover,
+.abs.d:hover {
+  background: #f44336;
+  color: white;
+}
+
+/* ============================================
+   16. MODAL OVERLAY
+   ============================================ */
+
+.modal-overlay,
+.mo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* ============================================
+   17. MODAL VIEW (Details)
+   ============================================ */
+
+.modal-view,
+.mv {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header,
+.mh {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2,
+.mh h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-modal,
+.cm {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.modal-content,
+.md {
+  padding: 20px;
+}
+
+.info-row,
+.dr {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.info-section,
+.ds {
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.info-section h4,
+.ds h4 {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.info-section p,
+.ds p {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+.budget-large,
+.bl {
+  color: #4caf50;
+}
+
+.modal-footer,
+.mf {
   display: flex;
   gap: 12px;
-  margin-top: 16px;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
 }
 
-.assign-doctor input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 8px;
-  font-size: 14px;
-  background: rgba(255,255,255,0.9);
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+/* ============================================
+   18. MODAL FORM
+   ============================================ */
+
+.modal-form,
+.mf2 {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-.assign-doctor input:focus {
-  border-color: #007acc;
-  box-shadow: 0 0 6px rgba(0,122,204,0.3);
-}
-
-.assign-doctor button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg,#007acc,#00c6ff);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.assign-doctor button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-}
-
-/* ================================
-   Delete Button
-   ================================ */
-
-.delete-btn {
-  margin-top: 16px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg,#f44336,#ff7961);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.delete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(244,67,54,0.4);
-}
-
-/* ================================
-   Responsive Adjustments
-   ================================ */
-
-@media (max-width: 768px) {
-  .department-card {
-    padding: 18px;
-  }
-
-  .department-card h4 {
-    font-size: 18px;
-  }
-
-  .department-card p {
-    font-size: 13px;
-  }
-
-  .assign-doctor {
-    flex-direction: column;
-  }
-
-  .assign-doctor button {
-    width: 100%;
-  }
-
-  .delete-btn {
-    width: 100%;
-  }
-}
-/* ================================
-   Analytics Section
-   ================================ */
-
-.analytics-section {
-  margin-top: 40px;
-  padding: 24px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 16px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
-}
-
-.analytics-section h3 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #007acc;
-  margin-bottom: 20px;
-}
-
-.analytics-section p {
-  font-size: 15px;
-  color: #333;
-  margin-bottom: 10px;
-  line-height: 1.6;
-}
-
-/* Highlighted metrics */
-.analytics-section p:nth-child(2) { color: #007acc; font-weight: 600; }
-.analytics-section p:nth-child(3) { color: #4caf50; font-weight: 600; }
-.analytics-section p:nth-child(4) { color: #ff9800; font-weight: 600; }
-.analytics-section p:nth-child(5) { color: #f44336; font-weight: 600; }
-
-/* ================================
-   Extra Options Row
-   ================================ */
-
-.extra-options {
-  display: flex;
-  flex-wrap: wrap;
+.form-groups-container,
+.fgd {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-top: 28px;
+  max-height: calc(90vh - 140px);
+  overflow-y: auto;
 }
 
-.extra-options button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#007acc,#00c6ff);
-  color: #fff;
+/* ============================================
+   19. FORM GROUPS
+   ============================================ */
+
+.form-group,
+.fg {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label,
+.fg label {
+  font-size: 12px;
   font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.form-input,
+.fi {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.fi:focus {
+  border-color: #007acc;
+  box-shadow: 0 0 4px rgba(0, 122, 204, 0.3);
+  outline: none;
+}
+
+.form-group-full,
+.fw {
+  grid-column: 1 / -1;
+}
+
+/* ============================================
+   20. COLOR PICKER
+   ============================================ */
+
+.color-picker,
+.cp {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-option,
+.co {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
   cursor: pointer;
-  font-size: 14px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.extra-options button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+.color-option:hover,
+.co:hover {
+  transform: scale(1.1);
 }
 
-/* ================================
-   Responsive Adjustments
-   ================================ */
+.color-option.selected,
+.co.selected {
+  border-color: #333;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   21. MODAL ACTIONS
+   ============================================ */
+
+.modal-actions,
+.mf3 {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* ============================================
+   22. ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   23. RESPONSIVE DESIGN
+   ============================================ */
 
 @media (max-width: 768px) {
-  .analytics-section {
-    padding: 18px;
-  }
-
-  .analytics-section h3 {
-    font-size: 18px;
-  }
-
-  .analytics-section p {
-    font-size: 14px;
-  }
-
-  .extra-options {
+  /* Header adjustments */
+  .dept-header {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
   }
 
-  .extra-options button {
-    width: 100%;
+  .dept-header h1 {
+    font-size: 24px;
+  }
+
+  /* Filter section */
+  .filter-sort-section,
+  .fs {
+    flex-direction: column;
+  }
+
+  /* Grid layout */
+  .departments-grid,
+  .dg {
+    grid-template-columns: 1fr;
+  }
+
+  /* Info rows */
+  .info-row,
+  .dr {
+    grid-template-columns: 1fr;
+  }
+
+  /* Form layout */
+  .form-groups-container,
+  .fgd {
+    grid-template-columns: 1fr;
+  }
+
+  /* Table adjustments */
+  .departments-table,
+  .dt {
+    font-size: 12px;
+  }
+
+  .departments-table td,
+  .departments-table th,
+  .dt td,
+  .dt th {
+    padding: 10px 8px;
   }
 }

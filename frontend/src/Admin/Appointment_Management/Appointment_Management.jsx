@@ -1,23 +1,19 @@
 import React, { useState, useMemo } from "react";
-import { useOutletContext } from "react-router-dom"; // Hook to receive global search
+import { useOutletContext } from "react-router-dom";
 import { 
-    Search, Calendar, ChevronRight, Download, 
-    X, Clock, Plus, Phone, Mail, ArrowLeft, Activity, MapPin, FileText, CheckCircle,
-    ChevronLeft
+    Search, X, Clock, Plus, Phone, Mail, ArrowLeft, Activity, MapPin, FileText,
+    ChevronLeft, ChevronRight, Download, Calendar, User, ClipboardList, ShieldCheck, 
+    GraduationCap, Hash, Thermometer
 } from "lucide-react";
 
-// --- DATA IMPORTS ---
 import appointmentsData from "../../Assets/Data/appointment.json"; 
 import "./Appointment_Management.css";
 
 export default function Appointment_Management() {
-    // --- 1. RECEIVE GLOBAL SEARCH FROM ADMIN_HOME ---
     const { searchTerm: globalSearch } = useOutletContext();
 
-    // --- 2. STATE MANAGEMENT ---
     const [localSearch, setLocalSearch] = useState("");
     const [filterDept, setFilterDept] = useState("");
-    const [filterType, setFilterType] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     
@@ -25,60 +21,50 @@ export default function Appointment_Management() {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [isDetailView, setIsDetailView] = useState(false);
 
-    // --- 3. PAGINATION STATE ---
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 15;
+    const rowsPerPage = 10;
 
-    // --- 4. DATA INITIALIZATION ---
     const [appointments] = useState(appointmentsData);
 
-    // --- 5. LOGIC: UNIFIED FILTERING ---
     const filtered = useMemo(() => {
         return appointments.filter(a => {
             const patientName = (a.patient || "").toLowerCase();
             const doctorName = (a.doctor || "").toLowerCase();
             const deptName = (a.department || "").toLowerCase();
 
-            // Check against Global Search (Top Bar)
             const matchesGlobal = patientName.includes(globalSearch.toLowerCase()) || 
                                   doctorName.includes(globalSearch.toLowerCase()) ||
                                   deptName.includes(globalSearch.toLowerCase());
 
-            // Check against Local Search (Table Toolbar)
             const matchesLocal = patientName.includes(localSearch.toLowerCase());
-
             const matchesDept = filterDept ? a.department === filterDept : true;
-            const matchesType = filterType ? a.type === filterType : true;
             const matchesStatus = filterStatus ? a.status === filterStatus : true;
             const matchesDate = dateFilter ? a.date === dateFilter : true;
             
-            return matchesGlobal && matchesLocal && matchesDept && matchesType && matchesStatus && matchesDate;
+            return matchesGlobal && matchesLocal && matchesDept && matchesStatus && matchesDate;
         });
-    }, [globalSearch, localSearch, filterDept, filterType, filterStatus, dateFilter, appointments]);
+    }, [globalSearch, localSearch, filterDept, filterStatus, dateFilter, appointments]);
 
-    // --- 6. PAGINATION CALCULATIONS ---
     const totalPages = Math.ceil(filtered.length / rowsPerPage);
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentAppointments = filtered.slice(indexOfFirstRow, indexOfLastRow);
 
-    // --- 7. HANDLERS ---
-    const getConsultationHistory = (currentAppt) => {
-        if (!currentAppt) return [];
+    const consultationHistory = useMemo(() => {
+        if (!selectedAppointment) return [];
         return appointments
             .filter(a => 
-                (a.patient || "") === (currentAppt.patient || "") && 
-                (a.doctor || "") === (currentAppt.doctor || "") && 
-                a.id !== currentAppt.id &&
-                new Date(a.date) < new Date(currentAppt.date)
+                a.patient === selectedAppointment.patient && 
+                a.doctor === selectedAppointment.doctor && 
+                a.id !== selectedAppointment.id
             )
             .sort((a, b) => new Date(b.date) - new Date(a.date));
-    };
+    }, [selectedAppointment, appointments]);
 
-    const handlePageChange = (pageNumber) => {
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-            setCurrentPage(pageNumber);
-            const container = document.querySelector(".med_table_container");
+    const handlePageChange = (num) => {
+        if (num >= 1 && num <= totalPages) {
+            setCurrentPage(num);
+            const container = document.querySelector(".admin_appt_m_table_scroll");
             if (container) container.scrollTop = 0;
         }
     };
@@ -88,70 +74,58 @@ export default function Appointment_Management() {
         setIsDetailView(true);
     };
 
-    const closeDetails = () => {
-        setIsDetailView(false);
-        setSelectedAppointment(null);
-    };
-
     return (
-        <div className="med_page_fade_in">
+        <div className="admin_appt_m_wrapper">
             {!isDetailView ? (
-                /* --- DIRECTORY VIEW --- */
-                <div className="med_main_list_view">
-                    
-                    {/* HEADER SECTION */}
-                    <div className="med_section_header">
-                        <div className="med_branding">
-                            <h1 className="med_title_elite">Clinical <span className="highlight">Appointments</span></h1>
-                            <p className="med_subtitle">
-                                {globalSearch && `Searching: "${globalSearch}" | `}
-                                {filtered.length} total records found
+                <div className="admin_appt_m_list_view">
+                    <div className="admin_appt_m_header">
+                        <div className="admin_appt_m_branding">
+                            <h1 className="admin_appt_m_title">Clinical <span>Appointments</span></h1>
+                            <p className="admin_appt_m_meta">
+                                {globalSearch && `Results for: "${globalSearch}" | `}
+                                {filtered.length} total records
                             </p>
                         </div>
-                        <div className="med_action_group">
-                            <button className="med_btn_outline" onClick={() => alert("CSV Exported")}>
+                        <div className="admin_appt_m_actions">
+                            <button className="admin_appt_m_btn_export" onClick={() => alert("Exported")}>
                                 <Download size={16}/> Export
                             </button>
-                            <button className="med_btn_primary" onClick={() => setShowForm(true)}>
+                            <button className="admin_appt_m_btn_primary" onClick={() => setShowForm(true)}>
                                 <Plus size={18}/> New Booking
                             </button>
                         </div>
                     </div>
 
-                    {/* FILTER TOOLBAR */}
-                    <div className="med_filter_bar">
-                        <div className="med_search_box">
+                    <div className="admin_appt_m_toolbar">
+                        <div className="admin_appt_m_search_container">
                             <Search size={18} color="#94a3b8" />
                             <input 
                                 type="text" 
-                                placeholder="Filter within results..." 
+                                placeholder="Search within results..." 
                                 value={localSearch}
                                 onChange={(e) => {setLocalSearch(e.target.value); setCurrentPage(1);}} 
                             />
                         </div>
                         
-                        <div className="med_dropdown_group">
-                            <select className="med_select_filter" value={filterDept} onChange={(e) => {setFilterDept(e.target.value); setCurrentPage(1);}}>
-                                <option value="">All Departments</option>
+                        <div className="admin_appt_m_filter_group">
+                            <select className="admin_appt_m_select" value={filterDept} onChange={(e) => {setFilterDept(e.target.value); setCurrentPage(1);}}>
+                                <option value="">Departments</option>
                                 <option value="Cardiology">Cardiology</option>
                                 <option value="Orthopedics">Orthopedics</option>
-                                <option value="General Medicine">General Medicine</option>
                                 <option value="Neurology">Neurology</option>
                                 <option value="Pediatrics">Pediatrics</option>
-                                <option value="Gastroenterology">Gastroenterology</option>
                             </select>
 
-                            <select className="med_select_filter" value={filterStatus} onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}}>
-                                <option value="">All Status</option>
+                            <select className="admin_appt_m_select" value={filterStatus} onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}}>
+                                <option value="">Status</option>
                                 <option value="Upcoming">Upcoming</option>
                                 <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
                             </select>
 
-                            <input type="date" className="med_date_filter" value={dateFilter} onChange={(e) => {setDateFilter(e.target.value); setCurrentPage(1);}} />
+                            <input type="date" className="admin_appt_m_date_input" value={dateFilter} onChange={(e) => {setDateFilter(e.target.value); setCurrentPage(1);}} />
                             
                             {(globalSearch || localSearch || filterDept || filterStatus || dateFilter) && (
-                                <button className="med_clear_btn" onClick={() => {
+                                <button className="admin_appt_m_clear" onClick={() => {
                                     setLocalSearch(""); setFilterDept(""); setFilterStatus(""); setDateFilter(""); setCurrentPage(1);
                                 }}>
                                     <X size={14} /> Clear
@@ -160,17 +134,16 @@ export default function Appointment_Management() {
                         </div>
                     </div>
 
-                    {/* DATA REGISTRY TABLE */}
-                    <div className="med_table_container">
-                        <table className="med_table">
+                    <div className="admin_appt_m_table_scroll">
+                        <table className="admin_appt_m_table">
                             <thead>
                                 <tr>
                                     <th>Patient</th>
-                                    <th>Specialist</th>
+                                    <th>Doctor</th>
                                     <th>Schedule</th>
-                                    <th>Category</th>
+                                    <th>Type</th>
                                     <th>Status</th>
-                                    <th className="text_right">Action</th>
+                                    <th className="admin_appt_m_text_right">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -178,30 +151,30 @@ export default function Appointment_Management() {
                                     currentAppointments.map((appt) => (
                                         <tr key={appt.id}>
                                             <td>
-                                                <div className="med_cell_user">
+                                                <div className="admin_appt_m_user_cell">
                                                     <img src={appt.patientPhoto || "https://i.pravatar.cc/150"} alt="" />
-                                                    <div><b>{appt.patient || "Unknown"}</b><span>ID: #{appt.id + 1000}</span></div>
+                                                    <div><b>{appt.patient}</b><span>#{appt.id + 1000}</span></div>
                                                 </div>
                                             </td>
-                                            <td className="med_text_bold">{appt.doctor || "Unassigned"}</td>
+                                            <td className="admin_appt_m_doc_name">{appt.doctor}</td>
                                             <td>
-                                                <div className="med_cell_time">
-                                                    <span className="date">{appt.date}</span>
-                                                    <span className="time">{appt.time}</span>
+                                                <div className="admin_appt_m_time_cell">
+                                                    <span className="admin_appt_m_date_text">{appt.date}</span>
+                                                    <span className="admin_appt_m_time_text">{appt.time}</span>
                                                 </div>
                                             </td>
-                                            <td><span className={`med_tag ${(appt.type || "routine").toLowerCase()}`}>{appt.type}</span></td>
-                                            <td><span className={`med_status ${(appt.status || "upcoming").toLowerCase()}`}>{appt.status}</span></td>
-                                            <td className="text_right">
-                                                <button className="med_btn_manage" onClick={() => handleViewDetails(appt)}>View File</button>
+                                            <td><span className={`admin_appt_m_tag ${appt.type?.toLowerCase()}`}>{appt.type}</span></td>
+                                            <td><span className={`admin_appt_m_status ${appt.status?.toLowerCase()}`}>{appt.status}</span></td>
+                                            <td className="admin_appt_m_text_right">
+                                                <button className="admin_appt_m_btn_view" onClick={() => handleViewDetails(appt)}>View File</button>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="med_no_data">
+                                        <td colSpan="6" className="admin_appt_m_empty">
                                             <Activity size={32} />
-                                            <p>No matches found for your search criteria.</p>
+                                            <p>No matching records found.</p>
                                         </td>
                                     </tr>
                                 )}
@@ -209,111 +182,127 @@ export default function Appointment_Management() {
                         </table>
                     </div>
 
-                    {/* PAGINATION NAVIGATION */}
                     {totalPages > 1 && (
-                        <div className="med_pagination_bar">
-                            <div className="pag_info">
-                                Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filtered.length)}</b> of <b>{filtered.length}</b> records
-                            </div>
-                            <div className="pag_buttons">
-                                <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                                    <ChevronLeft size={16}/>
-                                </button>
-                                
+                        <div className="admin_appt_m_pagination">
+                            <p>Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filtered.length)}</b> of <b>{filtered.length}</b></p>
+                            <div className="admin_appt_m_pag_controls">
+                                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft size={16}/></button>
                                 {[...Array(totalPages)].map((_, i) => {
                                     const page = i + 1;
                                     if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
                                         return (
-                                            <button key={i} className={`pag_num_btn ${currentPage === page ? 'active' : ''}`} onClick={() => handlePageChange(page)}>
-                                                {page}
-                                            </button>
+                                            <button key={i} className={currentPage === page ? 'admin_appt_m_pag_active' : ''} onClick={() => handlePageChange(page)}>{page}</button>
                                         );
                                     } else if (page === currentPage - 2 || page === currentPage + 2) {
-                                        return <span key={i} className="pag_ellipsis">...</span>;
+                                        return <span key={i}>...</span>;
                                     }
                                     return null;
                                 })}
-
-                                <button className="pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                                    <ChevronRight size={16}/>
-                                </button>
+                                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight size={16}/></button>
                             </div>
                         </div>
                     )}
                 </div>
             ) : (
-                /* --- CLINICAL DETAIL WORKSPACE --- */
-                <div className="med_detail_view">
-                    <div className="med_detail_nav">
-                        <button className="med_back_btn" onClick={closeDetails}>
-                            <ArrowLeft size={18}/> Back to Appointments
+                <div className="admin_appt_m_detail_view">
+                    <div className="admin_appt_m_detail_header">
+                        <button className="admin_appt_m_back_btn" onClick={() => setIsDetailView(false)}>
+                            <ArrowLeft size={18}/> Back to Overview
                         </button>
-                        <div className="med_case_id_badge">Reference ID: <b>#MS-2026-00{selectedAppointment.id}</b></div>
+                        <div className="admin_appt_m_status_indicator">
+                            <span className={`admin_appt_m_pulse ${selectedAppointment.status?.toLowerCase()}`}></span>
+                            Reference ID: #MS-{selectedAppointment.id + 4000}
+                        </div>
                     </div>
 
-                    <div className="med_bento_grid_refined">
-                        <div className="med_card_refined med_doc_profile_vertical">
-                            <span className="med_label_micro">Attending Specialist</span>
-                            <div className="med_doc_main_stack">
-                                <div className="med_doc_identity_row">
-                                    <img src={selectedAppointment.doctorPhoto || "https://i.pravatar.cc/150"} alt="Doctor" className="med_avatar_executive" />
-                                    <div className="med_doc_name_group">
-                                        <h2>{selectedAppointment.doctor}</h2>
-                                        <p className="med_specialty_tag">{selectedAppointment.department} Specialist</p>
+                    <div className="admin_appt_m_grid_layout">
+                        <div className="admin_appt_m_card admin_appt_m_profile_card">
+                            <label className="admin_appt_m_label_alt"><ShieldCheck size={14}/> Specialist Profile</label>
+                            <div className="admin_appt_m_profile_flex">
+                                <img src={selectedAppointment.doctorPhoto} alt="" className="admin_appt_m_profile_img" />
+                                <div className="admin_appt_m_profile_info">
+                                    <h2>{selectedAppointment.doctor}</h2>
+                                    <div className="admin_appt_m_degree_tag"><GraduationCap size={14}/> MBBS, MD | {selectedAppointment.department}</div>
+                                    <div className="admin_appt_m_quick_meta">
+                                        <span><MapPin size={12}/> Tower A, Room 402</span>
+                                        <span><Clock size={12}/> Shift: 09:00 - 17:00</span>
                                     </div>
                                 </div>
-                                <div className="med_doc_meta_grid">
-                                    <div className="meta_item"><Clock size={14}/> <b>Shift:</b> 09:00 AM - 05:00 PM</div>
-                                    <div className="meta_item"><MapPin size={14}/> <b>Location:</b> Tower A, Room 402</div>
+                            </div>
+                        </div>
+
+                        <div className="admin_appt_m_card admin_appt_m_profile_card">
+                            <label className="admin_appt_m_label_alt"><User size={14}/> Patient Demographics</label>
+                            <div className="admin_appt_m_profile_flex">
+                                <img src={selectedAppointment.patientPhoto} alt="" className="admin_appt_m_profile_img" />
+                                <div className="admin_appt_m_profile_info">
+                                    <h2>{selectedAppointment.patient}</h2>
+                                    <div className="admin_appt_m_demographic_grid">
+                                        <div className="admin_appt_m_demo_item">Age: <b>32Y</b></div>
+                                        <div className="admin_appt_m_demo_item">Sex: <b>Male</b></div>
+                                        <div className="admin_appt_m_demo_item">Blood: <b>O+</b></div>
+                                    </div>
+                                    <div className="admin_appt_m_contact_info">
+                                        <span><Mail size={12}/> {selectedAppointment.patient?.split(" ")[0].toLowerCase()}@medico.com</span>
+                                        <span><Phone size={12}/> +91 99000 11222</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="med_card_refined med_appt_compact_hero">
-                            <span className="med_label_micro">Schedule details</span>
-                            <div className="med_compact_time_grid">
-                                <div className="c_time_block"><label>Date</label><div className="c_value">{selectedAppointment.date}</div></div>
-                                <div className="c_time_block"><label>Time</label><div className="c_value">{selectedAppointment.time}</div></div>
-                                <div className="c_time_block"><label>Type</label><div className={`c_tag ${(selectedAppointment.type || "").toLowerCase()}`}>{selectedAppointment.type}</div></div>
-                            </div>
-                            <div className="med_compact_notes"><label>Clinical Notes</label><p>{selectedAppointment.notes || "No notes available for this session."}</p></div>
-                        </div>
-
-                        <div className="med_card_refined med_patient_info_compact">
-                            <span className="med_label_micro">Patient Record Profile</span>
-                            <div className="med_patient_mini_layout">
-                                <div className="p_identity_mini">
-                                    <img src={selectedAppointment.patientPhoto || "https://i.pravatar.cc/150"} alt="Patient" className="med_avatar_small_circle" />
-                                    <div className="p_text_mini"><h4>{selectedAppointment.patient}</h4><span>ID: #PT-{selectedAppointment.id}</span></div>
+                        <div className="admin_appt_m_card admin_appt_m_session_details_full">
+                            <label className="admin_appt_m_label_alt"><Activity size={14}/> Session Overview</label>
+                            <div className="admin_appt_m_session_row">
+                                <div className="admin_appt_m_session_cell">
+                                    <Calendar size={18} />
+                                    <div><small>Schedule Date</small><p>{selectedAppointment.date}</p></div>
                                 </div>
-                                <div className="p_meta_grid_mini">
-                                    <div className="p_meta_item"><Phone size={12}/> +91 90000 88888</div>
-                                    <div className="p_meta_item"><Mail size={12}/> {selectedAppointment.patient?.toLowerCase().split(' ')[0]}@medico.com</div>
-                                    <div className="p_meta_item"><Activity size={12}/> Medical History Synced</div>
+                                <div className="admin_appt_m_session_cell">
+                                    <Clock size={18} />
+                                    <div><small>Time Slot</small><p>{selectedAppointment.time}</p></div>
+                                </div>
+                                <div className="admin_appt_m_session_cell">
+                                    <Hash size={18} />
+                                    <div><small>Visit Type</small><p className="admin_appt_m_type_text">{selectedAppointment.type}</p></div>
+                                </div>
+                                <div className="admin_appt_m_session_cell">
+                                    <Thermometer size={18} />
+                                    <div><small>Status</small><p className={`admin_appt_m_status_pill ${selectedAppointment.status?.toLowerCase()}`}>{selectedAppointment.status}</p></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="med_card_refined med_history_extended">
-                            <span className="med_label_micro">Consultation History</span>
-                            <div className="med_history_list_pro">
-                                <div className="h_pro_header">
-                                    <span>Schedule</span>
-                                    <span>Category</span>
-                                    <span>Observations</span>
-                                    <span className="text_right">Records</span>
-                                </div>
-                                {getConsultationHistory(selectedAppointment).length > 0 ? (
-                                    getConsultationHistory(selectedAppointment).map((past) => (
-                                        <div key={past.id} className="h_pro_row">
-                                            <div className="h_time_col"><div className="h_date_flex"><b>{past.date}</b><span className="h_time_pill">{past.time}</span></div></div>
-                                            <div className="h_diag_col">{past.type}</div>
-                                            <div className="h_remarks_col">{past.notes}</div>
-                                            <div className="h_action_col text_right"><button className="med_btn_view_small"><FileText size={14} /> <span>View</span></button></div>
-                                        </div>
-                                    ))
+                        <div className="admin_appt_m_card admin_appt_m_history_full">
+                            <label className="admin_appt_m_label_alt"><ClipboardList size={14}/> Previous Encounters</label>
+                            <div className="admin_appt_m_history_list_v3">
+                                {consultationHistory.length > 0 ? (
+                                    <table className="admin_appt_m_modern_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Clinical Date</th>
+                                                <th>Category</th>
+                                                <th>Observations</th>
+                                                <th className="admin_appt_m_text_right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {consultationHistory.map((past) => (
+                                                <tr key={past.id}>
+                                                    <td className="admin_appt_m_date_col"><b>{past.date}</b><br/><span>{past.time}</span></td>
+                                                    <td><span className="admin_appt_m_cat_tag">{past.type}</span></td>
+                                                    <td><p className="admin_appt_m_history_notes_text">{past.notes}</p></td>
+                                                    <td className="admin_appt_m_text_right">
+                                                        <button className="admin_appt_m_btn_file_view"><FileText size={14}/> Report</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 ) : (
-                                    <div className="med_no_history_msg">No previous sessions found for this clinical relationship.</div>
+                                    <div className="admin_appt_m_empty_clinical">
+                                        <Activity size={24}/>
+                                        <p>No prior clinical history found for this specific Patient-Specialist interaction.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -321,21 +310,20 @@ export default function Appointment_Management() {
                 </div>
             )}
 
-            {/* NEW BOOKING MODAL */}
             {showForm && (
-                <div className="med_modal_overlay">
-                    <div className="med_modal_content">
-                        <div className="med_modal_header">
-                            <h3>Create <span>Appointment</span></h3>
-                            <button onClick={() => setShowForm(false)} className="med_modal_close"><X size={20}/></button>
+                <div className="admin_appt_m_modal">
+                    <div className="admin_appt_m_modal_box">
+                        <div className="admin_appt_m_modal_head">
+                            <h3>New <span>Booking</span></h3>
+                            <button onClick={() => setShowForm(false)}><X size={20}/></button>
                         </div>
-                        <form className="med_form_body">
-                            <div className="med_input_group"><label>Patient Name</label><input type="text" placeholder="Search or enter full name" /></div>
-                            <div className="med_form_row">
-                                <div className="med_input_group"><label>Date</label><input type="date" /></div>
-                                <div className="med_input_group"><label>Time</label><input type="time" /></div>
+                        <form className="admin_appt_m_form">
+                            <div className="admin_appt_m_field"><label>Patient Name</label><input type="text" /></div>
+                            <div className="admin_appt_m_row">
+                                <div className="admin_appt_m_field"><label>Date</label><input type="date" /></div>
+                                <div className="admin_appt_m_field"><label>Time</label><input type="time" /></div>
                             </div>
-                            <button type="submit" className="med_btn_submit_final">Confirm Booking</button>
+                            <button type="submit" className="admin_appt_m_submit">Confirm Appointment</button>
                         </form>
                     </div>
                 </div>

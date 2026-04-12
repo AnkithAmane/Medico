@@ -1,184 +1,163 @@
 import React, { useState, useMemo } from "react";
 import doctorsList from "../../Assets/Data/doctor.json";
 import { 
-  FaUser, FaEnvelope, FaIdCard, FaStethoscope, 
-  FaGraduationCap, FaEdit, FaSave, FaTimes, FaChartLine, FaHistory 
+  FaIdCard, FaStethoscope, FaEdit, FaSave, 
+  FaTimes, FaUserMd, FaPhoneAlt, FaEnvelope, 
+  FaAward, FaHospitalUser 
 } from "react-icons/fa";
 import "./Doctor_Profile.css";
 
 export default function Profile() {
-  // --- DATA INITIALIZATION ---
   const initialDoctorData = useMemo(() => {
-    const doc = doctorsList.find(d => d.id === "DOC-001") || doctorsList[0];
+    const doc = doctorsList.find(d => d.id === "DOC-006") || doctorsList[0] || {};
     return {
       ...doc,
-      firstName: doc.name.split(" ")[1] || doc.name,
-      lastName: doc.name.split(" ")[2] || "",
+      bio: "Dedicated medical professional with extensive experience in clinical diagnosis and patient-centered care. Committed to staying updated with the latest medical advancements.",
+      languages: ["English", "Hindi", "Marathi"],
+      experience: "12+ Years"
     };
   }, []);
 
-  // --- STATE MANAGEMENT ---
   const [formState, setFormState] = useState(initialDoctorData);
   const [isEditing, setIsEditing] = useState(false);
 
-  // --- HANDLERS ---
   const handleChange = (key, value) => {
     setFormState(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log("Clinical Registry Updated:", formState);
   };
 
   return (
-    <div className="med_profile_root med_page_fade_in">
-      <div className="med_profile_grid">
+    <div className="doc_prof_m_root doc_prof_m_fade_in">
+      <div className="doc_prof_m_grid">
         
-        {/* LEFT: IDENTITY & QUICK STATS */}
-        <div className="med_identity_sidebar">
-          <div className="med_card_refined med_id_card">
-            <div className="med_avatar_wrapper">
-              <img src={formState.photo} alt={formState.name} className="med_profile_image" />
-              <div className={`med_status_indicator ${formState.availability.toLowerCase()}`}></div>
+        {/* LEFT: IDENTITY COLUMN */}
+        <aside className="doc_prof_m_sidebar">
+          <div className="doc_prof_m_card doc_prof_m_identity">
+            <div className="doc_prof_m_avatar_wrapper">
+              <img src={formState.photo} alt={formState.name} className="doc_prof_m_img" />
+              <div className={`doc_prof_m_status ${formState.availability?.toLowerCase() || 'busy'}`}></div>
             </div>
             
-            <div className="med_id_text">
+            <div className="doc_prof_m_id_text">
               <h2>{formState.name}</h2>
-              <span className="med_qual_badge">{formState.degrees}</span>
-              <p className="med_spec_label">{formState.department} Specialist</p>
+              <span className="doc_prof_m_qual">{formState.degrees}</span>
+              <p className="doc_prof_m_dept_tag">{formState.department} Specialist</p>
             </div>
 
-            <div className="med_id_stats_row">
-               <div className="id_stat_node">
-                  <label>Appointments</label>
-                  <strong>{formState.totalAppointments}</strong>
+            <div className="doc_prof_m_stats_row">
+               <div className="doc_prof_m_stat_node">
+                  <label>Experience</label>
+                  <strong>{formState.experience}</strong>
                </div>
-               <div className="id_stat_node">
-                  <label>Patients</label>
-                  <strong>{formState.totalPatients}</strong>
+               <div className="doc_prof_m_stat_node">
+                  <label>Case Load</label>
+                  <strong>{formState.totalPatients || 0}+</strong>
                </div>
             </div>
 
-            <div className="med_id_actions">
+            <div className="doc_prof_m_actions">
               {isEditing ? (
-                <div className="med_action_group_flex">
-                  <button className="med_btn_primary" onClick={handleSave}><FaSave /> Save Changes</button>
-                  <button className="med_btn_outline" onClick={() => setIsEditing(false)}><FaTimes /> Cancel</button>
+                <div className="doc_prof_m_btn_group">
+                  <button className="doc_prof_m_btn_primary" onClick={handleSave}><FaSave /> Save</button>
+                  <button className="doc_prof_m_btn_outline" onClick={() => setIsEditing(false)}><FaTimes /> Cancel</button>
                 </div>
               ) : (
-                <button className="med_btn_primary full_width" onClick={() => setIsEditing(true)}>
-                  <FaEdit /> Modify Practitioner Info
+                <button className="doc_prof_m_btn_primary full_width" onClick={() => setIsEditing(true)}>
+                  <FaEdit /> Edit Profile
                 </button>
               )}
             </div>
           </div>
+        </aside>
 
-          {/* PERFORMANCE SNAPSHOT */}
-          <div className="med_card_refined med_mini_chart_card">
-             <div className="card_head_elite">
-                <FaChartLine className="icon_blue" />
-                <h4>Performance Indices</h4>
-             </div>
-             <div className="mini_perf_grid">
-                {formState.performanceStats.map((stat, i) => (
-                  <div key={i} className="perf_bar_container">
-                     <div className="perf_bar_fill" style={{ height: `${stat}%` }}></div>
-                     <span>Q{i+1}</span>
-                  </div>
-                ))}
-             </div>
-          </div>
-        </div>
-
-        {/* RIGHT: COMPREHENSIVE REGISTRY */}
-        <div className="med_data_registry">
-          <div className="med_details_grid">
-            
-            {/* CORE IDENTITY */}
-            <div className="med_card_refined">
-              <div className="card_head_elite">
-                <FaIdCard className="icon_blue" />
-                <h4>Registry Identification</h4>
-              </div>
-              <div className="med_form_compact">
-                <div className="med_field">
-                  <label>Practitioner ID</label>
-                  <p className="med_readonly_val">{formState.id}</p>
-                </div>
-                <div className="med_field">
-                  <label>Full Name</label>
-                  {isEditing ? (
-                    <input type="text" value={formState.name} onChange={e => handleChange("name", e.target.value)} />
-                  ) : (
-                    <p>{formState.name}</p>
-                  )}
-                </div>
-                <div className="med_field">
-                  <label>Academic Degrees</label>
-                  {isEditing ? (
-                    <input type="text" value={formState.degrees} onChange={e => handleChange("degrees", e.target.value)} />
-                  ) : (
-                    <p>{formState.degrees}</p>
-                  )}
-                </div>
-              </div>
+        {/* RIGHT: INFORMATION REGISTRY */}
+        <main className="doc_prof_m_main">
+          
+          {/* PROFESSIONAL BIO */}
+          <section className="doc_prof_m_card">
+            <div className="doc_prof_m_card_header">
+              <FaUserMd className="doc_prof_m_icon" />
+              <h4>Professional Summary</h4>
             </div>
+            <div className="doc_prof_m_content">
+              {isEditing ? (
+                <textarea 
+                  className="doc_prof_m_textarea"
+                  value={formState.bio} 
+                  onChange={e => handleChange("bio", e.target.value)}
+                  rows="4"
+                />
+              ) : (
+                <p className="doc_prof_m_bio_text">{formState.bio}</p>
+              )}
+            </div>
+          </section>
 
-            {/* CLINICAL ASSIGNMENT */}
-            <div className="med_card_refined">
-              <div className="card_head_elite">
-                <FaStethoscope className="icon_blue" />
-                <h4>Clinical Assignment</h4>
+          <div className="doc_prof_m_details_grid">
+            {/* CLINICAL COMPETENCIES */}
+            <section className="doc_prof_m_card">
+              <div className="doc_prof_m_card_header">
+                <FaStethoscope className="doc_prof_m_icon" />
+                <h4>Clinical Domain</h4>
               </div>
-              <div className="med_form_compact">
-                <div className="med_field">
-                  <label>Primary Department</label>
-                  {isEditing ? (
-                    <input type="text" value={formState.department} onChange={e => handleChange("department", e.target.value)} />
-                  ) : (
-                    <p>{formState.department}</p>
-                  )}
+              <div className="doc_prof_m_form">
+                <div className="doc_prof_m_field">
+                  <label>Primary Specialty</label>
+                  <p>{formState.department}</p>
                 </div>
-                <div className="med_field">
-                  <label>System Availability</label>
-                  <p className={`status_text ${formState.availability.toLowerCase()}`}>
+                <div className="doc_prof_m_field">
+                  <label>Clinical Status</label>
+                  <p className={`doc_prof_m_status_text ${formState.availability?.toLowerCase()}`}>
                     {formState.availability}
                   </p>
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* CASE HISTORY LOG */}
-            <div className="med_card_refined span_full">
-              <div className="card_head_elite">
-                <FaHistory className="icon_blue" />
-                <h4>Recent Case History</h4>
+            {/* CONTACT CREDENTIALS */}
+            <section className="doc_prof_m_card">
+              <div className="doc_prof_m_card_header">
+                <FaHospitalUser className="doc_prof_m_icon" />
+                <h4>Contact Registry</h4>
               </div>
-              <div className="med_history_scroll_area">
-                <table className="med_history_table">
-                  <thead>
-                    <tr>
-                      <th>Patient Name</th>
-                      <th>Consultation Date</th>
-                      <th className="text_right">Reference ID</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formState.appointmentHistory.map((caseItem, idx) => (
-                      <tr key={idx}>
-                        <td><strong>{caseItem.patient}</strong></td>
-                        <td>{caseItem.date}</td>
-                        <td className="text_right">#CS-{1000 + idx}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="doc_prof_m_form">
+                <div className="doc_prof_m_field">
+                  <label><FaEnvelope /> Official Email</label>
+                  <p>{formState.email || "practitioner@medico.com"}</p>
+                </div>
+                <div className="doc_prof_m_field">
+                  <label><FaPhoneAlt /> Clinical Extension</label>
+                  <p>{formState.phone || "+91 98220 11223"}</p>
+                </div>
               </div>
-            </div>
+            </section>
 
+            {/* ACADEMIC & CERTIFICATION */}
+            <section className="doc_prof_m_card span_full">
+              <div className="doc_prof_m_card_header">
+                <FaAward className="doc_prof_m_icon" />
+                <h4>Academic & Legal Credentials</h4>
+              </div>
+              <div className="doc_prof_m_info_grid">
+                <div className="doc_prof_m_field">
+                  <label>Medical License No.</label>
+                  <p className="doc_prof_m_readonly">{formState.id}</p>
+                </div>
+                <div className="doc_prof_m_field">
+                  <label>Board Certification</label>
+                  <p>{formState.degrees}</p>
+                </div>
+                <div className="doc_prof_m_field">
+                  <label>Languages Spoken</label>
+                  <p>{formState.languages.join(", ")}</p>
+                </div>
+              </div>
+            </section>
           </div>
-        </div>
+        </main>
 
       </div>
     </div>

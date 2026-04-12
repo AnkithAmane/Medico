@@ -1,4 +1,5 @@
-.auth-form-container {
+/* --- 1. LAYOUT & CONTAINER SECTIONS --- */
+.sign_in_form_wrapper {
     position: absolute;
     top: 0;
     height: 100%;
@@ -10,32 +11,42 @@
     box-sizing: border-box;
 }
 
-.sign-in-side {
+.sign_in_panel {
     left: 0;
     z-index: 2;
     opacity: 1;
 }
+.sign_in_link_wrapper{
+    text-decoration: none;
+}
 
-.sign-up-side {
+.sign_in_signup_panel {
     left: 0;
     width: 50%;
     opacity: 0;
     z-index: 1;
 }
 
-.right-panel-active .sign-in-side {
+/* --- 2. PANEL SWITCHING LOGIC (DESKTOP) --- */
+.right-panel-active .sign_in_panel {
     transform: translateX(100%);
     opacity: 0;
 }
 
-.right-panel-active .sign-up-side {
+.right-panel-active .sign_in_signup_panel {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
-    animation: showPanel 0.6s;
+    animation: sign_in_show_panel 0.6s;
 }
 
-.logo-container {
+@keyframes sign_in_show_panel {
+    0%, 49.99% { opacity: 0; z-index: 1; }
+    50%, 100% { opacity: 1; z-index: 5; }
+}
+
+/* --- 3. BRANDING & IDENTITY --- */
+.sign_in_brand_box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -43,7 +54,7 @@
     gap: 10px;
 }
 
-.shield {
+.sign_in_logo_icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,17 +65,17 @@
     line-height: 1;
 }
 
-.portal-name {
+.sign_in_portal_name {
     font-size: 14px;
     font-weight: 700;
     color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 1.2px;
     margin: 0;
-    line-height: 1.2;
 }
 
-.auth-form {
+/* --- 4. FORM MAIN STRUCTURE --- */
+.sign_in_form_main {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,92 +85,79 @@
     box-sizing: border-box;
 }
 
-.auth-form h1 {
+.sign_in_title {
     font-weight: 700;
     margin: 0 0 15px 0;
     color: var(--text-main);
     font-size: 26px;
-    line-height: 1.2;
 }
 
-.divider-text {
+.sign_in_divider_text {
     font-size: 11px;
     color: #999;
     margin-bottom: 20px;
-    line-height: 1;
 }
 
-.input-group {
+/* --- 5. INPUT FIELDS & ICONS --- */
+.sign_in_input_group {
     position: relative !important;
     width: 90% !important;
     margin-bottom: 15px !important;
 }
 
-.input-group input {
+.sign_in_input_group input {
     width: 100% !important;
     height: 45px !important;
     padding: 0 12px 0 45px !important;
     border-radius: 12px !important;
     border: 1px solid #e2e8f0 !important;
     font-size: 14px !important;
-    box-sizing: border-box !important;
     background-color: #f8fafc !important;
     transition: all 0.3s ease !important;
-    line-height: normal !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
 }
 
-.input-group input:focus {
+.sign_in_input_group input:focus {
     outline: none !important;
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 3px var(--primary-glow) !important;
 }
 
-.input-icon {
+.sign_in_input_icon {
     position: absolute;
     top: 50%;
     left: 18px;
     transform: translateY(-50%);
     font-size: 16px;
     opacity: 0.6;
-    line-height: 1;
     display: flex;
     align-items: center;
 }
 
-.terms-check {
+/* --- 6. CHECKBOX & TERMS --- */
+.sign_in_terms_check {
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 10px 0;
     font-size: 11px;
     color: var(--text-muted);
-    line-height: 1.2;
 }
 
-.terms-check input {
-    cursor: pointer;
-    accent-color: var(--primary);
-    margin: 0;
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-}
-
-.terms-check span {
+.sign_in_terms_check span {
     color: var(--primary);
     font-weight: 600;
     cursor: pointer;
 }
 
-.social-container {
+/* --- 7. BUTTONS & SOCIALS --- */
+.sign_in_social_container {
     margin: 15px 0;
     display: flex;
     justify-content: center;
 }
 
-.google-btn {
+.sign_in_google_btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,27 +169,20 @@
     width: 220px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    color: #444;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    box-sizing: border-box;
-    line-height: 1;
 }
 
-.google-btn:hover {
+.sign_in_google_btn:hover {
     background-color: #f8f9fa;
-    border-color: #ccc;
     transform: translateY(-2px);
 }
 
-.google-icon {
+.sign_in_google_icon {
     height: 20px;
     width: 20px;
-    flex-shrink: 0;
 }
 
-.submit-btn {
+.sign_in_submit_btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,17 +199,14 @@
     cursor: pointer;
     box-shadow: 0 4px 12px var(--primary-glow);
     transition: transform 0.2s ease;
-    box-sizing: border-box;
-    line-height: 1;
-    appearance: none;
-    -webkit-appearance: none;
 }
 
-.submit-btn:hover {
+.sign_in_submit_btn:hover {
     transform: translateY(-2px);
 }
 
-.form-footer-links {
+/* --- 8. FOOTER & MOBILE SWITCHER --- */
+.sign_in_footer_links {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -226,22 +214,70 @@
     margin-top: 20px;
 }
 
-.link {
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
-
-.footer-link {
+.sign_in_footer_link {
     font-size: 12px;
     cursor: pointer;
     text-decoration: none;
     color: var(--primary);
     font-weight: 500;
-    transition: opacity 0.2s;
-    line-height: 1.2;
 }
 
-.footer-link:hover {
-    opacity: 0.8;
+.sign_in_mobile_switcher {
+    display: none; /* Hidden on Desktop */
+}
+
+/* --- 9. RESPONSIVE MEDIA QUERIES --- */
+
+@media (max-width: 550px) {
+    .sign_in_form_wrapper {
+        width: 100%;
+        position: relative;
+        height: auto;
+        padding: 20px 0;
+    }
+
+    /* Stack Logic for Mobile */
+    .sign_in_panel {
+        display: block;
+        opacity: 1;
+    }
+
+    .right-panel-active .sign_in_panel {
+        display: none;
+    }
+
+    .sign_in_signup_panel {
+        display: none;
+        opacity: 1;
+        transform: none !important;
+    }
+
+    .right-panel-active .sign_in_signup_panel {
+        display: block;
+        transform: none !important;
+    }
+
+    /* Mobile switcher styling */
+    .sign_in_mobile_switcher {
+        display: block;
+        margin-top: 15px;
+        font-size: 13px;
+        color: var(--text-main);
+    }
+
+    .sign_in_mobile_switcher span {
+        color: var(--primary);
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-left: 4px;
+    }
+
+    .sign_in_form_main {
+        padding: 0 20px;
+    }
+
+    .sign_in_submit_btn {
+        width: 80%;
+    }
 }

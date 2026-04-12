@@ -21,11 +21,10 @@
     background-color: var(--bg-light);
     color: var(--text-main);
     overflow-x: hidden;
-    min-height: 100vh;
-    height: 100dvh;
-    -webkit-font-smoothing: antialiased;
-    text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
+    overflow-y: hidden;
+    min-height: auto;
+    height: auto;
+    zoom: 0.85;
 }
 
 /* --- NAVBAR SECTION --- */
@@ -37,7 +36,6 @@
     z-index: 1000;
     background: var(--glass);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
@@ -113,9 +111,6 @@
     
 }
 
-
-
-
 /* --- HERO SECTION --- */
 .landing_page_hero {
     min-height: 100vh;
@@ -124,14 +119,13 @@
     justify-content: center;
     background: radial-gradient(circle at top right, #e0f2fe, transparent),
                 radial-gradient(circle at bottom left, #f0f9ff, transparent);
-    padding: 80px 5% 0;
+    padding: 13% 0 100px 0;
     box-sizing: border-box;
 }
 
 .landing_page_hero_glass_card {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     padding: 70px 40px;
     border-radius: 40px;
@@ -294,7 +288,6 @@
 .landing_page_glass_tag {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.2);
     padding: 30px;
     border-radius: 20px;
@@ -709,4 +702,25 @@
     .landing_page_bento_grid { grid-template-columns: 1fr; }
     .landing_page_nav_inner { width: 95%; }
     .landing_page_hero { padding-top: 100px; }
+}
+@media (max-width: 600px) {
+    .landing_page_nav_inner {
+        justify-content: center; /* Centers everything on mobile */
+        flex-direction: column; /* Stacks logo above buttons */
+        gap: 10px;
+    }
+
+    .landing_page_navbar {
+        padding: 15px 0;
+    }
+
+    .landing_page_nav_actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Adjusting Hero spacing so it doesn't hide under the taller mobile nav */
+    .landing_page_hero {
+        padding-top: 140px; 
+    }
 }
