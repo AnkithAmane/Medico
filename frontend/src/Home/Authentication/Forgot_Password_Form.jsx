@@ -1,47 +1,41 @@
 import { Link } from 'react-router-dom';
+import './Forgot_Password_Form.css';
 
-/* STYLE IMPORTS */
-import '../Styles/Home/Forgot_Password_Form.css';
-
-/**
- * FORGOT PASSWORD FORM
- * Handles the password recovery state within the Auth_Main wrapper.
- */
 const ForgotPasswordForm = ({ setShowForgotPassword }) => {
   return (
-    <div className="forgot-wrapper">
+    <div className="forgot_form_wrapper">
       
-      {/* 1. HEADER SECTION */}
-      <div className="forgot-header">
+      {/* Header Section */}
+      <div className="forgot_form_header">
         <h1>Reset Password</h1>
         <p>A recovery link will be sent to your verified email address.</p>
       </div>
 
-      {/* 2. FORM BODY */}
-      <form className="forgot-form-body" onSubmit={(e) => e.preventDefault()}>
+      {/* Form Content */}
+      <form className="forgot_form_body_content" onSubmit={(e) => e.preventDefault()}>
         
         {/* Input Fields */}
-        <div className="input-field-group">
-          <div className="input-container">
+        <div className="forgot_form_field_group">
+          <div className="forgot_form_input_item">
             <input type="email" placeholder="Email Address" required />
-            <span className="input-icon">✉️</span>
+            <span className="forgot_form_glyph">✉️</span>
           </div>
           
-          <div className="input-container">
+          <div className="forgot_form_input_item">
             <input type="password" placeholder="New Password" required />
-            <span className="input-icon">🔒</span>
+            <span className="forgot_form_glyph">🔒</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="action-stack">
-          <button type="submit" className="main-submit-btn">
+        <div className="forgot_form_btn_stack">
+          <button type="submit" className="forgot_form_btn_submit">
             Send Recovery Link
           </button>
           
           <button 
             type="button" 
-            className="secondary-outline-btn" 
+            className="forgot_form_btn_cancel" 
             onClick={() => setShowForgotPassword(false)}
           >
             Back to Login
@@ -49,9 +43,9 @@ const ForgotPasswordForm = ({ setShowForgotPassword }) => {
         </div>
       </form>
 
-      {/* 3. FOOTER NAVIGATION */}
-      <div className="forgot-footer">
-        <Link to="/" className="home-navigation">
+      {/* Footer Navigation */}
+      <div className="forgot_form_nav_footer">
+        <Link to="/" className="forgot_form_home_anchor">
           <span className="arrow">⬅</span> Back to Home
         </Link>
       </div>

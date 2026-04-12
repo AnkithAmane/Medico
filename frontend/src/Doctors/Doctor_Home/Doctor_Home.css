@@ -1,405 +1,407 @@
-/* ============================================================
-   MEDICO+ ELITE: DOCTOR PORTAL CORE STYLESHEET
-   Refinement: Tri-Line Identity, Zero-Leakage Sidebar, Admin Clock
-   ============================================================ */
-
 :root {
-    --med-primary: #007acc;
-    --med-primary-light: #e0f2fe;
-    --med-secondary: #00d2ff;
-    --med-bg: #f8fafc;
-    --med-sidebar: #ffffff;
-    --med-text: #1e293b;
-    --med-text-muted: #64748b;
-    --med-border: #e2e8f0;
-    --med-gradient: linear-gradient(135deg, #007acc 0%, #00d2ff 100%);
+  --med-primary: #007acc;
+  --med-primary-light: #e0f2fe;
+  --med-secondary: #00d2ff;
+  --med-bg: #f8fafc;
+  --med-sidebar: #ffffff;
+  --med-text: #1e293b;
+  --med-text-muted: #64748b;
+  --med-border: #e2e8f0;
+  --med-gradient: linear-gradient(135deg, #007acc 0%, #00d2ff 100%);
 }
 
-/* --- BASE LAYOUT --- */
-.med_doctor_root {
-    display: flex;
+.doc_home_med_doctor_root {
+  display: flex;
+  background-color: var(--med-bg);
+  font-family: "Poppins", sans-serif;
+  color: var(--med-text);
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 125%;
+  height: 125vh;
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+
+.doc_home_med_sidebar_elite {
+  width: 270px;
+  height: 100%;
+  background: var(--med-sidebar);
+  border-right: 1px solid var(--med-border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.doc_home_med_sidebar_elite.doc_home_is_collapsed {
+  width: 95px;
+}
+
+.doc_home_doc_identity_panel {
+  padding: 45px 20px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.doc_home_doc_identity_panel:hover {
+  background: rgba(0, 122, 204, 0.02);
+}
+
+.doc_home_avatar_wrapper {
+  position: relative;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.doc_home_identity_avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 32px;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 25px rgba(0, 122, 204, 0.12);
+  transition: all 0.4s ease;
+}
+
+.doc_home_active_indicator_sidebar {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 3px solid #fff;
+  border-radius: 50%;
+}
+
+.doc_home_identity_meta {
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.doc_home_doc_full_name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.doc_home_doc_degree_tag {
+  font-size: 0.8rem;
+  color: var(--med-primary);
+  font-weight: 700;
+  margin: 4px 0 2px;
+}
+
+.doc_home_doc_dept_tag {
+  font-size: 0.7rem;
+  color: var(--med-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.doc_home_sidebar_navigation_menu {
+  flex: 1;
+  padding: 10px 15px;
+  overflow-y: auto;
+}
+
+.doc_home_nav_menu_item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  border: none;
+  background: transparent;
+  color: var(--med-text-muted);
+  border-radius: 18px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  gap: 15px;
+}
+
+.doc_home_nav_menu_item:hover {
+  background: var(--med-primary-light);
+  color: var(--med-primary);
+}
+
+.doc_home_nav_menu_item.doc_home_is_active {
+  background: var(--med-gradient);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 122, 204, 0.2);
+}
+
+.doc_home_collapsed_tooltip {
+  position: absolute;
+  left: 85px;
+  background: var(--med-text);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: none;
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.doc_home_nav_menu_item:hover .doc_home_collapsed_tooltip {
+  display: block;
+}
+
+.doc_home_sidebar_footer_actions {
+  padding: 20px 15px;
+  border-top: 1px solid var(--med-border);
+  margin-bottom: 20px;
+}
+
+.doc_home_logout_btn_elite {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  background: #fff1f2;
+  color: #be123c;
+  border-radius: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.doc_home_logout_btn_elite:hover {
+  background: #be123c;
+  color: #fff1f2;
+}
+
+.doc_home_sidebar_toggle_trigger {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  width: 26px;
+  height: 26px;
+  background: var(--med-primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.doc_home_med_workspace_viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.doc_home_med_workspace_header {
+  height: 85px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--med-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 900;
+}
+
+.doc_home_medico_plus_logo_area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc_home_logo_symbol {
+  font-size: 1.8rem;
+  color: var(--med-primary);
+  font-weight: 900;
+}
+
+.doc_home_logo_text {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--med-primary);
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.doc_home_text_cyan {
+  color: var(--med-secondary);
+  font-weight: 400;
+}
+
+.doc_home_global_search_container {
+  background: #f1f5f9;
+  border-radius: 15px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 450px;
+  transition: all 0.3s ease;
+}
+
+.doc_home_global_search_container.doc_home_is_focused {
+  background: #fff;
+  border: 1px solid var(--med-primary);
+  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.08);
+}
+
+.doc_home_global_search_container input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.doc_home_header_right_controls {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.doc_home_widget_header_sync {
+  display: flex;
+  align-items: center;
+}
+
+.doc_home_live_time_group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.doc_home_live_time {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--med-text);
+  letter-spacing: -0.5px;
+}
+
+.doc_home_full_date_text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--med-text-muted);
+  white-space: nowrap;
+}
+
+.doc_home_header_icon_group {
+  display: flex;
+  gap: 10px;
+}
+
+.doc_home_control_icon_btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: 0.25s;
+  color: var(--med-text-muted);
+}
+
+.doc_home_control_icon_btn:hover {
+  color: var(--med-primary);
+}
+
+.doc_home_notif_ping_dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  background: #f43f5e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.doc_home_med_workspace_content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  background: linear-gradient(to bottom, #fcfdfe, #f8fafc);
+}
+
+.doc_home_content_inner_wrapper {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.doc_home_view_fade_in {
+  animation: doc_home_fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes doc_home_fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .doc_home_med_doctor_root {
+    width: 100%;
     height: 100vh;
-    width: 100vw;
-    background-color: var(--med-bg);
-    font-family: 'Poppins', sans-serif;
-    color: var(--med-text);
-    overflow: hidden;
-}
-
-/* --- SIDEBAR CONFIGURATION --- */
-.med_sidebar_elite {
-    width: 270px;
-    height: 100%;
-    background: var(--med-sidebar);
-    border-right: 1px solid var(--med-border);
-    display: flex;
-    flex-direction: column;
+    transform: none;
     position: relative;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    overflow: hidden;
-}
-
-.med_sidebar_elite.is_collapsed {
-    width: 95px;
-}
-
-/* Sidebar Identity Panel */
-.doc_identity_panel { 
-    padding: 45px 20px 25px; 
-    margin-bottom: 15px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.doc_identity_panel:hover { 
-    background: rgba(0, 122, 204, 0.02); 
-}
-
-.avatar_wrapper { 
-    position: relative; 
-    margin-bottom: 15px; 
-    flex-shrink: 0; 
-}
-
-.identity_avatar {
-    width: 100px; 
-    height: 100px; 
-    border-radius: 32px; 
-    object-fit: cover;
-    border: 4px solid #fff; 
-    box-shadow: 0 10px 25px rgba(0, 122, 204, 0.12);
-    transition: all 0.4s ease;
-}
-
-.is_collapsed .identity_avatar { 
-    width: 50px; 
-    height: 50px; 
-    border-radius: 14px; 
-}
-
-.active_indicator_sidebar {
-    position: absolute; 
-    bottom: 5px; 
-    right: 5px; 
-    width: 14px; 
-    height: 14px;
-    background: #10b981; 
-    border: 3px solid #fff; 
-    border-radius: 50%;
-}
-
-/* Sidebar Metadata & Labels */
-.identity_meta {
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-
-.is_collapsed .identity_meta, 
-.is_collapsed .nav_label_text, 
-.is_collapsed .logout_text {
+  }
+  .doc_home_med_sidebar_elite { width: 95px; }
+  .doc_home_identity_avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+  .doc_home_identity_meta, 
+  .doc_home_nav_label_text, 
+  .doc_home_logout_text { 
     display: none; 
-    opacity: 0;
+  }
 }
 
-.nav_label_text {
-    font-size: 1rem;
-}
-
-.doc_full_name { 
-    font-size: 1.05rem; 
-    font-weight: 800; 
-    color: var(--med-text); 
-    margin: 0; 
-    line-height: 1.2; 
-}
-
-.doc_degree_tag { 
-    font-size: 0.8rem; 
-    color: var(--med-primary); 
-    font-weight: 700; 
-    margin: 4px 0 2px; 
-}
-
-.doc_dept_tag { 
-    font-size: 0.7rem; 
-    color: var(--med-text-muted); 
-    font-weight: 600; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-}
-
-/* Sidebar Navigation */
-.sidebar_navigation_menu { 
-    flex: 1; 
-    padding: 10px 15px; 
-}
-
-.nav_spacer_top { 
-    height: 0px; 
-}
-
-.nav_menu_item {
-    width: 100%; 
-    display: flex; 
-    align-items: center; 
-    padding: 14px 18px; 
-    margin-bottom: 8px;
-    border: none; 
-    background: transparent; 
-    color: var(--med-text-muted); 
-    border-radius: 18px;
-    transition: all 0.3s ease; 
-    cursor: pointer; 
-    gap: 15px;
-}
-
-.nav_menu_item:hover { 
-    background: var(--med-primary-light); 
-    color: var(--med-primary); 
-}
-
-.nav_menu_item.is_active { 
-    background: var(--med-gradient); 
-    color: #fff; 
-    box-shadow: 0 8px 20px rgba(0, 122, 204, 0.2); 
-}
-
-.is_collapsed .nav_menu_item { 
-    justify-content: center; 
-    padding: 14px 0; 
-}
-
-.collapsed_tooltip {
-    position: absolute; 
-    left: 85px; 
-    background: var(--med-text); 
-    color: #fff;
-    padding: 8px 14px; 
-    border-radius: 8px; 
-    font-size: 0.8rem; 
-    font-weight: 600;
+@media (max-width: 768px) {
+  .doc_home_med_workspace_header { padding: 0 15px; height: 75px; }
+  .doc_home_global_search_container { 
+    width: auto; 
+    flex: 1;
+    margin: 0 15px;
+    padding: 8px 15px;
+  }
+  .doc_home_logo_text,
+  .doc_home_live_time_group { 
     display: none; 
-    pointer-events: none; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
 }
 
-.nav_menu_item:hover .collapsed_tooltip { 
-    display: block; 
-}
-
-.sidebar_footer_actions { 
-    padding: 20px 15px; 
-    border-top: 1px solid var(--med-border); 
-}
-
-.logout_btn_elite {
-    width: 100%; 
-    padding: 14px; 
-    border: none; 
-    background: #fff1f2; 
-    color: #be123c;
-    border-radius: 16px; 
-    font-weight: 700; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 12px; 
-    cursor: pointer;
-}
-
-.sidebar_toggle_trigger {
-    position: absolute; 
-    top: 20px; 
-    right: 0px; 
-    width: 26px; 
-    height: 26px;
-    background: var(--med-primary); 
-    color: #fff; 
-    border: none; 
-    border-radius: 50%;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer; 
-    z-index: 10;
-}
-
-/* --- HEADER & WORKSPACE --- */
-.med_workspace_viewport { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    overflow: hidden; 
-}
-
-.med_workspace_header {
-    height: 85px; 
-    background: rgba(255, 255, 255, 0.85); 
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--med-border); 
-    display: flex; 
-    align-items: center;
-    justify-content: space-around; 
-    padding: 0 40px; 
-    z-index: 900;
-}
-
-.header_left_brand { 
-    display: flex; 
-    align-items: center; 
-    min-width: 220px; 
-}
-
-.medico_plus_logo_area { 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-}
-
-.logo_symbol { 
-    font-size: 1.8rem; 
-    color: var(--med-primary); 
-    font-weight: 900; 
-}
-
-.logo_text { 
-    font-size: 1.25rem; 
-    font-weight: 900; 
-    color: var(--med-primary); 
-    letter-spacing: -0.5px; 
-    margin: 0; 
-}
-
-.text_cyan { 
-    color: var(--med-secondary); 
-    font-weight: 400; 
-}
-
-/* Search Bar */
-.header_center_search { 
-    flex: 1.8; 
-    max-width: 400px; 
-    margin: 0 20px 0 0; 
-}
-
-.global_search_container {
-    background: #f1f5f9; 
-    border-radius: 15px; 
-    padding: 10px 22px;
-    display: flex; 
-    align-items: center; 
-    gap: 14px; 
-    transition: all 0.3s ease;
-}
-
-.global_search_container.is_focused { 
-    background: #fff; 
-    border: 1px solid var(--med-primary); 
-    box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.08); 
-}
-
-.global_search_container input { 
-    border: none; 
-    background: transparent; 
-    outline: none; 
-    width: 100%; 
-    font-size: 0.85rem; 
-    font-weight: 500; 
-}
-
-/* Right Side Controls & Clock */
-.header_right_controls { 
-    display: flex; 
-    align-items: center; 
-    gap: 25px; 
-}
-
-.widget-header-sync { 
-    display: flex; 
-    align-items: center; 
-    padding-right: 25px; 
-}
-
-.live-time-group { 
-    display: flex; 
-    flex-direction: column; 
-    line-height: 1.3; 
-    text-align: right; 
-}
-
-.live-time { 
-    font-size: 1.35rem; 
-    font-weight: 800; 
-    color: var(--med-text); 
-    letter-spacing: -0.5px; 
-}
-
-.full-date-text { 
-    font-size: 0.8rem; 
-    font-weight: 600; 
-    color: var(--med-text-muted); 
-    white-space: nowrap; 
-}
-
-.header_icon_group { 
-    display: flex; 
-    gap: 10px; 
-}
-
-.control_icon_btn { 
-    width: 44px; 
-    height: 44px; 
-    background: transparent; 
-    border: none; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer;
-    position: relative; 
-    transition: 0.25s; 
-    color: var(--med-text-muted);
-}
-
-.control_icon_btn:hover { 
-    color: var(--med-primary); 
-}
-
-.notif_ping_dot {
-    position: absolute; 
-    top: 9px; 
-    right: 9px; 
-    width: 7px; 
-    height: 7px;
-    background: #f43f5e; 
-    border-radius: 50%; 
-    border: 2px solid #fff;
-}
-
-/* --- CONTENT AREA --- */
-.med_workspace_content { 
-    flex: 1; 
-    overflow-y: auto; 
-    padding: 30px; 
-    background: linear-gradient(to bottom, #fcfdfe, #f8fafc); 
-}
-
-.content_inner_wrapper { 
-    width: 100%; 
-    max-width: 1600px; 
-    margin: 0 auto; 
-}
-
-.view_fade_in { 
-    animation: fadeIn 0.5s ease-out forwards; 
-}
-
-@keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(12px); } 
-    to { opacity: 1; transform: translateY(0); } 
+@media (max-width: 480px) {
+  .doc_home_med_sidebar_elite { width: 75px; }
+  .doc_home_identity_avatar {
+    width: 42px !important;
+    height: 42px !important;
+  }
+  .doc_home_global_search_container { margin: 0 10px; }
 }

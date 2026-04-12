@@ -1,8 +1,8 @@
 /* ============================================================
-   MEDICO+ ELITE: DOCTOR PERFORMANCE ANALYTICS MASTER
-   Architecture: Bento Grid 2.0 with Glass-morphism Elements
+   DOCTOR PORTAL: PERFORMANCE ANALYTICS MASTER
+   Scoped Prefix: doc_perf_dash_
+   Features: 80% Zoom Desktop, Elite Bento Grid, Full Responsive
    ============================================================ */
-
 
 :root {
     --sa-primary: #007acc;
@@ -19,96 +19,91 @@
     --sa-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-.da_revenue_wrapper {
+.doc_perf_dash_wrapper {
     padding: 30px;
     background-color: var(--sa-bg);
     min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     color: var(--sa-text);
+    /* --- 80% ZOOM SIMULATION --- */
+    zoom: 0.8;
+    box-sizing: border-box;
 }
 
-/* --- 1. ELITE HEADER SECTION --- */
-.da_revenue_header {
+/* --- 1. HEADER SECTION --- */
+.doc_perf_dash_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
 }
 
-.da_header_text h1 {
-    font-size: 1.8rem;
+.doc_perf_dash_header_text h1 {
+    font-size: 1.85rem;
     margin: 0;
     font-weight: 800;
     color: var(--sa-text);
 }
 
-.da_header_text h1 span {
+.doc_perf_dash_header_text h1 span {
     color: var(--sa-primary);
-    position: relative;
 }
 
-.da_header_text p {
-    font-size: 0.85rem;
+.doc_perf_dash_header_text p {
+    font-size: 0.9rem;
     color: var(--sa-text-muted);
     margin-top: 5px;
     font-weight: 600;
-    letter-spacing: 0.3px;
 }
 
-.med_btn_primary {
+.doc_perf_dash_btn_primary {
     background: var(--sa-primary);
     color: white;
     border: none;
-    padding: 10px 22px;
+    padding: 12px 24px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
 }
 
-.med_btn_primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 122, 204, 0.3);
-}
-
-/* --- 2. KPI BENTO STRIP --- */
-.da_stats_bento {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+/* --- 2. KPI STATS ROW (STRICT SINGLE LINE) --- */
+.doc_perf_dash_stats_row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between; 
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
-.da_stat_card {
+.doc_perf_dash_stat_card {
     background: var(--sa-white);
-    padding: 20px;
+    flex: 1;
+    padding: 22px;
     border-radius: 24px;
     border: 1px solid var(--sa-border);
-    position: relative;
     box-shadow: var(--sa-shadow);
     transition: 0.3s;
+    text-align: center;
 }
 
-.da_stat_card:hover {
+.doc_perf_dash_stat_card:hover {
     transform: translateY(-5px);
     border-color: var(--sa-primary-light);
 }
 
-.da_stat_card.primary {
+.doc_perf_dash_stat_card.doc_perf_dash_primary {
     background: linear-gradient(135deg, #007acc 0%, #00d2ff 100%);
     color: white;
     border: none;
 }
-.da_stat_card.primary > .da_label {
-    color: white;
-}
 
-.da_label {
+.doc_perf_dash_label {
     font-size: 0.65rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -118,412 +113,436 @@
     margin-bottom: 8px;
 }
 
-.da_value {
-    font-size: 2rem;
+.doc_perf_dash_value_small {
+    font-size: 1.25rem;
     font-weight: 800;
     margin: 0;
 }
 
-.da_value.available { color: var(--sa-success); }
-.da_value.unavailable { color: var(--sa-danger); }
-
-.da_rank_value {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-}
-
-.da_rank_value h2 {
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: 900;
-}
-
-.da_rank_value span {
-    font-size: 0.9rem;
-    opacity: 0.7;
-}
-
-
-/* --- 3. CORE BENTO GRID SYSTEM --- */
-.da_bento_row_sync {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+/* --- 3. DUAL ROW ENGINE (BENTO LAYOUT) --- */
+.doc_perf_dash_dual_row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     gap: 25px;
+    width: 100%;
     margin-bottom: 25px;
 }
 
-.da_bento_item {
+.flex_2 { 
+    width: 65% !important;
+    flex-shrink: 0; 
+}
+
+.flex_1 { 
+    width: calc(35% - 25px) !important; 
+    flex-shrink: 0;
+}
+
+.doc_perf_dash_flex_half {
+    width: calc(50% - 12.5px) !important;
+    flex: 0 0 auto !important;
+}
+
+.doc_perf_dash_bento_item {
     background: var(--sa-white);
     border-radius: 30px;
     padding: 25px;
     border: 1px solid var(--sa-border);
     box-shadow: var(--sa-shadow);
+    display: flex;
+    flex-direction: column;
 }
 
-.da_bento_item.span_2 { grid-column: span 2; }
-.da_bento_item.span_full { grid-column: span 3; }
-
-.da_card_head {
+.doc_perf_dash_card_head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
-.da_card_head h3 {
-    font-size: 1rem;
+.doc_perf_dash_card_head h3 {
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--sa-text);
     margin: 0;
 }
 
-/* --- 4. FILTERS & MINI TABS (AND UPDATES) --- */
-.da_header_actions {
+/* --- 4. CHARTS & DONUT ELEMENTS --- */
+.doc_perf_dash_canvas_holder {
+    height: 320px;
+    width: 100%;
+    position: relative;
+}
+
+.doc_perf_dash_chart_focus_mini {
+    height: 220px;
+    position: relative;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
 }
 
-.da_header_actions {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Increased gap from update */
+.doc_perf_dash_donut_center {
+    position: absolute;
+    text-align: center;
+    pointer-events: none; /* Mouse passes through to chart */
+    z-index: 5;
 }
 
-.da_mini_tabs {
-    background: #f1f5f9;
-    padding: 4px;
-    border-radius: 12px;
-    display: flex;
-    gap: 4px;
+.doc_perf_dash_donut_center strong {
+    font-size: 1.8rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
 }
 
-.da_mini_tabs button {
-    border: none;
-    background: transparent;
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 10px;
+.doc_perf_dash_donut_center span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
     color: var(--sa-text-muted);
-    transition: 0.3s;
-}
-
-.da_mini_tabs button {
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Updated transition */
-}
-
-.da_mini_tabs button.active {
-    background: var(--sa-white);
-    color: var(--sa-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.da_mini_tabs button.active {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Updated shadow */
-}
-
-.da_select_filter_mini {
-    background: #f8fafc;
-    border: 1px solid var(--sa-border);
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 0.75rem;
     font-weight: 700;
-    color: var(--sa-primary);
-    outline: none;
 }
 
-.da_select_filter_mini {
-    background: var(--sa-bg); /* Updated variables */
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-    min-width: 140px;
-    cursor: pointer;
+/* --- 5. PROGRESS BARS (CASE MIX) --- */
+.doc_perf_dash_progress_bar {
+    width: 100%;
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    margin-top: 6px;
+    overflow: hidden;
 }
 
-.da_select_filter_mini:focus {
-    border-color: var(--sa-primary);
-    background: white;
-    box-shadow: 0 0 0 3px var(--sa-primary-light);
+.doc_perf_dash_progress_bar div {
+    height: 100%;
+    background: var(--sa-primary);
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
 }
 
-.da_select_filter_mini::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: invert(34%) sepia(85%) saturate(2256%) hue-rotate(185deg) brightness(95%) contrast(101%);
-}
-
-.da_select_filter_mini[type="number"]::-webkit-inner-spin-button,
-.da_select_filter_mini[type="number"]::-webkit-outer-spin-button {
-    opacity: 1;
-    cursor: pointer;
-}
-
-/* --- 5. RANK AUTHORITY RIBBON --- */
-.da_rank_ribbon {
+/* --- 6. RANK AUTHORITY HUB --- */
+.doc_perf_dash_rank_ribbon {
     display: flex;
     align-items: center;
     gap: 35px;
-    background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+    background: #f8fafc;
     padding: 25px;
     border-radius: 24px;
     border: 1px solid #f1f5f9;
 }
 
-.rank_focus_box {
+.doc_perf_dash_rank_focus_box {
     background: var(--sa-primary);
-    color: var(--sa-white);
+    color: white;
     padding: 25px 50px;
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0, 122, 204, 0.2);
 }
 
-.rank_num_hero {
-    font-size: 3.5rem;
-    font-weight: 900;
-    line-height: 1;
-}
+.doc_perf_dash_rank_num_hero { font-size: 3.5rem; font-weight: 900; line-height: 1; }
 
-.rank_meta_label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    font-weight: 800;
-    margin-top: 5px;
-    letter-spacing: 1px;
-}
-
-.rank_stats_grid {
+.doc_perf_dash_rank_stats_grid {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.rank_stat_node {
-    display: flex;
-    align-items: center;
     gap: 15px;
-    padding: 18px;
-    background: var(--sa-white);
-    border-radius: 18px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.01);
 }
 
-.rank_stat_node .node_icon {
-    font-size: 1.8rem;
-    color: var(--sa-primary);
-    opacity: 0.8;
-}
-
-.rank_stat_node label {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: var(--sa-text-muted);
-    text-transform: uppercase;
-    margin-bottom: 2px;
-}
-
-.rank_stat_node strong {
-    font-size: 1.2rem;
-    color: var(--sa-text);
-    font-weight: 800;
-}
-
-/* --- 6. CLINICAL REGISTRY MODULE --- */
-.med_registry_list {
+.doc_perf_dash_rank_stat_node {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.registry_node {
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.registry_node:last-of-type { border: none; }
-
-.registry_node label {
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: #94a3b8;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.leave_tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.med_tag_leave {
-    background: #fef2f2;
-    color: #ef4444;
-    padding: 5px 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border: 1px solid #fee2e2;
-}
-
-.registry_stat_flex {
-    display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
-}
-
-.registry_stat_flex strong {
-    font-size: 1.6rem;
-    color: var(--sa-primary);
-}
-
-.trend_up {
-    font-size: 0.75rem;
-    color: var(--sa-success);
-    font-weight: 700;
-}
-
-.registry_text_small {
-    font-size: 0.9rem;
-    color: #475569;
-    font-weight: 600;
-}
-
-.registry_text_small small {
-    color: #94a3b8;
-    margin-left: 5px;
-}
-
-/* --- 7. CHART STYLING & CANVAS --- */
-.da_canvas_holder_reduced {
-    min-height: 250px;
-    position: relative;
-}
-
-.da_canvas_holder_reduced {
-    min-height: 260px; /* Updated height */
-    position: relative;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.da_canvas_holder_compact {
-    min-height: 280px;
-    position: relative;
-}
-
-.da_chart_focus_mini {
-    height: 200px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.da_donut_center {
-    position: absolute;
-    text-align: center;
-}
-
-.da_donut_center strong {
-    font-size: 1.8rem;
-    color: var(--sa-text);
-    font-weight: 800;
-    display: block;
-    line-height: 1;
-}
-
-.da_donut_center span {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    color: var(--sa-text-muted);
-    font-weight: 800;
-    margin-top: 5px;
-    display: block;
-}
-
-.da_custom_legend_grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-    border-top: 1px solid var(--sa-border);
-    padding-top: 15px;
-}
-
-.da_legend_pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--sa-text-muted);
-}
-
-.da_dot { width: 10px; height: 10px; border-radius: 50%; }
-.da_dot.blue { background: var(--sa-primary); }
-.da_dot.lightblue { background: var(--sa-secondary); }
-
-/* --- 8. UTILS & ANIMATIONS --- */
-.da_sync_indicator {
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: var(--sa-primary);
-    text-transform: uppercase;
-    background: var(--sa-primary-light);
-    padding: 5px 12px;
-    border-radius: 8px;
-}
-
-.da_view_more_full {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e2e8f0;
+    padding: 15px;
     background: white;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+}
+
+/* --- 7. MINI TABS & PILL LEGENDS --- */
+.doc_perf_dash_mini_tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
     border-radius: 12px;
+    border: 1px solid var(--sa-border);
+    gap: 2px;
+}
+
+.doc_perf_dash_mini_tabs button {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.8rem;
     color: var(--sa-text-muted);
-    margin-top: 10px;
     cursor: pointer;
+    border-radius: 10px;
     transition: 0.3s;
 }
 
-.da_view_more_full:hover {
-    background: var(--sa-primary);
-    color: white;
-    border-color: var(--sa-primary);
+.doc_perf_dash_mini_tabs button.doc_perf_dash_active {
+    background: #ffffff;
+    color: var(--sa-primary);
+    box-shadow: 0 4px 10px rgba(0, 122, 204, 0.1);
 }
 
-@keyframes fadeIn {
+.doc_perf_dash_comp_pill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #f1f5f9;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.doc_perf_dash_comp_pill:hover {
+    background: #ffffff;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.doc_perf_dash_legend_row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+.doc_perf_dash_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot_returning { background-color: #007acc; box-shadow: 0 0 8px rgba(0, 122, 204, 0.4); }
+.dot_first { background-color: #00d2ff; box-shadow: 0 0 8px rgba(0, 210, 255, 0.4); }
+
+/* --- 8. RESPONSIVE DESIGN --- */
+@media (max-width: 1100px) {
+    .doc_perf_dash_dual_row { 
+        flex-direction: column !important; 
+        flex-wrap: wrap !important;
+    }
+    .flex_2, .flex_1, .doc_perf_dash_flex_half { 
+        width: 100% !important; 
+        flex: none !important; 
+    }
+}
+
+@media (max-width: 600px) {
+    .doc_perf_dash_wrapper { zoom: 1; padding: 15px; }
+    .doc_perf_dash_stats_row { flex-direction: column !important; }
+}
+
+/* Animations */
+@keyframes doc_perf_dash_fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.med_page_fade_in {
-    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.doc_perf_dash_fade_in {
+    animation: doc_perf_dash_fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.doc_perf_dash_card_head>.doc_perf_dash_select_filter_mini {
+ max-width: 11%;
+}
+.doc_perf_dash_select_filter_mini {
+    background: var(--sa-bg);
+    border: 1px solid var(--sa-border);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sa-primary);
+    cursor: pointer;
+    width: auto;
+}
+.doc_perf_dash_comp_legend {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.doc_perf_dash_comp_pill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    background: #f8fafc; /* Subtle grey background */
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
 }
 
-/* --- 9. RESPONSIVE DESIGN --- */
-@media (max-width: 1400px) {
-    .da_stats_bento { grid-template-columns: repeat(2, 1fr); }
-    .da_bento_row_sync { grid-template-columns: 1fr; }
-    .da_bento_item.span_2, .da_bento_item.span_full { grid-column: span 1; }
-    .da_rank_ribbon { flex-direction: column; align-items: stretch; }
+.doc_perf_dash_comp_pill:hover {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateX(4px);
+}
+.doc_perf_dash_comp_info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-@media (max-width: 768px) {
-    .da_stats_bento { grid-template-columns: 1fr; }
-    .da_header_actions { flex-direction: column; align-items: stretch; gap: 10px; }
-    .rank_stats_grid { grid-template-columns: 1fr; }
-    .da_select_filter_mini { width: 100%; }
+.doc_perf_dash_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.doc_perf_dash_custom_legend_v2 {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.doc_perf_dash_legend_row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    background: #f8fafc; /* Subtle grey background */
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+}
+
+.doc_perf_dash_legend_left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.doc_perf_dash_legend_dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+/* --- PROFESSIONAL DYNAMICS & TABS STYLING --- */
+
+/* Header Actions Container */
+.doc_perf_dash_header_actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Tab Track (The grey background pill) */
+.doc_perf_dash_mini_tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--sa-border);
+    gap: 2px;
+}
+
+/* Individual Tab Buttons */
+.doc_perf_dash_mini_tabs button {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--sa-text-muted);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+/* Active Tab State */
+.doc_perf_dash_mini_tabs button.doc_perf_dash_active {
+    background: #ffffff;
+    color: var(--sa-primary);
+    box-shadow: 0 4px 10px rgba(0, 122, 204, 0.1);
+}
+
+.doc_perf_dash_mini_tabs button:hover:not(.doc_perf_dash_active) {
+    color: var(--sa-primary);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Dynamic Filter Input (Year/Week Picker) */
+.doc_perf_dash_select_filter_mini {
+    background: var(--sa-white);
+    border: 1px solid var(--sa-border);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sa-primary);
+    outline: none;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.doc_perf_dash_select_filter_mini:focus {
+    border-color: var(--sa-primary);
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.05);
+}
+
+/* Layout Math for the Dual Row */
+.doc_perf_dash_dual_row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 25px;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+/* 65% for Dynamics Chart */
+.flex_2 { 
+    width: 65% !important;
+    flex-shrink: 0; 
+}
+
+/* 35% for Composition Chart */
+.flex_1 { 
+    width: calc(35% - 25px) !important; 
+    flex-shrink: 0;
+}
+
+/* Chart Height Logic */
+.doc_perf_dash_canvas_holder {
+    height: 320px;
+    width: 100%;
+    position: relative;
+    margin-top: 10px;
+}
+
+/* 80% Zoom Support for Canvas */
+.doc_perf_dash_canvas_holder canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Mobile Responsiveness for this Section */
+@media (max-width: 1100px) {
+    .doc_perf_dash_dual_row {
+        flex-direction: column !important;
+    }
+    .flex_2, .flex_1 {
+        width: 100% !important;
+    }
+    .doc_perf_dash_header_actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
 }

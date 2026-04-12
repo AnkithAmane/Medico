@@ -1,454 +1,368 @@
-/* ==========================================================================
-   MEDICO+ ELITE: SCHEDULE & LEAVE MANAGEMENT MASTER CSS
-   Architecture: Calendar, Slot Modules, and leave Registry
-   ========================================================================== */
+/* ============================================================
+   DOCTOR PORTAL: SCHEDULE & AVAILABILITY MASTER STYLING
+   Scoped Prefix: doc_avail_m_
+   Features: 80% Zoom Desktop, Elite UI, Full Responsiveness
+   ============================================================ */
 
-/* --- MASTER CONFIGURATION & ROOT --- */
 :root {
-    --med-primary: #007acc;
-    --med-primary-light: #f0f7ff;
-    --med-success: #10b981;
-    --med-warning: #f59e0b;
-    --med-danger: #ef4444;
-    --med-text: #1e293b;
-    --med-text-muted: #64748b;
-    --med-border: #e2e8f0;
-    --med-bg: #f8fbff;
-    --med-card: #ffffff;
-    --med-gradient: linear-gradient(135deg, #007acc 0%, #00d2ff 100%);
+    --doc-avail-primary: #007acc;
+    --doc-avail-primary-light: #f0f7ff;
+    --doc-avail-success: #10b981;
+    --doc-avail-warning: #f59e0b;
+    --doc-avail-danger: #ef4444;
+    --doc-avail-text: #1e293b;
+    --doc-avail-text-muted: #64748b;
+    --doc-avail-border: #e2e8f0;
+    --doc-avail-bg: #f8fbff;
 }
 
-.med_schedule_root {
-    padding: 25px;
-    background: var(--med-bg);
+.doc_avail_m_root {
+    padding: 30px;
+    background: var(--doc-avail-bg);
     min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    /* 80% Zoom Simulation */
+    zoom: 0.8; 
+    box-sizing: border-box;
 }
 
-/* --- ROW 1: CALENDAR & SLOTS LAYOUT --- */
-.med_schedule_row_top {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 20px;
-    margin-bottom: 25px;
+/* --- 1. SECTION HEADER --- */
+.doc_avail_m_section_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Calendar Navigation & Header */
-.cal_nav_header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-}
+.doc_avail_m_title_elite { font-size: 1.8rem; font-weight: 800; color: var(--doc-avail-text); margin: 0; }
+.doc_avail_m_highlight { color: var(--doc-avail-primary); }
 
-.cal_title { 
-    font-size: 1.1rem; 
-    color: var(--med-text); 
-    font-weight: 800; 
-}
-
-.cal_title span { 
-    color: var(--med-primary); 
-    font-weight: 300; 
-}
-
-.nav_btn_lite { 
-    border: 1px solid var(--med-border); 
-    background: white; 
-    padding: 6px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    color: var(--med-text-muted); 
-    transition: 0.3s; 
-}
-
-.nav_btn_lite:hover { 
-    background: var(--med-primary); 
-    color: white; 
-}
-
-/* Calendar Date Grid */
-.cal_days_header { 
-    display: grid; 
-    grid-template-columns: repeat(7, 1fr); 
-    text-align: center; 
-    font-size: 0.7rem; 
-    font-weight: 800; 
-    color: var(--med-text-muted); 
-    margin-bottom: 10px; 
-    text-transform: uppercase; 
-}
-
-.cal_date_grid { 
-    display: grid; 
-    grid-template-columns: repeat(7, 1fr); 
-    gap: 6px; 
-}
-
-.day_node { 
-    aspect-ratio: 1/1; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 0.85rem; 
-    font-weight: 700; 
-    border-radius: 10px; 
-    cursor: pointer; 
-    background: #f8fafc; 
-    transition: 0.3s; 
-    color: #475569; 
-}
-
-.day_node.active { 
-    background: var(--med-primary); 
-    color: white; 
-    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3); 
-}
-
-.day_node.past { 
-    opacity: 0.3; 
-    cursor: not-allowed; 
-}
-
-/* Time Slot Controls */
-.slot_action_bar { 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-    margin-bottom: 25px; 
-    background: #f8fafc; 
-    padding: 12px; 
-    border-radius: 12px; 
-}
-
-.med_label_small { 
-    font-size: 0.75rem; 
-    font-weight: 800; 
-    color: var(--med-text-muted); 
-    text-transform: uppercase; 
-}
-
-.med_segmented_control { 
-    display: flex; 
-    background: white; 
-    padding: 4px; 
-    border-radius: 10px; 
-    border: 1px solid var(--med-border); 
-}
-
-.med_segmented_control button { 
-    border: none; 
-    background: transparent; 
-    padding: 6px 15px; 
-    font-size: 0.75rem; 
-    font-weight: 700; 
-    color: var(--med-text-muted); 
-    cursor: pointer; 
-    border-radius: 8px; 
-    text-transform: capitalize; 
-    transition: 0.3s; 
-}
-
-.med_segmented_control button.active { 
-    background: var(--med-primary); 
-    color: white; 
-}
-
-/* Slot Grid & Card Styles */
-.slot_grid_layout { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 12px; 
-}
-
-.med_slot_card_elite { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 15px 20px; 
-    border-radius: 16px; 
-    border: 1px solid var(--med-border); 
-    background: white; 
-    cursor: pointer; 
-    transition: 0.3s; 
-}
-
-.slot_info_group { 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-}
-
-.slot_icon_ring { 
-    width: 36px; 
-    height: 36px; 
-    border-radius: 10px; 
-    background: var(--med-primary-light); 
-    color: var(--med-primary); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-}
-
-.s_time { 
-    font-size: 0.9rem; 
-    font-weight: 800; 
-    color: var(--med-text); 
-    display: block; 
-}
-
-.s_label { 
-    font-size: 0.65rem; 
-    font-weight: 800; 
-    color: var(--med-text-muted); 
-}
-
-.med_slot_card_elite.unavailable { 
-    border-color: #fecaca; 
-    background: #fff1f2; 
-}
-
-.med_slot_card_elite.unavailable .slot_icon_ring { 
-    background: #fee2e2; 
-    color: var(--med-danger); 
-}
-
-.med_slot_card_elite.booked { 
-    border-color: #bae6fd; 
-    background: #f0f9ff; 
-}
-
-/* --- ROW 2: LEAVE REGISTRY TABLE --- */
-.history_header_flex { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-}
-
-.med_stats_pills { 
-    display: flex; 
-    gap: 12px; 
-}
-
-.stat_pill { 
-    font-size: 0.75rem; 
-    color: var(--med-text-muted); 
-    background: #f1f5f9; 
-    padding: 6px 15px; 
-    border-radius: 20px; 
-    font-weight: 600; 
-}
-
-.stat_pill.balance b { 
-    color: var(--med-success); 
-}
-
-/* Table Identity Components */
-.med_cell_user { 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-}
-
-.cal_icon_avatar { 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 12px; 
-    background: var(--med-primary-light); 
-    color: var(--med-primary); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    border: 1px solid #e0f2fe;
-}
-
-.med_cell_user b { 
-    color: var(--med-text); 
-    display: block; 
-    font-size: 0.9rem; 
-}
-
-.med_cell_user span { 
-    font-size: 0.75rem; 
-    color: var(--med-text-muted); 
-}
-
-.med_type_pill { 
-    background: #eff6ff; 
-    color: var(--med-primary); 
-    padding: 4px 10px; 
-    border-radius: 6px; 
-    font-size: 0.75rem; 
-    font-weight: 700; 
-}
-
-.med_text_bold_muted { 
-    color: var(--med-text-muted); 
-    font-size: 0.85rem; 
-    font-weight: 600; 
-}
-
-.med_cell_auth { 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
-    color: var(--med-text-muted); 
-    font-size: 0.85rem; 
-}
-
-.med_status_pill { 
-    padding: 5px 12px; 
-    border-radius: 6px; 
-    font-size: 0.7rem; 
-    font-weight: 800; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-}
-
-.med_status_pill.approved { 
-    background: #ecfdf5; 
-    color: var(--med-success); 
-}
-
-.med_status_pill.pending { 
-    background: #fffbeb; 
-    color: var(--med-warning); 
-}
-
-/* --- MODAL SYSTEM --- */
-.med_modal_overlay { 
-    position: fixed; 
-    inset: 0; 
-    background: rgba(15, 23, 42, 0.7); 
-    backdrop-filter: blur(8px); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 1000; 
-    padding: 20px;
-}
-
-.med_modal_card_compact { 
-    background: white; 
-    width: 100%; 
-    max-width: 500px; 
-    border-radius: 24px; 
-    padding: 30px; 
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-    animation: modalSlideUp 0.3s ease-out;
-}
-
-.modal_header_elite { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 25px; 
-    border-bottom: 1px solid #f1f5f9; 
-    padding-bottom: 10px; 
-}
-
-.close_modal_btn { 
-    background: transparent; 
-    border: none; 
-    font-size: 1.5rem; 
-    color: var(--med-text-muted); 
-    cursor: pointer; 
-}
-
-.modal_form_row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 15px; 
-    margin-bottom: 15px; 
-}
-
-.modal_field label { 
-    font-size: 0.7rem; 
-    font-weight: 800; 
-    color: var(--med-text-muted); 
-    text-transform: uppercase; 
-    display: block; 
-    margin-bottom: 8px; 
-}
-
-.modal_field input, .modal_field select, .modal_field textarea { 
-    width: 100%; 
-    padding: 12px; 
-    border-radius: 12px; 
-    border: 1px solid var(--med-border); 
-    background: #f8fafc; 
-    font-family: inherit; 
-    font-size: 0.9rem; 
-    outline: none; 
-    transition: 0.3s; 
-}
-
-.modal_field textarea { 
-    height: 90px; 
-    resize: none; 
-}
-
-.modal_field input:focus { 
-    border-color: var(--med-primary); 
-    background: white; 
-}
-
-.modal_footer_actions { 
-    display: flex; 
-    justify-content: flex-end; 
-    gap: 12px; 
-    margin-top: 25px; 
-}
-
-/* --- BUTTONS, UTILS & ANIMATIONS --- */
-.med_btn_primary {
-    background: var(--med-primary);
+.doc_avail_m_btn_primary {
+    background: var(--doc-avail-primary);
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 12px;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
 }
 
-.med_btn_secondary {
-    background: #f1f5f9;
-    color: var(--med-text-muted);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: 700;
+.doc_avail_m_btn_primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 122, 204, 0.3); }
+
+/* --- 2. ROW TOP (Calendar & Slots) --- */
+.doc_avail_m_row_top {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.doc_avail_m_card_refined {
+    background: white;
+    border-radius: 24px;
+    padding: 20px 15px 25px 15px;
+    border: 1px solid var(--doc-avail-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* --- 3. CLINICAL CALENDAR MODULE --- */
+.doc_avail_m_label_micro {
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: var(--doc-avail-primary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 10px;
+    display: block;
+}
+
+.doc_avail_m_cal_nav_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.doc_avail_m_cal_title { font-size: 1.25rem; color: var(--doc-avail-text); font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.doc_avail_m_cal_title span { color: var(--doc-avail-primary); font-weight: 400; opacity: 0.8; }
+
+.doc_avail_m_nav_btn_lite {
+    width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--doc-avail-border); background: #ffffff; border-radius: 12px; cursor: pointer;
+    color: var(--doc-avail-text-muted); transition: 0.25s;
+}
+
+.doc_avail_m_nav_btn_lite:hover { background: var(--doc-avail-primary-light); color: var(--doc-avail-primary); border-color: var(--doc-avail-primary); }
+
+.doc_avail_m_cal_days_header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.75rem; font-weight: 800; color: var(--doc-avail-text-muted); margin-bottom: 15px; text-transform: uppercase; }
+.doc_avail_m_cal_date_grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+
+.doc_avail_m_day_node { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; border-radius: 12px; cursor: pointer; background: #f8fafc; transition: 0.3s; color: #475569; }
+.doc_avail_m_day_node.doc_avail_m_active { background: var(--doc-avail-primary); color: white; box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3); }
+.doc_avail_m_day_node.doc_avail_m_past { opacity: 0.3; cursor: not-allowed; }
+
+/* --- 4. SESSION SLOTS MODULE (Horizontal Alignment Fix) --- */
+.doc_avail_m_slot_action_bar { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 16px; }
+.doc_avail_m_segmented_control { display: flex; background: white; padding: 5px; border-radius: 12px; border: 1px solid var(--doc-avail-border); }
+.doc_avail_m_segmented_control button { border: none; background: transparent; padding: 8px 16px; font-size: 0.8rem; font-weight: 700; color: var(--doc-avail-text-muted); cursor: pointer; border-radius: 10px; transition: 0.3s; }
+.doc_avail_m_segmented_control button.doc_avail_m_active { background: var(--doc-avail-primary); color: white; }
+
+.doc_avail_m_slot_grid_layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px; }
+
+.doc_avail_m_slot_card_elite {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--doc-avail-border);
+    background: white;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.med_btn_secondary:hover { 
-    background: #e2e8f0; 
-    color: var(--med-text); 
+/* Fix: Ensures icon and text stay in one line */
+.doc_avail_m_slot_info_group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.ping_dot { 
-    width: 6px; 
-    height: 6px; 
-    background: var(--med-success); 
-    border-radius: 50%; 
-    animation: blink 2s infinite; 
+/* Unavailable / Selected state (RED) */
+.doc_avail_m_slot_card_elite.doc_avail_m_unavailable {
+    border-color: var(--doc-avail-danger);
+    background: #fff1f2;
 }
 
-@keyframes blink { 
-    0%, 100% { opacity: 1; } 
-    50% { opacity: 0.3; } 
+.doc_avail_m_slot_card_elite.doc_avail_m_unavailable .doc_avail_m_slot_icon_ring {
+    background: #fee2e2;
+    color: var(--doc-avail-danger);
 }
 
-@keyframes modalSlideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+.doc_avail_m_slot_icon_ring {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--doc-avail-primary-light);
+    color: var(--doc-avail-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevents icon from squishing */
 }
 
-@media (max-width: 1100px) {
-    .med_schedule_row_top { grid-template-columns: 1fr; }
-    .slot_grid_layout { grid-template-columns: 1fr; }
+.doc_avail_m_s_time { font-size: 0.95rem; font-weight: 800; color: var(--doc-avail-text); display: block; }
+.doc_avail_m_s_label { font-size: 0.65rem; font-weight: 800; color: var(--doc-avail-text-muted); }
+
+/* --- 5. PROFESSIONAL LEAVE REGISTRY --- */
+.doc_avail_m_history_header_flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--doc-avail-border);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.doc_avail_m_registry_controls { display: flex; align-items: center; gap: 20px; }
+.doc_avail_m_swap_filter { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; border: 1px solid var(--doc-avail-border); }
+.doc_avail_m_swap_filter button { border: none; background: transparent; padding: 8px 18px; font-size: 0.85rem; font-weight: 700; color: var(--doc-avail-text-muted); cursor: pointer; border-radius: 10px; transition: 0.3s; }
+.doc_avail_m_swap_filter button.active { background: #ffffff; color: var(--doc-avail-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+.doc_avail_m_month_picker { padding: 10px 10px; border-radius: 12px; border: 1.5px solid var(--doc-avail-border); background: #ffffff; color: var(--doc-avail-text); font-weight: 700; cursor: pointer; outline: none; max-width: 150px; }
+
+.doc_avail_m_table_container { width: 100%; overflow-x: auto; padding: 5px; }
+.doc_avail_m_table { width: 100%; border-collapse: separate; border-spacing: 0 12px; margin-top: -12px; min-width: 800px; }
+.doc_avail_m_table thead th { padding: 15px 25px; text-align: left; font-size: 0.75rem; font-weight: 800; color: var(--doc-avail-text-muted); text-transform: uppercase; }
+.doc_avail_m_table tbody tr { background: #f8fafc; transition: 0.3s ease; }
+.doc_avail_m_table td { padding: 22px 25px; border-top: 1px solid var(--doc-avail-border); border-bottom: 1px solid var(--doc-avail-border); font-size: 0.95rem; }
+.doc_avail_m_table td:first-child { border-left: 1px solid var(--doc-avail-border); border-radius: 16px 0 0 16px; }
+.doc_avail_m_table td:last-child { border-right: 1px solid var(--doc-avail-border); border-radius: 0 16px 16px 0; }
+
+.doc_avail_m_duration_stack { display: flex; flex-direction: column; gap: 4px; }
+.doc_avail_m_duration_text { font-size: 0.95rem; color: var(--doc-avail-text); font-weight: 700; }
+.doc_avail_m_id_span { font-size: 0.75rem; color: var(--doc-avail-text-muted); font-weight: 600; }
+
+.doc_avail_m_reason_container { max-width: 350px; padding-right: 20px; }
+.doc_avail_m_reason_text { font-size: 0.9rem; color: var(--doc-avail-text-muted); line-height: 1.5; margin: 0; font-weight: 500; }
+
+.doc_avail_m_status_pill { display: inline-block; padding: 6px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+.doc_avail_m_status_pill.doc_avail_m_approved { background: #ecfdf5; color: #065f46; }
+.doc_avail_m_status_pill.doc_avail_m_pending { background: #fffbeb; color: #92400e; }
+.doc_avail_m_text_right { text-align: right !important; padding-right: 30px !important; }
+
+/* --- 6. MODAL & ANIMATIONS --- */
+.doc_avail_m_modal_overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.doc_avail_m_modal_card_compact { background: white; width: 100%; max-width: 550px; border-radius: 30px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: modalSlideUp 0.3s ease-out; }
+
+@keyframes modalSlideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.doc_avail_m_page_fade_in { animation: fadeIn 0.6s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- 7. RESPONSIVE MEDIA QUERIES --- */
+@media screen and (max-width: 1024px) {
+    .doc_avail_m_root { zoom: 0.9; padding: 20px; }
+    .doc_avail_m_row_top { grid-template-columns: 1fr; }
+}
+
+@media screen and (max-width: 850px) {
+    .doc_avail_m_section_header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .doc_avail_m_btn_primary { width: 100%; justify-content: center; }
+    .doc_avail_m_registry_controls { width: 100%; justify-content: space-between; }
+}
+
+@media screen and (max-width: 480px) {
+    .doc_avail_m_root { zoom: 1; padding: 15px; }
+    .doc_avail_m_slot_grid_layout { grid-template-columns: 1fr; }
+    .doc_avail_m_registry_controls { flex-direction: column; gap: 10px; }
+    .doc_avail_m_swap_filter, .doc_avail_m_month_picker { width: 100%; }
+}
+/* ============================================================
+   APPLY LEAVE FORM & MODAL STYLING
+   Scoped Prefix: doc_avail_m_
+   ============================================================ */
+
+/* Modal Header Refinement */
+.doc_avail_m_modal_header_elite {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.doc_avail_m_title_small {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--doc-avail-text);
+    margin: 0;
+}
+
+.doc_avail_m_subtitle_micro {
+    font-size: 0.85rem;
+    color: var(--doc-avail-text-muted);
+    margin: 4px 0 0 0;
+}
+
+.doc_avail_m_close_modal_btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--doc-avail-text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+    padding: 0;
+    display: flex;
+}
+
+.doc_avail_m_close_modal_btn:hover {
+    color: var(--doc-avail-danger);
+    transform: rotate(90deg);
+}
+
+/* Form Body & Grid */
+.doc_avail_m_leave_form_body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.doc_avail_m_modal_form_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Input & Label Units */
+.doc_avail_m_modal_field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.doc_avail_m_modal_field label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--doc-avail-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Input Fields (Dates, Select, Textarea) */
+.doc_avail_m_modal_field input, 
+.doc_avail_m_modal_field select, 
+.doc_avail_m_modal_field textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1.5px solid var(--doc-avail-border);
+    background: #f8fafc;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--doc-avail-text);
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.doc_avail_m_modal_field input:focus, 
+.doc_avail_m_modal_field select:focus, 
+.doc_avail_m_modal_field textarea:focus {
+    border-color: var(--doc-avail-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.1);
+}
+
+.doc_avail_m_modal_field textarea {
+    height: 100px;
+    resize: none;
+    line-height: 1.5;
+}
+
+/* Footer Actions */
+.doc_avail_m_modal_footer_actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.doc_avail_m_btn_secondary {
+    background: #f1f5f9;
+    color: var(--doc-avail-text-muted);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.doc_avail_m_btn_secondary:hover {
+    background: #e2e8f0;
+    color: var(--doc-avail-text);
+}
+
+/* Form Responsiveness */
+@media screen and (max-width: 500px) {
+    .doc_avail_m_modal_card_compact {
+        padding: 25px;
+        border-radius: 20px;
+    }
+    
+    .doc_avail_m_modal_form_row {
+        grid-template-columns: 1fr;
+    }
+    
+    .doc_avail_m_modal_footer_actions {
+        flex-direction: column-reverse;
+    }
+    
+    .doc_avail_m_btn_primary, 
+    .doc_avail_m_btn_secondary {
+        width: 100%;
+        justify-content: center;
+    }
 }

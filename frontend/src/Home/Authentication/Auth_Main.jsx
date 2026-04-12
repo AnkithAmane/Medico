@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-/* ASSET IMPORTS */
-import ambulance from "../Assets/Images/Home/ambulancia.gif";
-import heart from "../Assets/Images/Home/heart.gif";
-import lungs from "../Assets/Images/Home/lungs.gif";
-import syringe from "../Assets/Images/Home/syringe.gif";
-import prescription from "../Assets/Images/Home/prescription.gif";
+// Asset Imports
+import ambulance from "../../Assets/Images/Home/ambulancia.gif";
+import heart from "../../Assets/Images/Home/heart.gif";
+import lungs from "../../Assets/Images/Home/lungs.gif";
+import syringe from "../../Assets/Images/Home/syringe.gif";
+import prescription from "../../Assets/Images/Home/prescription.gif";
 
-/* COMPONENT IMPORTS */
-import SignInForm from './Sign_In_Form';
-import ForgotPasswordForm from './Forgot_Password_Form';
+// Component Imports
+import SignInForm from '../Authentication/Sign_In_Form';
+import ForgotPasswordForm from '../Authentication/Forgot_Password_Form';
 
-/* STYLE IMPORTS */
-import '../Styles/Home/Auth_Main.css';
+// Styling
+import './Auth_Main.css';
 
 function Auth_Main({ 
     role, 
@@ -24,15 +24,15 @@ function Auth_Main({
     isPatient = false, 
     signUpForm 
 }) {
-    /* STATE MANAGEMENT */
+    // State Management
     const [showAuth, setShowAuth] = useState(false);
     const [authActive, setAuthActive] = useState(false);
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-   /* ENTRANCE ANIMATION LOGIC */
+    // Entrance Animation Logic
     useEffect(() => {
-        const ambulanceEl = document.getElementById('ambulance-intro');
+        const ambulanceEl = document.getElementById('auth-main-ambulance-element');
     
         if (ambulanceEl) {
             setTimeout(() => {
@@ -43,11 +43,11 @@ function Auth_Main({
                 if (ambulanceEl) ambulanceEl.style.opacity = '0';
                 setShowAuth(true);
                 setTimeout(() => setAuthActive(true), 100);
-            }, 1500); // Increased slightly to let the slide finish
+            }, 1500); 
         }
     }, []);
 
-    /* HELPER FUNCTIONS */
+    // Navigation Helper
     const resetToStart = () => {
         setAuthActive(false);
         setShowAuth(false);
@@ -55,83 +55,85 @@ function Auth_Main({
     };
 
     return (
-        <div className={`hospital-intro ${themeClass}`}>
+        <div className={`auth_main_root ${themeClass}`}>
             
-            {/* 1. BACKGROUND DECORATIVE LAYER */}
-            <div className="background-layer">
-                <img src={heart} className="bg-image resize" style={{ top: '3%', left: '3%' }} alt="Heart" />
-                <img src={lungs} className="bg-image resize" style={{ top: '3%', right: '3%' }} alt="Lungs" />
-                <img src={syringe} className="bg-image resize" style={{ bottom: '7%', left: '3%'}} alt="Syringe" />
-                <img src={prescription} className="bg-image resize" style={{ bottom: '3%', right: '3%', width: '170px' }} alt="Prescription" />
+            {/* Background Decorative Layer */}
+            <div className="auth_main_bg_layer">
+                <img src={heart} className="auth_main_bg_icon resize" style={{ top: '3%', left: '3%' }} alt="Heart" />
+                <img src={lungs} className="auth_main_bg_icon resize" style={{ top: '3%', right: '3%' }} alt="Lungs" />
+                <img src={syringe} className="auth_main_bg_icon resize" style={{ bottom: '7%', left: '3%'}} alt="Syringe" />
+                <img src={prescription} className="auth_main_bg_icon resize" style={{ bottom: '3%', right: '3%', width: '170px' }} alt="Prescription" />
             </div>
 
-            {/* 2. AMBULANCE INTRO ANIMATION */}
+            {/* Animation Layer */}
             {!showAuth && (
                 <img 
                     src={ambulance} 
-                    className="ambulance-intro" 
-                    id="ambulance-intro" 
+                    className="auth_main_anim_ambulance" 
+                    id="auth-main-ambulance-element" 
                     alt="Ambulance" 
                 />
             )}
 
-            {/* 3. MAIN AUTHENTICATION WRAPPER */}
+            {/* Main Content Interface */}
             {showAuth && (
-                <div className={`auth-wrapper ${authActive ? 'active' : ''}`}>
-                    <div className="auth-page-flex">
+                <div className={`auth_main_wrapper ${authActive ? 'active' : ''}`}>
+                    <div className="auth_main_flex_layout">
                         
-                        {/* CRITICAL: The auth-container handles the dimensions. 
-                            'forgot-active' triggers the resize in ForgotPasswordForm.css 
-                        */}
-                        <div className={`auth-container 
+                        <div className={`auth_main_container 
                             ${isRightPanelActive ? 'right-panel-active' : ''} 
-                            ${showForgotPassword ? 'forgot-active' : ''}`}>
+                            ${showForgotPassword ? 'forgot_form_active' : ''}`}>
                             
                             {showForgotPassword ? (
-                                /* FORGOT PASSWORD STATE */
                                 <ForgotPasswordForm 
                                     setShowForgotPassword={setShowForgotPassword} 
                                     resetToStart={resetToStart} 
                                 />
                             ) : (
-                                /* NORMAL AUTH STATE (SIGN IN / SIGN UP) */
                                 <>
-                                    {/* Sliding Sign Up form (Patient specific) */}
+                                    {/* Component Injections */}
                                     {isPatient && signUpForm}
                                     
-                                    {/* Standard Sign In Form */}
                                     <SignInForm 
                                         logo={logo} 
                                         portalName={portalName} 
                                         setShowForgotPassword={setShowForgotPassword} 
-                                        role={role} /* <--- CRITICAL: Connects the role to the button */
+                                        role={role} 
+                                        setIsRightPanelActive={setIsRightPanelActive}
                                     />
 
-                                    {/* SLIDING OVERLAYS */}
-                                    <div className="overlay-container">
-                                        <div className="overlay">
+                                    {/* Mobile-Only Switcher (Responsive Toggle) */}
+                                    <div className="auth_main_mobile_toggle">
+                                        {isPatient && isRightPanelActive ? (
+                                            <p>Already have an account? <span onClick={() => setIsRightPanelActive(false)}>Sign In</span></p>
+                                        ) : (
+                                            isPatient && <p>Don't have an account? <span onClick={() => setIsRightPanelActive(true)}>Sign Up</span></p>
+                                        )}
+                                    </div>
+
+                                    {/* Desktop Overlay System */}
+                                    <div className="auth_main_overlay_wrapper">
+                                        <div className="auth_main_overlay_content">
                                             
-                                            {/* LEFT OVERLAY: Visible when Sign Up is active */}
-                                            <div className="overlay-panel overlay-left">
+                                            <div className="auth_main_panel_overlay auth_main_panel_left">
                                                 <h1>Welcome Back!</h1>
                                                 <p>To keep connected with us please login with your personal info</p>
                                                 <button 
                                                     type="button" 
-                                                    className="ghost-btn" 
+                                                    className="auth_main_btn_outline" 
                                                     onClick={() => setIsRightPanelActive(false)}
                                                 >
                                                     Sign In
                                                 </button>
                                             </div>
 
-                                            {/* RIGHT OVERLAY: Visible when Sign In is active */}
-                                            <div className="overlay-panel overlay-right">
+                                            <div className="auth_main_panel_overlay auth_main_panel_right">
                                                 <h1>Hello, {role}!</h1>
                                                 <p>{description}</p>
                                                 {isPatient && (
                                                     <button 
                                                         type="button" 
-                                                        className="ghost-btn" 
+                                                        className="auth_main_btn_outline" 
                                                         onClick={() => setIsRightPanelActive(true)}
                                                     >
                                                         Sign Up
