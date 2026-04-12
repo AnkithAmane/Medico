@@ -22,16 +22,7 @@
 }
 
 /* MODAL BOX */
-.modal-window {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  border-radius: var(--radius-md);
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-  animation: modalPop 0.3s ease-out;
-  overflow-y: auto;
-}
+
 
 /* ANIMATION */
 @keyframes modalPop {
@@ -55,7 +46,7 @@
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
-  color: #aaa;
+  color: #333 !important;
   transition: color 0.2s;
 }
 

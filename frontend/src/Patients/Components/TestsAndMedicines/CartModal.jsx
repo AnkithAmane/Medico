@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import './ManageModal.css';
+import './CartModal.css'
 
 const CartModal = ({ isOpen, onClose, cartItems, onRemove, onOrderSuccess }) => {
   const [step, setStep] = useState('info');
@@ -92,7 +92,7 @@ const CartModal = ({ isOpen, onClose, cartItems, onRemove, onOrderSuccess }) => 
           ) : (
             <>
               {step === 'info' ? (
-                <div className="modal-form">
+                <div className="cart-modal-form">
                    {/* ... your input fields ... */}
                    <div className="mb-3">
                     <label className="form-label fw-semibold">Name</label>

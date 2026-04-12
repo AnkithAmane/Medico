@@ -849,4 +849,29 @@
   .dt th {
     padding: 10px 8px;
   }
+
+  /* Info rows */
+  .info-row,
+  .dr {
+    grid-template-columns: 1fr;
+  }
+
+  /* Form layout */
+  .form-groups-container,
+  .fgd {
+    grid-template-columns: 1fr;
+  }
+
+  /* Table adjustments */
+  .departments-table,
+  .dt {
+    font-size: 12px;
+  }
+
+  .departments-table td,
+  .departments-table th,
+  .dt td,
+  .dt th {
+    padding: 10px 8px;
+  }
 }

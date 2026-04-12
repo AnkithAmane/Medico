@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import  availableTests  from '../../Assets/Data/PatientData/TestData1';
+import  availableTests  from '../../../Assets/Data/PatientData/TestData1';
 import Medicines from './Medicines';
 import CartModal from './CartModal';
 import './MedicationTests.css';

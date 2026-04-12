@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // 1. Check your import! If MedicineData uses "export const", use { availableMedicines }
-import data from '../../Assets/Data/PatientData/MedicineData'; 
+import data from '../../../Assets/Data/PatientData/MedicineData'; 
 import './Medicines.css';
 
 const Medicines = ({ onAddToCart, onOpenCart, cartCount }) => {

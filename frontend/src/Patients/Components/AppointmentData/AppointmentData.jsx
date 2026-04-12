@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import patientData from "../../Assets/Data/PatientData/PatienceData"; 
+import patientData from "../../../Assets/Data/PatientData/PatienceData"; 
 import ManageModal from "./ManageModal"; 
 import "./AppointmentData.css";
 
