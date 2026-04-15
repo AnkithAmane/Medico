@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // Asset Imports
-import ambulance from "../../Assets/Images/Home/ambulancia.gif";
+import ambulance from "../../Assets/Images/Home/ambulance.gif";
 import heart from "../../Assets/Images/Home/heart.gif";
 import lungs from "../../Assets/Images/Home/lungs.gif";
 import syringe from "../../Assets/Images/Home/syringe.gif";
@@ -15,10 +15,7 @@ import ForgotPasswordForm from './Forgot_Password_Form';
 // Styling
 import './Authentication_Page.css';
 
-/**
- * Authentication Master Component
- * Handles entry animations, theme switching, and sub-form navigation (Sign In, Sign Up, Forgot Password).
- */
+/* Authentication Master Component */
 function Authentication({ 
     role, 
     themeClass, 
