@@ -1,0 +1,96 @@
+.pat_vau_container {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* 3:1 Ratio */
+    gap: 25px;
+    padding: 30px 40px;
+    background: #f8fafc;
+    min-height: 100vh;
+    zoom: 0.8;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* LEFT MAIN CONTENT */
+.pat_vau_main { display: flex; flex-direction: column; gap: 25px; }
+
+.pat_vau_header { display: flex; justify-content: space-between; align-items: flex-end; }
+.pat_vau_title h1 { font-size: 2.2rem; margin: 0; font-weight: 800; color: #1e293b; }
+.pat_vau_title h1 span { color: #007acc; font-weight: 400; }
+.pat_vau_title p { color: #64748b; font-weight: 600; }
+
+.pat_vau_upload_btn { 
+    background: #007acc; color: white; border: none; padding: 14px 25px; 
+    border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; 
+    align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(0, 122, 204, 0.2);
+}
+
+/* CONTROLS */
+.pat_vau_controls { display: flex; flex-direction: column; gap: 15px; }
+.pat_vau_search_bar { position: relative; width: 100%; }
+.pat_vau_search_bar input { 
+    width: 100%; padding: 15px 15px 15px 50px; border-radius: 18px; 
+    border: 1.5px solid #e2e8f0; font-weight: 600; background: white;
+}
+.pat_vau_search_bar svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+.pat_vau_tabs { display: flex; gap: 10px; }
+.pat_vau_tabs button { 
+    padding: 10px 20px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; 
+    font-weight: 700; color: #64748b; cursor: pointer; transition: 0.3s;
+}
+.pat_vau_tabs button.active { background: #007acc; color: white; border-color: #007acc; }
+
+/* FILE LIST */
+.pat_vau_list_header { 
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 0 20px 10px; 
+    font-size: 0.8rem; font-weight: 800; color: #94a3b8; text-transform: uppercase;
+}
+
+.pat_vau_file_list { display: flex; flex-direction: column; gap: 10px; }
+.pat_vau_file_item { 
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; 
+    background: white; padding: 18px 20px; border-radius: 20px; border: 1.5px solid #e2e8f0; transition: 0.2s;
+}
+.pat_vau_file_item:hover { border-color: #007acc; transform: translateX(5px); }
+
+.file_name { display: flex; align-items: center; gap: 15px; }
+.file_icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.file_icon.lab_reports { background: #ecfdf5; color: #10b981; }
+.file_icon.prescriptions { background: #f0f7ff; color: #007acc; }
+.file_icon.radiology { background: #fef2f2; color: #ef4444; }
+.file_icon.invoices { background: #fff7ed; color: #f59e0b; }
+
+.file_name strong { display: block; font-size: 0.95rem; color: #1e293b; }
+.file_name small { font-size: 0.75rem; color: #94a3b8; }
+
+.type_tag { background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: #64748b; }
+.file_date { font-size: 0.85rem; font-weight: 600; color: #475569; }
+
+.file_actions { display: flex; gap: 10px; }
+.file_actions button { background: none; border: none; color: #cbd5e1; cursor: pointer; transition: 0.2s; }
+.file_actions button:hover { color: #007acc; }
+
+/* SIDEBAR */
+.pat_vau_sidebar { display: flex; flex-direction: column; gap: 20px; }
+.pat_vau_card { background: white; border: 1.5px solid #e2e8f0; border-radius: 25px; padding: 25px; }
+
+.pat_vau_storage { text-align: center; }
+.card_head { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.card_head h3 { font-size: 0.95rem; margin: 0; }
+
+.storage_visual { width: 100px; margin: 0 auto 15px; }
+.circular_chart { display: block; margin: 10px auto; max-width: 100%; }
+.circle_bg { fill: none; stroke: #f1f5f9; stroke-width: 2.8; }
+.circle { fill: none; stroke: #007acc; stroke-width: 2.8; stroke-linecap: round; }
+.percentage { fill: #1e293b; font-size: 0.5rem; text-anchor: middle; font-weight: 800; }
+
+.upgrade_btn { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #f0f7ff; color: #007acc; font-weight: 800; cursor: pointer; margin-top: 15px; }
+
+.pat_vau_security { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; border-color: #d1fae5; background: #f0fdf4; }
+.pat_vau_security p { font-size: 0.75rem; color: #10b981; line-height: 1.5; font-weight: 600; }
+
+.history_item { display: flex; gap: 12px; margin-top: 15px; }
+.h_dot { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; margin-top: 7px; }
+.history_item strong { display: block; font-size: 0.85rem; }
+.history_item span { font-size: 0.7rem; color: #94a3b8; }
+
+.text_link { background: none; border: none; color: #007acc; font-weight: 800; font-size: 0.75rem; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 5px; margin-top: 15px; }

@@ -1,3 +1,4 @@
+/* Animation Keyframes */
 @keyframes admin_appt_m_FadeIn {
   from {
     opacity: 0;
@@ -29,9 +30,7 @@
   }
 }
 
-/* ==========================================================================
-   1. GLOBAL WRAPPER & ZOOM (80%)
-   ========================================================================== */
+/* Global Wrapper and Zoom Settings */
 .admin_appt_m_wrapper {
   animation: admin_appt_m_FadeIn 0.5s ease-out;
   height: 100%;
@@ -42,9 +41,7 @@
   box-sizing: border-box;
 }
 
-/* ==========================================================================
-   2. MAIN LIST VIEW
-   ========================================================================== */
+/* Main List View Header */
 .admin_appt_m_header {
   display: flex;
   justify-content: space-between;
@@ -70,6 +67,7 @@
   margin-top: 4px;
 }
 
+/* Action Buttons and Toolbar */
 .admin_appt_m_actions {
   display: flex;
   gap: 12px;
@@ -136,8 +134,9 @@
   background: #fff1f2;
   color: #e11d48;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: auto;
+  height: auto;
+  padding: 5px 10px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -146,7 +145,7 @@
   transition: 0.3s;
 }
 
-/* Table Styling */
+/* Registry Table Styling */
 .admin_appt_m_table_scroll {
   background: var(--med-card);
   border-radius: 20px;
@@ -182,19 +181,6 @@
   background-color: #f1f5f9;
 }
 
-.admin_appt_m_user_cell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.admin_appt_m_user_cell img {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
 .admin_appt_m_tag {
   padding: 4px 10px;
   border-radius: 6px;
@@ -204,9 +190,7 @@
   background: #f1f5f9;
 }
 
-/* ==========================================================================
-   3. DETAIL VIEW BENTO GRID
-   ========================================================================== */
+/* Detail View Layout */
 .admin_appt_m_detail_view {
   height: 100%;
   display: flex;
@@ -244,6 +228,7 @@
   transform: translateX(-5px);
 }
 
+/* Status Pulse Indicator */
 .admin_appt_m_status_indicator {
   display: flex;
   align-items: center;
@@ -274,23 +259,6 @@
   animation: admin_appt_m_PulseDot 1.5s infinite;
 }
 
-.admin_appt_m_grid_layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  background: #f1f5f9;
-  padding: 20px;
-  border-radius: 30px;
-}
-
-.admin_appt_m_card {
-  background: white;
-  border: 1px solid var(--med-border);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
 .admin_appt_m_profile_card {
   grid-column: span 1;
 }
@@ -300,7 +268,7 @@
   grid-column: span 2;
 }
 
-/* Profile Section Styling */
+/* Card Content Styling */
 .admin_appt_m_label_alt {
   font-size: 0.65rem;
   font-weight: 800;
@@ -352,7 +320,7 @@
 .admin_appt_m_demographic_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -384,7 +352,7 @@
   gap: 8px;
 }
 
-/* Session Row */
+/* Session Details Row */
 .admin_appt_m_session_row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -440,7 +408,7 @@
   color: #1e40af;
 }
 
-/* History Table */
+/* Clinical History Table */
 .admin_appt_m_history_list_v3 {
   background: white;
   border: 1px solid #e2e8f0;
@@ -490,9 +458,7 @@
   font-style: italic;
 }
 
-/* ==========================================================================
-   4. BUTTONS & UI
-   ========================================================================== */
+/* Component Buttons & UI */
 .admin_appt_m_btn_primary,
 .admin_appt_m_submit {
   background: var(--med-gradient);
@@ -535,6 +501,7 @@
   border-color: var(--med-primary);
 }
 
+/* Pagination UI */
 .admin_appt_m_pagination {
   display: flex;
   justify-content: space-between;
@@ -564,9 +531,7 @@
   color: white !important;
 }
 
-/* ==========================================================================
-   5. RESPONSIVENESS
-   ========================================================================== */
+/* Responsive Overrides (1100px - 1000px) */
 @media (max-width: 1100px) {
   .admin_appt_m_wrapper {
     padding: 0 20px;
@@ -576,16 +541,7 @@
   }
 }
 
-@media (max-width: 1000px) {
-  .admin_appt_m_grid_layout {
-    grid-template-columns: 1fr;
-  }
-  .admin_appt_m_session_row {
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-  }
-}
-
+/* Tablet & Mobile Responsiveness (768px and below) */
 @media (max-width: 768px) {
   .admin_appt_m_header {
     flex-direction: column;
@@ -608,6 +564,7 @@
   }
 }
 
+/* Empty States & Alignment */
 .admin_appt_m_text_right {
   text-align: left;
 }
@@ -619,6 +576,7 @@
   color: #94a3b8;
 }
 
+/* Export Button Styling */
 .admin_appt_m_btn_export {
   background: white;
   border: 1px solid #cbd5e1;
@@ -637,9 +595,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* ==========================================================================
-   1. REGISTRY UI ENHANCEMENTS
-   ========================================================================== */
+/* Registry UI Enhancements */
 .admin_appt_m_user_cell {
   display: flex;
   align-items: center;
@@ -672,7 +628,7 @@
   color: #007acc;
 }
 
-/* Status & Tags */
+/* Status Tags Implementation */
 .admin_appt_m_status {
   padding: 6px 12px;
   border-radius: 8px;
@@ -699,9 +655,7 @@
   border: 1px solid #ffe4e6;
 }
 
-/* ==========================================================================
-   2. DETAIL VIEW BENTO GRID (The Workspace)
-   ========================================================================== */
+/* Workspace Bento Grid Overrides */
 .admin_appt_m_grid_layout {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -725,7 +679,7 @@
   transform: translateY(-5px);
 }
 
-/* Demographic Highlights */
+/* Demographic Data Items */
 .admin_appt_m_demographic_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -748,107 +702,82 @@
   font-size: 15px;
 }
 
-/* ==========================================================================
-   3. RESPONSIVE DESIGN QUERIES
-   ========================================================================== */
-
-/* Tablet Optimization */
+/* Multi-Device Screen Support */
 @media screen and (max-width: 1100px) {
   .admin_appt_m_grid_layout {
     grid-template-columns: 1fr;
     padding: 20px;
   }
-
   .admin_appt_m_toolbar {
     flex-direction: column;
     align-items: stretch;
   }
-
   .admin_appt_m_search_container {
     width: 100%;
   }
 }
 
-/* Mobile Phone Optimization */
 @media screen and (max-width: 768px) {
   .admin_avail_m_wrapper {
     padding: 0 15px;
     zoom: 1;
   }
-
   .admin_appt_m_header {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-
   .admin_appt_m_actions {
     width: 100%;
   }
-
   .admin_appt_m_btn_primary,
   .admin_appt_m_btn_export {
     flex: 1;
     justify-content: center;
   }
-
-  /* Table horizontal scroll handling */
   .admin_appt_m_table_scroll {
     border-radius: 15px;
     overflow-x: auto;
   }
-
   .admin_appt_m_session_row {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
-
   .admin_appt_m_profile_flex {
     flex-direction: column;
     text-align: center;
   }
-
   .admin_appt_m_profile_img {
     width: 120px;
     height: 120px;
   }
-
   .admin_appt_m_quick_meta,
   .admin_appt_m_contact_info {
     align-items: center;
   }
 }
 
-/* Small Screen Optimization */
 @media screen and (max-width: 480px) {
   .admin_appt_m_session_row {
     grid-template-columns: 1fr;
   }
-
   .admin_appt_m_demographic_grid {
     grid-template-columns: 1fr;
   }
-
   .admin_appt_m_modern_table thead {
     display: none;
   }
-
   .admin_appt_m_modern_table td {
     display: block;
     text-align: left;
     padding: 10px 0;
   }
-
   .admin_appt_m_text_right {
     text-align: left;
   }
 }
 
-/* ==========================================================================
-   ADD APPOINTMENT MODAL (Clinical Modern)
-   ========================================================================== */
-
-/* 1. Modal Overlay & Container */
+/* Clinical Modal Styles */
 .admin_appt_m_modal {
   position: fixed;
   inset: 0;
@@ -872,7 +801,6 @@
   animation: admin_appt_m_SlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 2. Header Section */
 .admin_appt_m_modal_head {
   display: flex;
   justify-content: space-between;
@@ -913,7 +841,7 @@
   color: #e11d48;
 }
 
-/* 3. Form Layout & Fields */
+/* Modal Form Controls */
 .admin_appt_m_form {
   display: flex;
   flex-direction: column;
@@ -953,14 +881,13 @@
   box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.1);
 }
 
-/* Date/Time Row */
 .admin_appt_m_row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
 }
 
-/* 4. Action Button */
+/* Submission UI */
 .admin_appt_m_submit {
   margin-top: 10px;
   padding: 16px;
@@ -985,14 +912,12 @@
   transform: translateY(0);
 }
 
-/* 5. Mobile Responsiveness for Form */
 @media (max-width: 600px) {
   .admin_appt_m_modal_box {
     margin: 20px;
     padding: 25px;
     border-radius: 20px;
   }
-
   .admin_appt_m_row {
     grid-template-columns: 1fr;
   }

@@ -11,13 +11,16 @@ import {
   Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend
 } from "chart.js";
 
-import doctorsData from "../../Assets/Data/doctor.json";
-import appointmentsData from "../../Assets/Data/appointment.json";
+// Data and Assets
+import doctorsData from "../../Assets/Data/Doctors_Data.json";
+import appointmentsData from "../../Assets/Data/Appointments_Data.json";
 import "./Doctor_Management.css";
 
+// ChartJS registration
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function Doctor_Management() {
+  // Global and UI State
   const { searchTerm: globalSearch } = useOutletContext();
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [showAllEvents, setShowAllEvents] = useState(false);
@@ -35,6 +38,7 @@ export default function Doctor_Management() {
 
   const rowsPerPage = 10;
 
+  // Selected doctor data synchronization
   useEffect(() => {
     if (selectedDoctor) {
       const updated = doctors.find(d => d.id === selectedDoctor.id);
@@ -42,6 +46,7 @@ export default function Doctor_Management() {
     }
   }, [doctors, selectedDoctor]);
 
+  // Registry filtering logic
   const filteredDoctors = useMemo(() => {
     return doctors.filter((doc) => {
       const doctorName = (doc.name || "").toLowerCase();
@@ -56,6 +61,7 @@ export default function Doctor_Management() {
     });
   }, [doctors, globalSearch, localSearch, filterDept, filterAvail]);
 
+  // Performance metrics calculation
   const docStats = useMemo(() => {
     if (!selectedDoctor) return { totalAppts: 0, totalPatients: 0 };
 
@@ -71,11 +77,13 @@ export default function Doctor_Management() {
     };
   }, [selectedDoctor]);
 
+  // Table pagination
   const totalPages = Math.ceil(filteredDoctors.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentDoctors = filteredDoctors.slice(indexOfFirstRow, indexOfLastRow);
 
+  // Clinical history retrieval
   const getFilteredDoctorAppointments = (doctorName) => {
     if (!doctorName) return [];
     const targetStatus = historyTab === "Recent" ? "Completed" : "Upcoming";
@@ -87,6 +95,7 @@ export default function Doctor_Management() {
       ).slice(0, 3);
   };
 
+  // Chart data formatting
   const getPerformanceData = (stats) => ({
     labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
     datasets: [{
@@ -99,6 +108,7 @@ export default function Doctor_Management() {
     }],
   });
 
+  // Navigation and UI handlers
   const handlePageChange = (num) => {
     if (num >= 1 && num <= totalPages) {
       setCurrentPage(num);
@@ -112,6 +122,7 @@ export default function Doctor_Management() {
     setShowForm(true);
   };
 
+  // Form submission logic
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -141,8 +152,10 @@ export default function Doctor_Management() {
 
   return (
     <div className="admin_doc_m_wrapper">
+      {/* Specialist List View */}
       {!selectedDoctor && (
         <div className="admin_doc_m_list_view">
+          {/* Header and Global Actions */}
           <div className="admin_doc_m_header_row">
             <div className="admin_doc_m_branding">
               <h2 className="admin_doc_m_title_elite">Medical <span>Specialists</span></h2>
@@ -159,6 +172,7 @@ export default function Doctor_Management() {
             </div>
           </div>
 
+          {/* Filtering Toolbar */}
           <div className="admin_doc_m_actions_bar">
             <div className="admin_doc_m_search_box">
               <Search size={18} color="#94a3b8" />
@@ -192,6 +206,7 @@ export default function Doctor_Management() {
             </div>
           </div>
 
+          {/* Records Table */}
           <div className="admin_doc_m_table_container">
             <div className="admin_doc_m_table_scroll">
               <table className="admin_doc_m_table">
@@ -242,6 +257,7 @@ export default function Doctor_Management() {
             </div>
           </div>
 
+          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="admin_patnt_m_pagination_bar">
               <div className="admin_patnt_m_pag_info">
@@ -267,13 +283,16 @@ export default function Doctor_Management() {
         </div>
       )}
 
+      {/* Detailed Specialist Profile Workspace */}
       {selectedDoctor && (
         <div className="admin_doc_m_detail_container">
+          {/* Workspace Controls */}
           <div className="admin_doc_m_detail_header">
             <button className="admin_doc_m_btn_edit" onClick={() => handleEditClick(selectedDoctor)}>Edit Specialist</button>
             <button className="admin_doc_m_btn_close" onClick={() => setSelectedDoctor(null)}>Close Workspace</button>
           </div>
 
+          {/* Profile Identity Data */}
           <div className="admin_doc_m_profile_section">
             <img src={selectedDoctor.photo} alt="" className="admin_doc_m_profile_photo_large" />
             <div className="admin_doc_m_profile_info">
@@ -289,7 +308,9 @@ export default function Doctor_Management() {
             </div>
           </div>
 
+          {/* Clinical Activity and Charts */}
           <div className="admin_doc_m_middle_section">
+            {/* Consultation Log */}
             <div className="admin_doc_m_appointments_list">
               <div className="admin_doc_m_list_header_flex">
                 <h3>Clinical Consultation Log</h3>
@@ -318,14 +339,23 @@ export default function Doctor_Management() {
               </ul>
             </div>
 
+            {/* Performance Visualization */}
             <div className="admin_doc_m_charts_section">
               <h3>Specialist Performance</h3>
               <div style={{ height: '240px', marginTop: '15px' }}>
-                <Bar data={getPerformanceData(selectedDoctor.performanceStats)} options={{ maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                <Bar 
+                  data={getPerformanceData(selectedDoctor.performanceStats)} 
+                  options={{ 
+                    maintainAspectRatio: false, 
+                    resizeDelay: 200, 
+                    plugins: { legend: { display: false } } 
+                  }} 
+                />
               </div>
             </div>
           </div>
 
+          {/* Absence Registry */}
           <div className="admin_doc_m_leaves_section" style={{ marginTop: '0px', marginBottom: '20px' }}>
             <div className="admin_doc_m_list_header_flex">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -357,7 +387,9 @@ export default function Doctor_Management() {
             </div>
           </div>
 
+          {/* Patient Testimonials and Professional Log */}
           <div className="admin_doc_m_middle_section">
+            {/* Reviews Section */}
             <div className="admin_doc_m_appointments_list">
               <div className="admin_doc_m_list_header_flex">
                 <h3><Star size={18} color="#facc15" fill="#facc15" /> Patient Testimonials</h3>
@@ -381,6 +413,7 @@ export default function Doctor_Management() {
               )}
             </div>
 
+            {/* Awards and Milestones */}
             <div className="admin_doc_m_charts_section">
               <div className="admin_doc_m_list_header_flex">
                 <h3><Milestone size={18} color="#007acc" /> Professional Log</h3>
@@ -409,6 +442,7 @@ export default function Doctor_Management() {
         </div>
       )}
 
+      {/* Onboarding Form Modal */}
       {showForm && (
         <div className="admin_doc_m_modal_overlay">
           <div className="admin_doc_m_centered_form_card">

@@ -1,17 +1,15 @@
 import React, { useState, useMemo } from "react";
-import { useOutletContext } from "react-router-dom";
 import { 
     Search, X, Clock, Plus, Phone, Mail, ArrowLeft, Activity, MapPin, FileText,
     ChevronLeft, ChevronRight, Download, Calendar, User, ClipboardList, ShieldCheck, 
     GraduationCap, Hash, Thermometer
 } from "lucide-react";
 
-import appointmentsData from "../../Assets/Data/appointment.json"; 
+import appointmentsData from "../../Assets/Data/Appointments_Data.json"; 
 import "./Appointment_Management.css";
 
 export default function Appointment_Management() {
-    const { searchTerm: globalSearch } = useOutletContext();
-
+    /* State Initialization */
     const [localSearch, setLocalSearch] = useState("");
     const [filterDept, setFilterDept] = useState("");
     const [filterStatus, setFilterStatus] = useState("");
@@ -26,30 +24,27 @@ export default function Appointment_Management() {
 
     const [appointments] = useState(appointmentsData);
 
+    /* Search and Filter Logic */
     const filtered = useMemo(() => {
         return appointments.filter(a => {
             const patientName = (a.patient || "").toLowerCase();
-            const doctorName = (a.doctor || "").toLowerCase();
-            const deptName = (a.department || "").toLowerCase();
-
-            const matchesGlobal = patientName.includes(globalSearch.toLowerCase()) || 
-                                  doctorName.includes(globalSearch.toLowerCase()) ||
-                                  deptName.includes(globalSearch.toLowerCase());
-
+            
             const matchesLocal = patientName.includes(localSearch.toLowerCase());
             const matchesDept = filterDept ? a.department === filterDept : true;
             const matchesStatus = filterStatus ? a.status === filterStatus : true;
             const matchesDate = dateFilter ? a.date === dateFilter : true;
             
-            return matchesGlobal && matchesLocal && matchesDept && matchesStatus && matchesDate;
+            return matchesLocal && matchesDept && matchesStatus && matchesDate;
         });
-    }, [globalSearch, localSearch, filterDept, filterStatus, dateFilter, appointments]);
+    }, [localSearch, filterDept, filterStatus, dateFilter, appointments]);
 
+    /* Pagination Calculations */
     const totalPages = Math.ceil(filtered.length / rowsPerPage);
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentAppointments = filtered.slice(indexOfFirstRow, indexOfLastRow);
 
+    /* Data Memoization for Detailed View */
     const consultationHistory = useMemo(() => {
         if (!selectedAppointment) return [];
         return appointments
@@ -61,6 +56,7 @@ export default function Appointment_Management() {
             .sort((a, b) => new Date(b.date) - new Date(a.date));
     }, [selectedAppointment, appointments]);
 
+    /* UI Event Handlers */
     const handlePageChange = (num) => {
         if (num >= 1 && num <= totalPages) {
             setCurrentPage(num);
@@ -74,15 +70,17 @@ export default function Appointment_Management() {
         setIsDetailView(true);
     };
 
+    /* Main Component Render */
     return (
         <div className="admin_appt_m_wrapper">
+            {/* Appointment List View */}
             {!isDetailView ? (
                 <div className="admin_appt_m_list_view">
+                    {/* Header Section */}
                     <div className="admin_appt_m_header">
                         <div className="admin_appt_m_branding">
                             <h1 className="admin_appt_m_title">Clinical <span>Appointments</span></h1>
                             <p className="admin_appt_m_meta">
-                                {globalSearch && `Results for: "${globalSearch}" | `}
                                 {filtered.length} total records
                             </p>
                         </div>
@@ -96,12 +94,13 @@ export default function Appointment_Management() {
                         </div>
                     </div>
 
+                    {/* Toolbar and Filtering */}
                     <div className="admin_appt_m_toolbar">
                         <div className="admin_appt_m_search_container">
                             <Search size={18} color="#94a3b8" />
                             <input 
                                 type="text" 
-                                placeholder="Search within results..." 
+                                placeholder="Search by patient name..." 
                                 value={localSearch}
                                 onChange={(e) => {setLocalSearch(e.target.value); setCurrentPage(1);}} 
                             />
@@ -124,7 +123,7 @@ export default function Appointment_Management() {
 
                             <input type="date" className="admin_appt_m_date_input" value={dateFilter} onChange={(e) => {setDateFilter(e.target.value); setCurrentPage(1);}} />
                             
-                            {(globalSearch || localSearch || filterDept || filterStatus || dateFilter) && (
+                            {(localSearch || filterDept || filterStatus || dateFilter) && (
                                 <button className="admin_appt_m_clear" onClick={() => {
                                     setLocalSearch(""); setFilterDept(""); setFilterStatus(""); setDateFilter(""); setCurrentPage(1);
                                 }}>
@@ -134,6 +133,7 @@ export default function Appointment_Management() {
                         </div>
                     </div>
 
+                    {/* Appointments Table */}
                     <div className="admin_appt_m_table_scroll">
                         <table className="admin_appt_m_table">
                             <thead>
@@ -182,6 +182,7 @@ export default function Appointment_Management() {
                         </table>
                     </div>
 
+                    {/* Pagination Controls */}
                     {totalPages > 1 && (
                         <div className="admin_appt_m_pagination">
                             <p>Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filtered.length)}</b> of <b>{filtered.length}</b></p>
@@ -204,6 +205,7 @@ export default function Appointment_Management() {
                     )}
                 </div>
             ) : (
+                /* Detailed Appointment View */
                 <div className="admin_appt_m_detail_view">
                     <div className="admin_appt_m_detail_header">
                         <button className="admin_appt_m_back_btn" onClick={() => setIsDetailView(false)}>
@@ -216,6 +218,7 @@ export default function Appointment_Management() {
                     </div>
 
                     <div className="admin_appt_m_grid_layout">
+                        {/* Doctor Specialist Profile Card */}
                         <div className="admin_appt_m_card admin_appt_m_profile_card">
                             <label className="admin_appt_m_label_alt"><ShieldCheck size={14}/> Specialist Profile</label>
                             <div className="admin_appt_m_profile_flex">
@@ -231,6 +234,7 @@ export default function Appointment_Management() {
                             </div>
                         </div>
 
+                        {/* Patient Demographics Card */}
                         <div className="admin_appt_m_card admin_appt_m_profile_card">
                             <label className="admin_appt_m_label_alt"><User size={14}/> Patient Demographics</label>
                             <div className="admin_appt_m_profile_flex">
@@ -250,6 +254,7 @@ export default function Appointment_Management() {
                             </div>
                         </div>
 
+                        {/* Session Overview Card */}
                         <div className="admin_appt_m_card admin_appt_m_session_details_full">
                             <label className="admin_appt_m_label_alt"><Activity size={14}/> Session Overview</label>
                             <div className="admin_appt_m_session_row">
@@ -272,6 +277,7 @@ export default function Appointment_Management() {
                             </div>
                         </div>
 
+                        {/* Encounter History Card */}
                         <div className="admin_appt_m_card admin_appt_m_history_full">
                             <label className="admin_appt_m_label_alt"><ClipboardList size={14}/> Previous Encounters</label>
                             <div className="admin_appt_m_history_list_v3">
@@ -310,6 +316,7 @@ export default function Appointment_Management() {
                 </div>
             )}
 
+            {/* Booking Modal */}
             {showForm && (
                 <div className="admin_appt_m_modal">
                     <div className="admin_appt_m_modal_box">

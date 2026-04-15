@@ -16,7 +16,8 @@
     z-index: 2;
     opacity: 1;
 }
-.sign_in_link_wrapper{
+
+.sign_in_link_wrapper {
     text-decoration: none;
 }
 
@@ -223,11 +224,10 @@
 }
 
 .sign_in_mobile_switcher {
-    display: none; /* Hidden on Desktop */
+    display: none;
 }
 
 /* --- 9. RESPONSIVE MEDIA QUERIES --- */
-
 @media (max-width: 550px) {
     .sign_in_form_wrapper {
         width: 100%;
@@ -236,7 +236,6 @@
         padding: 20px 0;
     }
 
-    /* Stack Logic for Mobile */
     .sign_in_panel {
         display: block;
         opacity: 1;
@@ -257,7 +256,6 @@
         transform: none !important;
     }
 
-    /* Mobile switcher styling */
     .sign_in_mobile_switcher {
         display: block;
         margin-top: 15px;

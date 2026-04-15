@@ -1,0 +1,78 @@
+.pat_pharma_container {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* 3:1 Ratio */
+    gap: 25px;
+    padding: 30px 40px;
+    background: #f8fafc;
+    min-height: 100vh;
+    zoom: 0.8;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* LEFT MAIN */
+.pat_pharma_main { display: flex; flex-direction: column; gap: 30px; }
+
+.pat_pharma_header h1 { font-size: 2.4rem; margin: 0; font-weight: 800; color: #1e293b; }
+.pat_pharma_header h1 span { color: #007acc; font-weight: 400; }
+
+.pat_pharma_search {
+    position: relative; margin-top: 15px; width: 100%;
+}
+.pat_pharma_search input {
+    width: 100%; padding: 15px 15px 15px 50px; border-radius: 18px;
+    border: 1.5px solid #e2e8f0; font-weight: 600;
+}
+.pat_pharma_search svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+/* SECTIONS */
+.pat_pharma_sec_head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.flex_align { display: flex; align-items: center; gap: 10px; }
+.pat_pharma_sec_head h2 { font-size: 1.2rem; font-weight: 800; color: #1e293b; margin: 0; }
+.pat_pharma_text_btn { background: none; border: none; color: #007acc; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
+
+/* GRID & CARDS */
+.pat_pharma_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+
+.pat_pharma_card {
+    background: white; border-radius: 20px; border: 1.5px solid #e2e8f0;
+    padding: 18px; display: flex; flex-direction: column; transition: 0.3s;
+}
+.pat_pharma_card:hover { border-color: #007acc; transform: translateY(-5px); }
+
+.pat_pharma_tag { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px; }
+.pat_pharma_body { flex: 1; }
+.pat_pharma_body h3 { font-size: 1rem; margin-bottom: 8px; color: #1e293b; line-height: 1.2; height: 38px; overflow: hidden; }
+.pat_pharma_body p { font-size: 0.75rem; color: #64748b; margin-bottom: 12px; height: 45px; overflow: hidden; }
+
+.pat_pharma_warning { font-size: 0.7rem; color: #c2410c; background: #fff7ed; padding: 6px; border-radius: 8px; display: flex; align-items: center; gap: 5px; }
+.pat_pharma_meta { font-size: 0.75rem; color: #10b981; font-weight: 700; }
+
+.pat_pharma_footer { display: flex; justify-content: space-between; align-items: center; border-top: 1.5px solid #f1f5f9; padding-top: 15px; margin-top: 10px; }
+.pat_pharma_footer strong { font-size: 1.1rem; color: #1e293b; }
+.pat_pharma_footer button { background: #1e293b; color: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
+.pat_pharma_footer .book_btn { background: #007acc; }
+
+/* SIDEBAR CART */
+.pat_pharma_sidebar { display: flex; flex-direction: column; gap: 20px; }
+.pat_pharma_cart_card { background: white; border: 1.5px solid #e2e8f0; border-radius: 25px; padding: 25px; display: flex; flex-direction: column; height: fit-content; }
+.cart_head { display: flex; align-items: center; gap: 10px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
+.cart_head h3 span { color: #007acc; }
+
+.cart_list { max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.cart_item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 12px; }
+.item_info strong { display: block; font-size: 0.85rem; color: #1e293b; }
+.item_info span { font-size: 0.75rem; color: #94a3b8; }
+
+.item_actions { display: flex; align-items: center; gap: 10px; }
+.qty_stepper { display: flex; align-items: center; gap: 8px; background: white; padding: 4px; border-radius: 8px; border: 1px solid #e2e8f0; }
+.qty_stepper button { background: none; border: none; cursor: pointer; padding: 2px; color: #007acc; }
+.remove_btn { color: #ef4444; background: none; border: none; cursor: pointer; }
+
+.cart_summary { border-top: 1.5px solid #f1f5f9; padding-top: 15px; }
+.summary_row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 8px; }
+.summary_row.total { color: #1e293b; font-weight: 800; font-size: 1rem; margin-top: 10px; }
+
+.checkout_btn { width: 100%; padding: 15px; border-radius: 15px; border: none; background: #007acc; color: white; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; }
+
+.pat_pharma_card_mini { background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 20px; padding: 20px; text-align: center; }
+.pat_pharma_card_mini p { font-size: 0.75rem; color: #065f46; line-height: 1.5; margin: 10px 0 0; }

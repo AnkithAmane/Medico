@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate, Outlet, useLocation } from "react-router-dom"; // Added Outlet and useLocation
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -16,10 +16,12 @@ import {
   User as UserIcon
 } from "lucide-react";
 
-import doctorsData from "../../Assets/Data/doctor.json";
+// Data and Assets
+import doctorsData from "../../Assets/Data/Doctors_Data.json";
 import "./Doctor_Home.css";
 
 export default function DoctorHome() {
+  // UI State management
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -27,22 +29,26 @@ export default function DoctorHome() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Specialist context (Dr. Vijay K)
   const currentDoc = useMemo(() => doctorsData[5] || {}, []);
 
+  // Real-time clock logic
   useEffect(() => {
     const timer = setInterval(() => setDateTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // Navigation configuration
   const mainNavOptions = useMemo(() => [
-    { id: 1, label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/doctor/dashboard" },
-    { id: 2, label: "Appointments", icon: <CalendarCheck size={20} />, path: "/doctor/appointments" },
-    { id: 3, label: "Patients", icon: <Users size={20} />, path: "/doctor/patients" },
-    { id: 4, label: "Schedule", icon: <Clock size={20} />, path: "/doctor/schedule" },
-    { id: 5, label: "Performance", icon: <BarChart4 size={20} />, path: "/doctor/performance" },
-    { id: 6, label: "Reviews", icon: <Star size={20} />, path: "/doctor/reviews" },
+    { id: 1, label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/doctor/doctor_dashboard" },
+    { id: 2, label: "Appointments", icon: <CalendarCheck size={20} />, path: "/doctor/doctor_appointments_management" },
+    { id: 3, label: "Patients", icon: <Users size={20} />, path: "/doctor/doctor_patients_management" },
+    { id: 4, label: "Schedule", icon: <Clock size={20} />, path: "/doctor/doctor_availability_management" },
+    { id: 5, label: "Performance", icon: <BarChart4 size={20} />, path: "/doctor/doctor_performance_dashboard" },
+    { id: 6, label: "Reviews", icon: <Star size={20} />, path: "/doctor/doctor_review_management" },
   ], []);
 
+  // Session termination handler
   const handleLogout = () => {
     if (window.confirm("Terminate clinical session at Medico+?")) {
       navigate("/");
@@ -51,9 +57,11 @@ export default function DoctorHome() {
 
   return (
     <div className="doc_home_med_doctor_root">
+      {/* Sidebar Navigation */}
       <aside className={`doc_home_med_sidebar_elite ${isCollapsed ? "doc_home_is_collapsed" : ""}`}>
-        {/* Profile Section */}
-        <div className="doc_home_doc_identity_panel" onClick={() => navigate("/doctor/profile")}>
+        
+        {/* Doctor Identity Module */}
+        <div className="doc_home_doc_identity_panel" onClick={() => navigate("/doctor/doctor_profile")}>
           <div className="doc_home_avatar_wrapper">
             <img
               src={currentDoc.photo || "/assets/doc_default.png"}
@@ -72,7 +80,7 @@ export default function DoctorHome() {
           )}
         </div>
 
-        {/* Navigation Menu */}
+        {/* Menu Navigation Items */}
         <nav className="doc_home_sidebar_navigation_menu">
           <div className="doc_home_nav_spacer_top"></div>
           {mainNavOptions.map((opt) => (
@@ -88,6 +96,7 @@ export default function DoctorHome() {
           ))}
         </nav>
 
+        {/* Sidebar Footer Controls */}
         <div className="doc_home_sidebar_footer_actions">
           <button className="doc_home_logout_btn_elite" onClick={handleLogout}>
             <LogOut size={20} />
@@ -95,12 +104,15 @@ export default function DoctorHome() {
           </button>
         </div>
 
+        {/* Sidebar Collapse Toggle */}
         <button className="doc_home_sidebar_toggle_trigger" onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </aside>
 
+      {/* Main Workspace Area */}
       <main className="doc_home_med_workspace_viewport">
+        {/* Workspace Top Header */}
         <header className="doc_home_med_workspace_header">
           <div className="doc_home_header_left_brand">
             <div className="doc_home_medico_plus_logo_area">
@@ -109,6 +121,7 @@ export default function DoctorHome() {
             </div>
           </div>
 
+          {/* Global Registry Search */}
           <div className="doc_home_header_center_search">
             <div className={`doc_home_global_search_container ${isSearchFocused ? "doc_home_is_focused" : ""}`}>
               <Search size={18} className="doc_home_search_icon_main" />
@@ -121,6 +134,7 @@ export default function DoctorHome() {
             </div>
           </div>
 
+          {/* Header Utilities and Clock */}
           <div className="doc_home_header_right_controls">
             <div className="doc_home_widget_header_sync">
               <div className="doc_home_live_time_group">
@@ -140,13 +154,14 @@ export default function DoctorHome() {
                 <Bell size={22} />
                 <span className="doc_home_notif_ping_dot"></span>
               </button>
-              <button className="doc_home_control_icon_btn" onClick={() => navigate("/doctor/settings")}>
+              <button className="doc_home_control_icon_btn" onClick={() => navigate("/doctor/doctor_settings")}>
                 <SettingsIcon size={22} />
               </button>
             </div>
           </div>
         </header>
 
+        {/* Dynamic Route Content */}
         <section className="doc_home_med_workspace_content">
           <div className="doc_home_content_inner_wrapper doc_home_view_fade_in">
             <Outlet />

@@ -1,0 +1,374 @@
+/* 1. MASTER LAYOUT & HEADER */
+.doc_set_wrapper {
+  padding: 40px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  zoom: 0.9;
+  box-sizing: border-box;
+}
+
+.doc_set_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.doc_set_header_text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.doc_set_header_text h1 span {
+  color: #007acc;
+}
+
+.doc_set_header_text p {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.doc_set_status_pill_active {
+  background: #ecfdf5;
+  color: #10b981;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid #d1fae5;
+}
+
+/* 2. GRID ARCHITECTURE */
+.doc_set_grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* 3. SIDEBAR NAVIGATION */
+.doc_set_sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc_set_sidebar button {
+  background: transparent;
+  border: none;
+  padding: 18px 25px;
+  border-radius: 16px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.doc_set_sidebar button .doc_set_nav_icon {
+  font-size: 1.2rem;
+}
+
+.doc_set_sidebar button.doc_set_active {
+  background: #ffffff;
+  color: #007acc;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+}
+
+/* 4. CONTENT CARDS & FORMS */
+.doc_set_card {
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 25px;
+}
+
+.doc_set_card_title_node h3 {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 700;
+}
+
+.doc_set_card_title_node p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 8px 0 25px;
+  line-height: 1.5;
+}
+
+.doc_set_form_stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.doc_set_input_node label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.doc_set_input_node textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.doc_set_input_node textarea:focus {
+  border-color: #007acc;
+  background: white;
+}
+
+/* 5. UPLOAD & TOGGLE COMPONENTS */
+.doc_set_upload_container {
+  border: 2px dashed #e2e8f0;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.doc_set_upload_icon {
+  font-size: 2.5rem;
+  color: #007acc;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.doc_set_upload_inner strong {
+  display: block;
+  color: #1e293b;
+  margin-bottom: 5px;
+}
+
+.doc_set_btn_ghost {
+  margin-top: 20px;
+  background: #f1f5f9;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.doc_set_toggle_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.doc_set_toggle_text strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+/* Switch Utility */
+.doc_set_switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.doc_set_switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.doc_set_slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e2e8f0;
+  transition: .4s;
+}
+
+.doc_set_slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+
+.doc_set_switch input:checked + .doc_set_slider {
+  background-color: #10b981;
+}
+
+.doc_set_switch input:checked + .doc_set_slider:before {
+  transform: translateX(20px);
+}
+
+.doc_set_slider.doc_set_round {
+  border-radius: 34px;
+}
+
+.doc_set_slider.doc_set_round:before {
+  border-radius: 50%;
+}
+
+/* 6. EXPORT REGISTRY NODES */
+.doc_set_export_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.doc_set_export_node {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+}
+
+.doc_set_node_info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.doc_set_node_icon {
+  font-size: 1.5rem;
+  color: #007acc;
+}
+
+.doc_set_btn_minimal {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.doc_set_btn_primary {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.doc_set_btn_primary:hover {
+  background: #005fa3;
+  transform: translateY(-1px);
+}
+
+.doc_set_action_footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 7. RESPONSIVE MEDIA QUERIES */
+@media screen and (max-width: 1024px) {
+  .doc_set_wrapper {
+    zoom: 0.9;
+    padding: 25px;
+  }
+  .doc_set_grid {
+    grid-template-columns: 240px 1fr;
+    gap: 25px;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .doc_set_grid {
+    grid-template-columns: 1fr;
+  }
+  .doc_set_sidebar nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  .doc_set_sidebar button {
+    padding: 12px 20px;
+    white-space: nowrap;
+  }
+  .doc_set_export_grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .doc_set_wrapper {
+    zoom: 1;
+    padding: 15px;
+  }
+  .doc_set_header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .doc_set_card {
+    padding: 20px;
+  }
+  .doc_set_export_node {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .doc_set_btn_minimal {
+    width: 100%;
+  }
+}
+
+/* 8. ANIMATIONS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doc_set_page_fade_in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.doc_set_fade_in {
+  animation: fadeIn 0.4s ease-out forwards;
+}

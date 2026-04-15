@@ -1,3 +1,4 @@
+/* Color Variables and Root Styles */
 :root {
   --med-primary: #007acc;
   --med-secondary: #00d2ff;
@@ -10,6 +11,7 @@
   --med-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* Layout Wrapper */
 .admin_home_layout {
   display: flex;
   height: 100vh;
@@ -20,7 +22,7 @@
   font-size: 0.85rem;
 }
 
-/* --- SIDEBAR --- */
+/* Sidebar Styling */
 .admin_home_sidebar {
   width: 220px;
   background: var(--med-card);
@@ -35,6 +37,7 @@
   width: 65px;
 }
 
+/* Sidebar Toggle Controls */
 .admin_home_toggle_zone {
   padding: 15px;
   display: flex;
@@ -59,6 +62,7 @@
   color: white;
 }
 
+/* Navigation Menu Items */
 .admin_home_nav {
   flex: 1;
   padding: 10px 12px;
@@ -97,6 +101,7 @@
   min-width: 18px;
 }
 
+/* Sidebar Tooltips (Collapsed State) */
 .admin_home_nav_tooltip {
   display: none;
   position: absolute;
@@ -113,6 +118,7 @@
   display: block;
 }
 
+/* Bottom Sidebar Actions */
 .admin_home_sidebar_bottom {
   margin-top: auto;
   padding: 15px 10px;
@@ -142,7 +148,7 @@
   color: white;
 }
 
-/* --- TOP HEADER --- */
+/* Header Bar Styling */
 .admin_home_top_header {
   height: 70px;
   background: var(--med-card);
@@ -157,6 +163,7 @@
   display: none;
 }
 
+/* Branding Elements */
 .admin_home_brand_header {
   display: flex;
   align-items: center;
@@ -181,6 +188,7 @@
   font-weight: 400;
 }
 
+/* Global Search Bar */
 .admin_home_header_center {
   flex: 1;
   display: flex;
@@ -209,6 +217,7 @@
   color: var(--med-text);
 }
 
+/* User Profile and Notifications */
 .admin_home_header_right {
   display: flex;
   align-items: center;
@@ -257,7 +266,7 @@
   object-fit: cover;
 }
 
-/* --- MAIN VIEWPORT --- */
+/* Main Content Viewport */
 .admin_home_main_viewport {
   flex: 1;
   display: flex;
@@ -272,7 +281,7 @@
   background: #fcfdfe;
 }
 
-/* --- RESPONSIVENESS --- */
+/* Responsive Media Queries */
 @media (max-width: 1024px) {
   .admin_home_sidebar {
     width: 75px;

@@ -6,29 +6,30 @@ import {
   ChevronLeft, ChevronRight, Mail, ArrowLeft, MapPin, ClipboardList
 } from "lucide-react";
 
-import patientsData from "../../Assets/Data/patient.json";
-import appointmentsData from "../../Assets/Data/appointment.json";
+// Clinical data assets
+import patientsData from "../../Assets/Data/Patients_Data.json";
+import appointmentsData from "../../Assets/Data/Appointments_Data.json";
 import "./Patient_Management.css";
 
 export default function Patient_Management() {
+  // Global and filtering state
   const { searchTerm: globalSearch } = useOutletContext();
   const [localSearch, setLocalSearch] = useState("");
   const [filterGender, setFilterGender] = useState("");
   const [filterAgeRange, setFilterAgeRange] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [filterStatus, setFilterStatus] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
 
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
 
+  // Workspace sub-filters
   const [showAllAppts, setShowAllAppts] = useState(false);
-  const [apptSearch, setApptSearch] = useState("");
-  const [apptMonthFilter, setApptMonthFilter] = useState("");
-
   const [patients] = useState(patientsData);
 
+  // Demographic classification helper
   const getAgeClass = (age) => {
     if (age < 13) return "Child";
     if (age < 20) return "Teen";
@@ -36,6 +37,7 @@ export default function Patient_Management() {
     return "Senior";
   };
 
+  // Vital metrics calculation
   const calculateBMI = (weightStr, heightStr) => {
     const w = parseFloat(weightStr);
     const h = parseFloat(heightStr) / 100;
@@ -49,10 +51,12 @@ export default function Patient_Management() {
     return { bmi, category, color };
   };
 
+  // Appointment history retrieval
   const getPatientAppointments = (patientName) => {
     return appointmentsData.filter(a => (a.patient || "") === patientName);
   };
 
+  // Comprehensive directory filtering
   const filteredPatients = useMemo(() => {
     return patients.filter((p) => {
       const patientName = (p.name || "").toLowerCase();
@@ -80,6 +84,7 @@ export default function Patient_Management() {
     });
   }, [globalSearch, localSearch, filterGender, filterAgeRange, patients]);
 
+  // UI Pagination logic
   const totalPages = Math.ceil(filteredPatients.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -92,8 +97,10 @@ export default function Patient_Management() {
 
   return (
     <div className="admin_patnt_m_page_fade_in">
+      {/* Primary Directory List View */}
       {!selectedPatient || editMode ? (
         <div className="admin_patnt_m_main_list_view">
+          {/* Section Header */}
           <div className="admin_patnt_m_section_header">
             <div className="admin_patnt_m_branding">
               <h1 className="admin_patnt_m_title_elite">Patient <span className="admin_patnt_m_highlight">Directory</span></h1>
@@ -112,6 +119,7 @@ export default function Patient_Management() {
             </div>
           </div>
 
+          {/* Search and Advanced Filters */}
           <div className="admin_patnt_m_filter_bar">
             <div className="admin_patnt_m_search_box admin_patnt_m_smart_search">
               <Search size={18} color="#007acc" />
@@ -143,6 +151,7 @@ export default function Patient_Management() {
             </div>
           </div>
 
+          {/* Patient Records Table */}
           <div className="admin_patnt_m_table_container">
             <table className="admin_patnt_m_table">
               <thead>
@@ -168,7 +177,7 @@ export default function Patient_Management() {
                       <td>{p.gender}</td>
                       <td><span className="admin_patnt_m_disease_tag">{p.disease}</span></td>
                       <td className="admin_patnt_m_text_right">
-                        <button className="admin_patnt_m_btn_manage" onClick={() => { setSelectedPatient(p); setApptSearch(""); setApptMonthFilter(""); setShowAllAppts(false); }}>View Case</button>
+                        <button className="admin_patnt_m_btn_manage" onClick={() => { setSelectedPatient(p); setShowAllAppts(false); }}>View Case</button>
                       </td>
                     </tr>
                   ))
@@ -184,6 +193,7 @@ export default function Patient_Management() {
             </table>
           </div>
 
+          {/* Pagination Component */}
           {totalPages > 1 && (
             <div className="admin_patnt_m_pagination_bar">
               <div className="admin_patnt_m_pag_info">
@@ -208,7 +218,9 @@ export default function Patient_Management() {
           )}
         </div>
       ) : (
+        /* Detailed Clinical Case Workspace */
         <div className="admin_patnt_m_detail_workspace">
+          {/* Workspace Status Bar */}
           <div className="admin_patnt_m_workspace_header">
             <div className="admin_patnt_m_header_btns">
               <button className="admin_patnt_m_btn_close_workspace" onClick={() => setSelectedPatient(null)}>
@@ -221,6 +233,7 @@ export default function Patient_Management() {
             </div>
           </div>
 
+          {/* Profile Overview Card */}
           <div className="admin_patnt_m_profile_hero_card">
             <div className="admin_patnt_m_hero_left">
               <img src={selectedPatient.photo || "https://i.pravatar.cc/150"} alt="" className="admin_patnt_m_avatar_hero" />
@@ -238,6 +251,7 @@ export default function Patient_Management() {
               </div>
             </div>
 
+            {/* Vital Statistics Bento Grid */}
             <div className="admin_patnt_m_hero_stats">
               <div className="admin_patnt_m_hero_stat_item">
                 <Scale size={18} color="#007acc" />
@@ -258,7 +272,9 @@ export default function Patient_Management() {
             </div>
           </div>
 
+          {/* History and Logs Split View */}
           <div className="admin_patnt_m_split_history_row">
+            {/* Upcoming Schedules */}
             <div className="admin_patnt_m_history_column">
               <div className="admin_patnt_m_col_header">
                 <h3><Clock size={18} color="#facc15" /> Upcoming Schedules</h3>
@@ -285,6 +301,7 @@ export default function Patient_Management() {
               )}
             </div>
 
+            {/* Completed Registry */}
             <div className="admin_patnt_m_history_column">
               <div className="admin_patnt_m_col_header">
                 <h3><CheckCircle2 size={18} color="#22c55e" /> Completed Registry</h3>
@@ -314,6 +331,7 @@ export default function Patient_Management() {
         </div>
       )}
 
+      {/* Registration and Update Modal */}
       {showForm && (
         <div className="admin_patnt_m_modal_overlay">
           <div className="admin_patnt_m_centered_form_card">
