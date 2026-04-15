@@ -10,24 +10,25 @@ import {
   Star, ArrowRight, Calendar, Zap 
 } from "lucide-react";
 
-import appointmentsData from "../../Assets/Data/appointment.json";
-import doctorsData from "../../Assets/Data/doctor.json";
+// Data assets
+import appointmentsData from "../../Assets/Data/Appointments_Data.json";
+import doctorsData from "../../Assets/Data/Doctors_Data.json";
 import "./Doctor_Dashboard.css";
 
+// ChartJS setup
 ChartJS.register(
   LineElement, BarElement, ArcElement, CategoryScale, 
   LinearScale, PointElement, Tooltip, Legend, Filler
 );
 
 export default function Dashboard() {
+  // Navigation and data context
   const navigate = useNavigate();
-// Change this line:
-const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
-  // 1. Access the specific doctor data (Dr. Vijay K is index 5 in your context)
+  const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
   const currentDoc = useMemo(() => doctorsData[5] || {}, []);
   const todayStr = "2026-04-06"; 
 
-  // 2. Filter global appointments to only this doctor
+  // Appointment filtering
   const docAppts = useMemo(() => 
     appointmentsData.filter(a => a.doctor === currentDoc.name), 
     [currentDoc.name]
@@ -38,7 +39,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
     [docAppts]
   );
 
-  // Calculate review average for the "Satisfaction" section
+  // Review and rating analytics
   const ratingData = useMemo(() => {
     const stars = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     currentDoc.reviews?.forEach(rev => {
@@ -47,48 +48,53 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
     return stars;
   }, [currentDoc.reviews]);
 
- useEffect(() => {
-  let t = 0, c = 0, u = 0; // Initialize local 'u' for upcoming
-  const targetT = docAppts.length;
-  const targetC = docAppts.filter(a => a.status === "Completed").length;
-  const targetU = docAppts.filter(a => a.status === "Upcoming").length; // Target for upcoming
+  // Statistics counter animation
+  useEffect(() => {
+    let t = 0, c = 0, u = 0;
+    const targetT = docAppts.length;
+    const targetC = docAppts.filter(a => a.status === "Completed").length;
+    const targetU = docAppts.filter(a => a.status === "Upcoming").length;
 
-  const interval = setInterval(() => {
-    let updated = false;
-    if (t < targetT) { t++; updated = true; }
-    if (c < targetC) { c++; updated = true; }
-    if (u < targetU) { u++; updated = true; } // Increment upcoming
-    
-    setCounts({ total: t, completed: c, upcoming: u }); // Update state with upcoming
-    if (!updated) clearInterval(interval);
-  }, 20);
-  return () => clearInterval(interval);
-}, [docAppts]);
+    const interval = setInterval(() => {
+      let updated = false;
+      if (t < targetT) { t++; updated = true; }
+      if (c < targetC) { c++; updated = true; }
+      if (u < targetU) { u++; updated = true; }
+      
+      setCounts({ total: t, completed: c, upcoming: u });
+      if (!updated) clearInterval(interval);
+    }, 20);
+    return () => clearInterval(interval);
+  }, [docAppts]);
 
   return (
     <div className="doc_dashboard_container doc_dashboard_view_fade_in">
       
+      {/* Top Section Grid */}
       <div className="doc_dashboard_top_grid_layout">
         
+        {/* Analytics Column */}
         <div className="doc_dashboard_left_analytics_stack">
           
+          {/* Main Stats Summary */}
           <div className="doc_dashboard_stats_cards_row">
-  <div className="doc_dashboard_stat_tile">
-    <h3>Total Appointments</h3>
-    <p>{counts.total}</p>
-  </div>
-  <div className="doc_dashboard_stat_tile">
-    <h3>Completed</h3>
-    <p>{counts.completed}</p>
-  </div>
-  <div className="doc_dashboard_stat_tile">
-    <h3>Upcoming</h3>
-    <p>{counts.upcoming}</p>
-  </div>
-</div>
+            <div className="doc_dashboard_stat_tile">
+              <h3>Total Appointments</h3>
+              <p>{counts.total}</p>
+            </div>
+            <div className="doc_dashboard_stat_tile">
+              <h3>Completed</h3>
+              <p>{counts.completed}</p>
+            </div>
+            <div className="doc_dashboard_stat_tile">
+              <h3>Upcoming</h3>
+              <p>{counts.upcoming}</p>
+            </div>
+          </div>
 
+          {/* Charts Bento Grid */}
           <div className="doc_dashboard_charts_bento">
-            {/* 1. PATIENT TRAFFIC (Using performanceStats from JSON) */}
+            {/* Patient Traffic Trends */}
             <div className="doc_dashboard_chart_card">
               <div className="doc_dashboard_chart_head">
                 <h3>Patient Traffic <span className="doc_dashboard_tag">Quarterly</span></h3>
@@ -113,7 +119,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
               </div>
             </div>
 
-            {/* 2. CONSULTATION MIX */}
+            {/* Appointment Consultation Mix */}
             <div className="doc_dashboard_chart_card">
               <div className="doc_dashboard_chart_head">
                 <h3>Consultation Mix</h3>
@@ -139,7 +145,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
               </div>
             </div>
 
-            {/* 3. APPOINTMENTS OVERVIEW */}
+            {/* Volume Status Distribution */}
             <div className="doc_dashboard_chart_card">
               <div className="doc_dashboard_chart_head">
                 <h3>Appointments Overview</h3>
@@ -153,7 +159,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
                     labels: ["Pending", "Completed"],
                     datasets: [{ 
                       label: "Volume", 
-                      data: [counts.pending, counts.completed], 
+                      data: [counts.upcoming, counts.completed], 
                       backgroundColor: ["#007acc", "#10b981"], 
                       borderRadius: 6 
                     }]
@@ -163,7 +169,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
               </div>
             </div>
 
-            {/* 4. PATIENT SATISFACTION (Accessing reviews data) */}
+            {/* Feedback and Satisfaction */}
             <div className="doc_dashboard_chart_card">
               <div className="doc_dashboard_chart_head">
                 <h3>Patient Satisfaction</h3>
@@ -190,8 +196,9 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR */}
+        {/* Sidebar Column */}
         <div className="doc_dashboard_right_priority_stack">
+          {/* Active Patient Widget */}
           <div className="doc_dashboard_next_pat_card_elite">
              <div className="doc_dashboard_card_title_row">
                 <div className="doc_dashboard_flex_center" style={{padding: '0'}}><Zap size={16} color="#007acc" fill="#007acc" /><h3>Next Appointment</h3></div>
@@ -219,12 +226,12 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
              )}
           </div>
 
+          {/* Clinical Schedule Feed */}
           <div className="doc_dashboard_events_panel_elite">
             <div className="doc_dashboard_card_title_row">
               <div className="doc_dashboard_flex_center" style={{padding: '0'}}><Calendar size={16} color="#007acc" /><h3>Clinical Events</h3></div>
             </div>
             <div className="doc_dashboard_event_list_scroll">
-              {/* Mapping Upcoming Leaves as Events */}
               {currentDoc.leaves?.upcoming.map((leave, idx) => (
                 <div key={idx} className="doc_dashboard_event_card doc_dashboard_pink">
                    <div className="doc_dashboard_date_badge">
@@ -246,8 +253,9 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
         </div>
       </div>
 
-      {/* BOTTOM SECTION */}
+      {/* Bottom Status Feeds */}
       <div className="doc_dashboard_bottom_section">
+        {/* Completed Cases List */}
         <div className="doc_dashboard_info_card_modern">
           <div className="doc_dashboard_modern_header">
             <div className="doc_dashboard_header_info"><CheckCircle size={16} color="#10b981" /><h3>Recently Completed</h3></div>
@@ -265,6 +273,7 @@ const [counts, setCounts] = useState({ total: 0, completed: 0, upcoming: 0 });
           </div>
         </div>
 
+        {/* Future Queue Preview */}
         <div className="doc_dashboard_info_card_modern">
           <div className="doc_dashboard_modern_header">
             <div className="doc_dashboard_header_info"><Clock4 size={16} color="#007acc" /><h3>Upcoming Queue</h3></div>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import "./Landing_Page.css";
 
 /* --- ASSET IMPORTS --- */
-import delhi from "../../Assets/Images/Home/Delhi.png"
+import delhi from "../../Assets/Images/Home/Delhi.png";
 import mumbai from "../../Assets/Images/Home/Mumbai.png";
 import hyderabad from "../../Assets/Images/Home/Hyderabad.png";
 import bangalore from "../../Assets/Images/Home/Banglore.png";
@@ -14,8 +14,13 @@ import hosp2 from "../../Assets/Images/Home/Hospital_2.png";
 import hosp3 from "../../Assets/Images/Home/Hospital_3.png";
 import hosp4 from "../../Assets/Images/Home/Hospital_4.png";
 
+/**
+ * Landing_Page Component
+ * The primary entry point for the Medico+ platform.
+ * Features: Auto-sliding hero, emergency tickers, branch directory, and specialization overview.
+ */
 function Landing_Page() {
-    /* --- SLIDER LOGIC --- */
+    /* --- HERO SLIDER LOGIC --- */
     const slides = [hosp1, hosp2, hosp3, hosp4];
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -26,11 +31,11 @@ function Landing_Page() {
         return () => clearInterval(interval);
     }, [slides.length]);
 
-    /* --- DATA ARRAYS --- */
+    /* --- REGISTRY DATA --- */
     const locations = [
         {
             name: "Hyderabad",
-            area: "Banjarahills",
+            area: "Banjara Hills",
             addr: "Road No. 12",
             img: hyderabad,
             phone: "+91 98765 12345",
@@ -84,7 +89,7 @@ function Landing_Page() {
         { title: "Neurology", icon: "♥", desc: "Advanced care for the nervous system" },
         { title: "Pediatrics", icon: "♥", desc: "Dedicated healthcare for children" },
         { title: "Gastroenterology", icon: "♥", desc: "Digestive system and liver health" },
-        { title: "Oncology", icon: "♥", desc: "Cancer Treatment" },
+        { title: "Oncology", icon: "♥", desc: "Cancer Treatment & Therapy" },
         { title: "Dermatology", icon: "♥", desc: "Skin & Hair Wellness" },
         { title: "General", icon: "♥", desc: "Comprehensive primary healthcare" }
     ];
@@ -92,7 +97,7 @@ function Landing_Page() {
     return (
         <div className="landing_page_wrapper">
             
-            {/* --- NAVIGATION --- */}
+            {/* --- TOP NAVIGATION BAR --- */}
             <nav className="landing_page_navbar">
                 <div className="landing_page_nav_inner">
                     <div className="landing_page_brand">
@@ -111,7 +116,7 @@ function Landing_Page() {
                 </div>
             </nav>
 
-            {/* --- HERO SECTION --- */}
+            {/* --- HERO BRANDING SECTION --- */}
             <main className="landing_page_hero">
                 <div className="landing_page_hero_glass_card">
                     <div className="landing_page_badge">REDEFINING MEDICAL EXCELLENCE</div>
@@ -136,7 +141,7 @@ function Landing_Page() {
                 </div>
             </main>
 
-            {/* --- EMERGENCY TICKER --- */}
+            {/* --- LIVE EMERGENCY TICKER --- */}
             <div className="landing_page_ticker">
                 <div className="landing_page_ticker_track">
                     <span>⚠️ EMERGENCY: 24/7 Trauma Centers Active</span>
@@ -148,7 +153,7 @@ function Landing_Page() {
                 </div>
             </div>
 
-            {/* --- IMAGE SLIDER --- */}
+            {/* --- FACILITY SHOWCASE SLIDER --- */}
             <section className="landing_page_slider_section">
                 <div className="landing_page_slider_frame">
                     {slides.map((img, index) => (
@@ -168,7 +173,7 @@ function Landing_Page() {
                 </div>
             </section>
 
-            {/* --- LOCATIONS GRID --- */}
+            {/* --- BRANCH DIRECTORY --- */}
             <section className="landing_page_section" id="locations-link">
                 <div className="landing_page_container">
                     <h2 className="landing_page_section_heading">
@@ -179,6 +184,7 @@ function Landing_Page() {
                         {locations.map((loc, i) => (
                             <div key={i} className="landing_page_location_card">
                                 <div className="landing_page_card_inner">
+                                    {/* Front side showing the building */}
                                     <div
                                         className="landing_page_card_front"
                                         style={{ backgroundImage: `url(${loc.img})` }}
@@ -186,6 +192,7 @@ function Landing_Page() {
                                         <div className="landing_page_city_label">{loc.name}</div>
                                     </div>
 
+                                    {/* Back side showing contact details */}
                                     <div className="landing_page_card_back">
                                         <h3>{loc.area}</h3>
                                         <div className="landing_page_loc_info">
@@ -201,7 +208,7 @@ function Landing_Page() {
                 </div>
             </section>
 
-            {/* --- MEDICAL SERVICES --- */}
+            {/* --- CLINICAL SPECIALIZATIONS --- */}
             <section className="landing_page_section landing_page_bg_light" id="services-link">
                 <div className="landing_page_container">
                     <h2 className="landing_page_section_heading">
@@ -220,7 +227,7 @@ function Landing_Page() {
                 </div>
             </section>
 
-            {/* --- STATISTICS --- */}
+            {/* --- IMPACT STATISTICS --- */}
             <section className="landing_page_stats_bar">
                 <div className="landing_page_stat_box">
                     <span className="landing_page_num">800+</span>
@@ -260,7 +267,7 @@ function Landing_Page() {
                 </div>
             </section>
 
-            {/* --- FOOTER --- */}
+            {/* --- SYSTEM FOOTER --- */}
             <footer className="landing_page_footer">
                 <div className="landing_page_container landing_page_footer_grid">
                     <div className="landing_page_footer_main">

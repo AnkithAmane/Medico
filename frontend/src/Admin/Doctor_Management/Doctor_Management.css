@@ -1,9 +1,4 @@
-/* ==========================================================================
-   ADMIN_DOC_M: SPECIALIST REGISTRY & ANALYTICS
-   Architecture: High-Trust Clinical Dashboard & Bento Grid
-   ========================================================================== */
-
-/* 1.1 KEYFRAMES & GLOBAL ANIMATIONS */
+/* Animations */
 @keyframes admin_doc_m_FadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -14,7 +9,7 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* 1.2 MAIN WRAPPER CONFIGURATION */
+/* Main Layout Wrapper */
 .admin_doc_m_wrapper {
   animation: admin_doc_m_FadeIn 0.6s ease-in-out;
   min-height: 100%;
@@ -26,7 +21,7 @@
   padding: 20px 50px 50px 50px;
 }
 
-/* 1.3 SECTION HEADER & BRANDING */
+/* Header and Branding */
 .admin_doc_m_header_row {
   margin-bottom: 25px;
   display: flex;
@@ -54,7 +49,7 @@
   font-weight: 500;
 }
 
-/* 1.4 ACTION BUTTON GROUPS */
+/* Action Buttons */
 .admin_doc_m_action_group {
   display: flex;
   gap: 12px;
@@ -105,7 +100,7 @@
   filter: brightness(1.05);
 }
 
-/* 1.5 FILTER & SEARCH TOOLBAR SYSTEM */
+/* Toolbar and Search */
 .admin_doc_m_actions_bar {
   display: flex;
   flex-wrap: wrap;
@@ -148,6 +143,7 @@
   color: #1e293b;
 }
 
+/* Filters */
 .admin_doc_m_dropdown_group {
   display: flex;
   gap: 10px;
@@ -205,10 +201,7 @@
   transform: scale(1.02);
 }
 
-/* ==========================================================================
-   PART 2: CLINICAL REGISTRY TABLE & PAGINATION
-   ========================================================================== */
-
+/* Registry Table Styling */
 .admin_doc_m_table_container {
   background: white;
   border-radius: 24px;
@@ -268,6 +261,7 @@
   background-color: #f0f9ff;
 }
 
+/* Table Cells */
 .admin_doc_m_cell_user {
   display: flex;
   align-items: center;
@@ -281,11 +275,6 @@
   object-fit: cover;
   border: 3px solid #f1f5f9;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.admin_doc_m_cell_user div {
-  display: flex;
-  flex-direction: column;
 }
 
 .admin_doc_m_cell_user b {
@@ -308,6 +297,7 @@
   width: fit-content;
 }
 
+/* Status Badges */
 .admin_doc_m_status {
   padding: 6px 14px;
   border-radius: 10px;
@@ -330,15 +320,6 @@
   border: 1px solid #fecaca;
 }
 
-.admin_doc_m_text_bold {
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.admin_doc_m_text_right {
-  text-align: left;
-}
-
 .admin_doc_m_btn_manage {
   background: white;
   border: 1.5px solid var(--med-border, #e2e8f0);
@@ -358,6 +339,7 @@
   box-shadow: 0 6px 15px rgba(0, 122, 204, 0.2);
 }
 
+/* Pagination */
 .admin_doc_m_pagination_bar {
   display: flex;
   justify-content: space-between;
@@ -416,29 +398,7 @@
   background: #f1f5f9;
 }
 
-.admin_patnt_m_pag_nav_btn:hover:not(:disabled),
-.admin_patnt_m_pag_num_btn:hover:not(.admin_patnt_m_active) {
-  border-color: var(--med-primary, #007acc);
-  color: var(--med-primary, #007acc);
-  background: #f0f9ff;
-}
-
-.admin_doc_m_empty {
-  text-align: center;
-  padding: 60px 40px;
-  color: #94a3b8;
-}
-
-.admin_doc_m_empty p {
-  margin-top: 15px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* ==========================================================================
-   PART 3: SPECIALIST WORKSPACE, ANALYTICS, REVIEWS & MODAL SYSTEM
-   ========================================================================== */
-
+/* Detail Workspace */
 .admin_doc_m_detail_container {
   background: #ffffff;
   border-radius: 32px;
@@ -476,6 +436,7 @@
   cursor: pointer;
 }
 
+/* Profile Section */
 .admin_doc_m_profile_section {
   display: flex;
   align-items: center;
@@ -513,6 +474,7 @@
   gap: 10px;
 }
 
+/* Stats Boxes */
 .admin_doc_m_profile_stats {
   display: flex;
   gap: 20px;
@@ -545,6 +507,7 @@
   letter-spacing: 0.8px;
 }
 
+/* Grid Layout Sections */
 .admin_doc_m_middle_section {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -560,6 +523,7 @@
   padding: 30px;
 }
 
+/* Elite Lists */
 .admin_doc_m_list_header_flex {
   display: flex;
   justify-content: space-between;
@@ -591,7 +555,7 @@
   background: #f0f9ff;
 }
 
-/* 3.4 ABSENCE & LEAVES LOG */
+/* Absence and Leaves Section */
 .admin_doc_m_leaves_section {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border: 1px solid #e2e8f0;
@@ -626,34 +590,7 @@
   box-shadow: 0 10px 20px rgba(16, 185, 129, 0.1);
 }
 
-.admin_doc_m_leave_box_elite b {
-  color: #1e293b;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 2px;
-}
-
-.admin_doc_m_view_more_btnl {
-  width: 100%;
-  background: #f1f5f9;
-  color: #64748b;
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.admin_doc_m_view_more_btnl:hover {
-  background: #e2e8f0;
-  color: #0f172a;
-}
-
-/* 3.5 MODAL SYSTEM (CENTERED ELITE) */
+/* Modal and Form Styling */
 .admin_doc_m_modal_overlay {
   position: fixed;
   inset: 0;
@@ -688,12 +625,6 @@
   gap: 10px;
 }
 
-.admin_doc_m_input_box label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #475569;
-}
-
 .admin_doc_m_input_box input,
 .admin_doc_m_input_box select {
   padding: 16px;
@@ -719,7 +650,7 @@
   box-shadow: 0 10px 20px rgba(0, 122, 204, 0.2);
 }
 
-/* 3.6 TAB TOGGLES */
+/* Tabs and Sub-filters */
 .admin_doc_m_sub_filter_toggle {
   display: flex;
   background: #f1f5f9;
@@ -746,95 +677,7 @@
   box-shadow: 0 4px 10px rgba(0, 122, 204, 0.2);
 }
 
-/* 1. MONTH FILTER STYLING */
-.admin_doc_m_date_filter_wrapper {
-  display: flex;
-  align-items: center;
-  background: #f8fafc;
-  padding: 8px 15px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-
-.admin_doc_m_date_filter_wrapper:focus-within {
-  border-color: #007acc;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 122, 204, 0.08);
-}
-
-.admin_doc_m_date_filter_wrapper input[type="month"] {
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  color: #1e293b;
-  cursor: pointer;
-  font-size: 13px;
-  text-transform: uppercase;
-}
-
-.admin_doc_m_date_filter_wrapper input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-}
-
-/* 2. TESTIMONIALS & LOGS */
-.admin_doc_m_appointments_list h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  color: #0f172a;
-  font-weight: 800;
-}
-
-.admin_doc_m_list_item_refined {
-  background: #f0f9ff;
-  border: 1px solid #f1f5f9;
-  padding: 20px;
-  border-radius: 18px;
-  margin-bottom: 12px;
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-}
-
-.admin_doc_m_list_item_refined:hover {
-  border-color: #007acc;
-  background: #f0f9ff;
-  transform: scale(1.01);
-}
-
-.admin_doc_m_list_item_refined p {
-  line-height: 1.5;
-  color: #475569;
-  margin-top: 8px !important;
-}
-
-/* Award Icons */
-.admin_doc_m_charts_section .admin_doc_m_list_item_refined div:first-child {
-  background: #f1f5f9 !important;
-  border: 1px solid #e2e8f0;
-  transition: 0.3s;
-}
-
-.admin_doc_m_charts_section .admin_doc_m_list_item_refined:hover div:first-child {
-  background: #007acc !important;
-  color: white !important;
-}
-
-/* Upcoming Events Section */
-.admin_doc_m_charts_section div[style*="borderTop"] {
-  background: #f8fafc;
-  padding: 15px !important;
-  border-radius: 12px;
-  border: 1px dashed #cbd5e1 !important;
-}
-
-/* ==========================================================================
-   RESPONSIVE DESIGN SYSTEM
-   ========================================================================== */
-
+/* Responsive Queries */
 @media screen and (max-width: 1200px) {
   .admin_doc_m_wrapper {
     padding: 20px;
@@ -853,30 +696,12 @@
   .admin_doc_m_profile_section {
     flex-direction: column;
     text-align: center;
-    padding: 20px;
   }
   .admin_doc_m_profile_stats {
     margin-left: 0;
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-  }
-  .admin_doc_m_profile_info p {
-    justify-content: center;
-  }
-  .admin_doc_m_header_row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  .admin_doc_m_action_group {
-    width: 100%;
-    flex-direction: column;
-  }
-  .admin_doc_m_btn_outline_action,
-  .admin_doc_m_btn_primary_action {
-    width: 100%;
-    justify-content: center;
   }
   .admin_doc_m_actions_bar {
     padding: 15px;
@@ -890,45 +715,20 @@
     width: 100% !important;
     max-width: 100%;
   }
-  .admin_doc_m_table_scroll {
-    overflow-x: auto;
-  }
-  .admin_doc_m_table th,
-  .admin_doc_m_table td {
-    padding: 12px 15px;
-    font-size: 13px;
-  }
-  .admin_doc_m_leaves_grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media screen and (max-width: 480px) {
   .admin_doc_m_title_elite {
     font-size: 24px;
   }
-  .admin_doc_m_profile_photo_large {
-    width: 120px;
-    height: 120px;
-  }
   .admin_doc_m_stat_box {
     padding: 15px;
     min-width: 110px;
-  }
-  .admin_doc_m_stat_box h3 {
-    font-size: 1.4rem;
-  }
-  .admin_doc_m_sub_filter_toggle {
-    overflow-x: auto;
-    white-space: nowrap;
   }
   .admin_doc_m_centered_form_card {
     padding: 25px;
   }
   .admin_doc_m_form_grid {
     grid-template-columns: 1fr;
-  }
-  .admin_doc_m_btn_submit_pro {
-    grid-column: span 1;
   }
 }

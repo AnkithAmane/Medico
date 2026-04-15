@@ -1,5 +1,5 @@
 import React from 'react';
-import Auth_Main from '../Authentication/Auth_Main';
+import Auth_Main from '../Authentication/Authentication_Page';
 
 // Styling
 import './Patient_Auth.css';

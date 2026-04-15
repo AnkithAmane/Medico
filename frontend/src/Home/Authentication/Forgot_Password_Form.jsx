@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import './Forgot_Password_Form.css';
 
-const ForgotPasswordForm = ({ setShowForgotPassword }) => {
+/**
+ * Forgot_Password_Form Component
+ * Manages the password recovery interface and navigation back to the sign-in state.
+ */
+const Forgot_Password_Form = ({ setShowForgotPassword }) => {
   return (
     <div className="forgot_form_wrapper">
       
@@ -53,4 +57,4 @@ const ForgotPasswordForm = ({ setShowForgotPassword }) => {
   );
 };
 
-export default ForgotPasswordForm;
+export default Forgot_Password_Form;

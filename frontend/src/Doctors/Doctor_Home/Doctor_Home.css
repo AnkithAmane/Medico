@@ -1,3 +1,4 @@
+/* 1. ROOT VARIABLES & GLOBAL FOUNDATIONS */
 :root {
   --med-primary: #007acc;
   --med-primary-light: #e0f2fe;
@@ -25,6 +26,7 @@
   transform-origin: top left;
 }
 
+/* 2. SIDEBAR CONFIGURATION */
 .doc_home_med_sidebar_elite {
   width: 270px;
   height: 100%;
@@ -42,6 +44,7 @@
   width: 95px;
 }
 
+/* 3. DOCTOR IDENTITY PANEL */
 .doc_home_doc_identity_panel {
   padding: 45px 20px 25px;
   display: flex;
@@ -110,6 +113,7 @@
   letter-spacing: 0.5px;
 }
 
+/* 4. SIDEBAR NAVIGATION */
 .doc_home_sidebar_navigation_menu {
   flex: 1;
   padding: 10px 15px;
@@ -160,6 +164,7 @@
   display: block;
 }
 
+/* 5. SIDEBAR FOOTER & TRIGGER */
 .doc_home_sidebar_footer_actions {
   padding: 20px 15px;
   border-top: 1px solid var(--med-border);
@@ -205,6 +210,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* 6. MAIN WORKSPACE VIEWPORT */
 .doc_home_med_workspace_viewport {
   flex: 1;
   display: flex;
@@ -212,6 +218,7 @@
   overflow: hidden;
 }
 
+/* 7. HEADER COMPONENTS */
 .doc_home_med_workspace_header {
   height: 85px;
   background: rgba(255, 255, 255, 0.85);
@@ -249,6 +256,7 @@
   font-weight: 400;
 }
 
+/* 8. SEARCH & UTILITIES */
 .doc_home_global_search_container {
   background: #f1f5f9;
   border-radius: 15px;
@@ -341,6 +349,7 @@
   border: 2px solid #fff;
 }
 
+/* 9. CONTENT AREA */
 .doc_home_med_workspace_content {
   flex: 1;
   overflow-y: auto;
@@ -354,6 +363,7 @@
   margin: 0 auto;
 }
 
+/* 10. ANIMATIONS & RESPONSIVE QUERIES */
 .doc_home_view_fade_in {
   animation: doc_home_fadeIn 0.5s ease-out forwards;
 }
@@ -403,5 +413,4 @@
     width: 42px !important;
     height: 42px !important;
   }
-  .doc_home_global_search_container { margin: 0 10px; }
 }

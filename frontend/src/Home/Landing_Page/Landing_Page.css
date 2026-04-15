@@ -108,7 +108,6 @@
     background: transparent;
     color:#334155 ;
     border: 2px solid #334155;
-    
 }
 
 /* --- HERO SECTION --- */
@@ -171,6 +170,7 @@
     line-height: 1;
 }
 
+/* Character entry animations */
 .landing_page_letter_m { animation: fTL 1s ease-out forwards; }
 .landing_page_letter_e { animation: fTR 1s ease-out forwards; }
 .landing_page_letter_d { animation: fBR 1.2s ease-out forwards; }
@@ -302,7 +302,7 @@
     line-height: 1.2;
 }
 
-/* --- LOCATIONS BENTO GRID --- */
+/* --- LOCATIONS GRID --- */
 .landing_page_section {
     padding: 80px 8%;
     padding-top: 50px;
@@ -335,6 +335,7 @@
     gap: 25px;
 }
 
+/* Flipping card styles */
 .landing_page_location_card {
     cursor: pointer;
 }
@@ -415,7 +416,7 @@
     border-radius: 10px;
 }
 
-/* --- MEDICAL SPECIALIZATIONS --- */
+/* --- MEDICAL SERVICES --- */
 .landing_page_bg_light {
     background: #f1f5f9;
 }
@@ -513,7 +514,7 @@
     line-height: 1;
 }
 
-/* --- PATIENT FEEDBACK SECTION --- */
+/* --- PATIENT FEEDBACK --- */
 .landing_page_feedback_list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -570,7 +571,7 @@
     line-height: 1;
 }
 
-/* --- MODERN FOOTER SECTION --- */
+/* --- FOOTER SECTION --- */
 .landing_page_footer {
     background: #f8fafc;
     padding: 50px 5% 30px;
@@ -660,7 +661,7 @@
     line-height: 1.5;
 }
 
-/* --- KEYFRAMES ANIMATIONS --- */
+/* --- KEYFRAME DEFINITIONS --- */
 @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
@@ -696,31 +697,21 @@
     to { transform: scale(1); }
 }
 
-/* --- RESPONSIVENESS --- */
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 900px) {
     .landing_page_footer_grid { grid-template-columns: 1fr; gap: 40px; }
     .landing_page_bento_grid { grid-template-columns: 1fr; }
     .landing_page_nav_inner { width: 95%; }
     .landing_page_hero { padding-top: 100px; }
 }
+
 @media (max-width: 600px) {
     .landing_page_nav_inner {
-        justify-content: center; /* Centers everything on mobile */
-        flex-direction: column; /* Stacks logo above buttons */
+        justify-content: center;
+        flex-direction: column;
         gap: 10px;
     }
-
-    .landing_page_navbar {
-        padding: 15px 0;
-    }
-
-    .landing_page_nav_actions {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* Adjusting Hero spacing so it doesn't hide under the taller mobile nav */
-    .landing_page_hero {
-        padding-top: 140px; 
-    }
-}
+    .landing_page_navbar { padding: 15px 0; }
+    .landing_page_nav_actions { width: 100%; justify-content: center; }
+    .landing_page_hero { padding-top: 140px; }
+}   

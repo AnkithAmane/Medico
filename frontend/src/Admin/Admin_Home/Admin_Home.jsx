@@ -18,34 +18,39 @@ import {
   Menu
 } from "lucide-react";
 import "./Admin_Home.css";
-import adminPic from "../../Assets/Images/Admin/default_admin.jpg";
+import adminPic from "../../Assets/Images/Admin/default_admin_pic.jpg";
 
 export default function Admin_Home() {
+  /* State Management */
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  /* Navigation Configuration */
   const navOptions = [
-    { id: 1, label: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
-    { id: 2, label: "Appointments", path: "/admin/appointment_management", icon: <CalendarDays size={20} /> },
-    { id: 3, label: "Doctors", path: "/admin/doctor_management", icon: <UserRound size={20} /> },
-    { id: 4, label: "Patients", path: "/admin/patient_management", icon: <Users size={20} /> },
+    { id: 1, label: "Dashboard", path: "/admin/admin_dashboard", icon: <LayoutDashboard size={20} /> },
+    { id: 2, label: "Appointments", path: "/admin/appointments_management", icon: <CalendarDays size={20} /> },
+    { id: 3, label: "Doctors", path: "/admin/doctors_management", icon: <UserRound size={20} /> },
+    { id: 4, label: "Patients", path: "/admin/patients_management", icon: <Users size={20} /> },
     { id: 5, label: "Revenue", path: "/admin/revenue_details", icon: <Wallet size={20} /> },
     { id: 6, label: "Statistics", path: "/admin/statistics", icon: <BarChart3 size={20} /> },
-    { id: 7, label: "Events", path: "/admin/event_management", icon: <PartyPopper size={20} /> },
-    { id: 8, label: "Schedules", path: "/admin/schedule_management", icon: <Clock size={20} /> },
-    { id: 9, label: "Departments", path: "/admin/department_management", icon: <Settings size={20} /> },
+    { id: 7, label: "Events", path: "/admin/events_management", icon: <PartyPopper size={20} /> },
+    { id: 8, label: "Schedules", path: "/admin/availability_management", icon: <Clock size={20} /> },
+    { id: 9, label: "Departments", path: "/admin/departments_management", icon: <Settings size={20} /> },
   ];
 
+  /* Event Handlers */
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to end your session at Medico+?")) {
       navigate("/");
     }
   };
 
+  /* Main Layout Render */
   return (
     <div className="admin_home_layout">
+      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div 
           className="admin_home_mobile_overlay" 
@@ -53,6 +58,7 @@ export default function Admin_Home() {
         ></div>
       )}
 
+      {/* Sidebar Navigation */}
       <aside className={`admin_home_sidebar ${isCollapsed ? "collapsed" : ""} ${isMobileMenuOpen ? "mobile_open" : ""}`}>
         <div className="admin_home_toggle_zone">
           <button 
@@ -88,7 +94,9 @@ export default function Admin_Home() {
         </div>
       </aside>
 
+      {/* Content Area */}
       <main className="admin_home_main_viewport">
+        {/* Top Header Bar */}
         <header className="admin_home_top_header">
           <div className="admin_home_header_left">
             <button 
@@ -134,6 +142,7 @@ export default function Admin_Home() {
           </div>
         </header>
 
+        {/* Dynamic Page Content */}
         <section className="admin_home_page_container">
           <Outlet context={{ searchTerm }} />
         </section>

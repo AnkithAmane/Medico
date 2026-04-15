@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import hospitalData from "../../../Assets/Data/PatientData/DoctorData";
+import hospitalData from "../../../Assets/Data/DoctorData";
 import PaymentConfirmation from "./PaymentConfirmation";
 import "./AppointmentForm.css";
  

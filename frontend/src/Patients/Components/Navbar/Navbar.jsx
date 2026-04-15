@@ -1,7 +1,7 @@
 import './Navbar.css';
 import { useState } from 'react';
 import { NavLink,useNavigate } from 'react-router-dom';
-import Image from '../../../Assets/Images/Doctor/Patient.jpg';
+import Image from '../../../Assets/Images/Patient/default_patient_pic.jpg';
 
 export default function Navbar() {
   const [profileClicked, setProfileClicked] = useState(false);

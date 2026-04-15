@@ -1,0 +1,397 @@
+/* ==========================================================================
+   1. CORE CONTAINER & LAYOUT
+   ========================================================================== */
+.pat_spec_container_full {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: #f8fafc;
+    overflow: hidden;
+    zoom: 0.8;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ==========================================================================
+   2. LEFT SIDE PROFILE PANEL (Full Height)
+   ========================================================================== */
+.pat_spec_side_panel {
+    width: 0;
+    height: 100vh;
+    background: white;
+    overflow: hidden;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-right: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.pat_spec_side_panel.open {
+    width: 480px; /* Width when profile is active */
+}
+
+.side_panel_content {
+    width: 480px;
+    height: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel_close_btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    margin-bottom: 30px;
+    width: fit-content;
+    transition: 0.2s;
+}
+
+.panel_close_btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.panel_img {
+    width: 140px;
+    height: 140px;
+    border-radius: 35px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.panel_title_group h2 { 
+    font-size: 2rem; 
+    color: #1e293b; 
+    margin: 0; 
+    font-weight: 800;
+}
+
+.panel_dept_tag { 
+    display: inline-block;
+    color: #007acc; 
+    font-weight: 700; 
+    font-size: 1rem; 
+    margin-top: 5px;
+}
+
+.panel_scroll_area { 
+    flex: 1; 
+    overflow-y: auto; 
+    margin: 25px 0; 
+    padding-right: 15px; 
+}
+
+/* Custom Scrollbar for Panel */
+.panel_scroll_area::-webkit-scrollbar { width: 5px; }
+.panel_scroll_area::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+.panel_stats_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.p_stat {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 22px;
+    text-align: center;
+    border: 1px solid #f1f5f9;
+}
+
+.p_stat strong { 
+    display: block;
+    font-size: 0.75rem; 
+    color: #94a3b8; 
+    text-transform: uppercase; 
+    margin-bottom: 5px; 
+    letter-spacing: 0.5px;
+}
+
+.p_stat span {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.panel_section { margin-bottom: 30px; }
+.panel_section h3 { font-size: 1.1rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; }
+.panel_section p { font-size: 0.95rem; color: #64748b; line-height: 1.7; }
+
+.panel_loc_pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f7ff;
+    color: #007acc;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    width: fit-content;
+}
+
+.panel_book_btn {
+    background: #007acc;
+    color: white;
+    padding: 22px;
+    border-radius: 22px;
+    border: none;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 122, 204, 0.25);
+    transition: 0.3s;
+}
+
+.panel_book_btn:hover {
+    background: #005fa3;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   3. MAIN HUB (Search & Grid)
+   ========================================================================== */
+.pat_spec_main_full {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+/* SEARCH & FILTER STRIP */
+.pat_spec_search_strip {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.pat_spec_filter_row_top {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.pat_spec_input_wrap {
+    position: relative;
+    flex: 1;
+}
+
+.pat_spec_input_wrap input {
+    width: 100%;
+    padding: 20px 20px 20px 60px;
+    border-radius: 25px;
+    border: 1px solid #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: 0.3s;
+}
+
+.pat_spec_input_wrap input:focus {
+    border-color: #007acc;
+    outline: none;
+    box-shadow: 0 4px 20px rgba(0, 122, 204, 0.1);
+}
+
+.search_icon { 
+    position: absolute; 
+    left: 22px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    color: #007acc; 
+}
+
+/* Location Select */
+.pat_spec_loc_select {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 22px;
+    border: 1px solid #e2e8f0;
+    gap: 12px;
+    color: #007acc;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.pat_spec_loc_select select {
+    border: none;
+    outline: none;
+    font-weight: 700;
+    color: #1e293b;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Department Filters */
+.pat_spec_dept_filter {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.pat_spec_dept_filter::-webkit-scrollbar { height: 0px; }
+
+.pat_spec_dept_filter button {
+    padding: 12px 25px;
+    border-radius: 15px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pat_spec_dept_filter button.active {
+    background: #007acc;
+    color: white;
+    border-color: #007acc;
+    box-shadow: 0 5px 15px rgba(0, 122, 204, 0.2);
+}
+
+/* ==========================================================================
+   4. DOCTOR GRID & CARDS
+   ========================================================================== */
+.pat_spec_grid_full {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 25px;
+}
+
+.pat_spec_card {
+    background: white;
+    border-radius: 35px;
+    padding: 25px;
+    border: 1px solid #e2e8f0;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.pat_spec_card:hover { 
+    transform: translateY(-8px); 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
+    border-color: #cbd5e1;
+}
+
+.pat_spec_card.selected { 
+    border-color: #007acc; 
+    background: #f0f7ff; 
+    box-shadow: 0 10px 25px rgba(0, 122, 204, 0.1);
+}
+
+.pat_spec_card_top { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
+
+.pat_spec_avatar_frame { position: relative; }
+.pat_spec_avatar_frame img { 
+    width: 80px; 
+    height: 80px; 
+    border-radius: 25px; 
+    object-fit: cover; 
+}
+
+.status_dot { 
+    position: absolute; 
+    bottom: 2px; 
+    right: 2px; 
+    width: 16px; 
+    height: 16px; 
+    border-radius: 50%; 
+    border: 3px solid white; 
+}
+.status_dot.online { background: #10b981; }
+.status_dot.offline { background: #cbd5e1; }
+
+.pat_spec_core_info h3 { font-size: 1.25rem; margin: 0; font-weight: 800; color: #1e293b; }
+.pat_spec_dept_tag_small { font-size: 0.85rem; color: #007acc; font-weight: 700; display: block; margin-top: 2px; }
+
+.pat_spec_branch_tag {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+.pat_spec_card_meta { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    margin-bottom: 25px; 
+    border-top: 1px solid #f1f5f9; 
+    padding-top: 20px; 
+}
+
+.meta_item { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    font-size: 0.9rem; 
+    color: #64748b; 
+    font-weight: 600; 
+}
+
+.pat_spec_card_actions { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 12px; 
+}
+
+.btn_view_profile { 
+    padding: 14px; 
+    border-radius: 16px; 
+    border: 1.5px solid #e2e8f0; 
+    background: white; 
+    font-weight: 700; 
+    font-size: 0.9rem; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.btn_view_profile:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+.btn_book_now { 
+    padding: 14px; 
+    border-radius: 16px; 
+    border: none; 
+    background: #1e293b; 
+    color: white; 
+    font-weight: 700; 
+    font-size: 0.9rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.btn_book_now:hover { background: #000; transform: translateY(-2px); }
+
+/* ==========================================================================
+   5. UTILS & MODAL OVERLAYS
+   ========================================================================== */
+.pat_spec_empty_text {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px;
+    color: #94a3b8;
+    font-weight: 600;
+}
