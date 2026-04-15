@@ -15,10 +15,7 @@ import ForgotPasswordForm from './Forgot_Password_Form';
 // Styling
 import './Authentication_Page.css';
 
-/**
- * Authentication Master Component
- * Handles entry animations, theme switching, and sub-form navigation (Sign In, Sign Up, Forgot Password).
- */
+/* Authentication Master Component */
 function Authentication({ 
     role, 
     themeClass, 
