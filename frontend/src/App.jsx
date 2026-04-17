@@ -29,13 +29,16 @@ import Doctor_Review_Management from './Doctors/Doctor_Review_Management/Doctor_
 import Doctor_Profile from './Doctors/Doctor_Profile/Doctor_Profile';
 import Doctor_Settings from './Doctors/Doctor_Settings/Doctor_Settings';
 
-// Common/Other
-import Patient from './Patients/Pages/Patient';
+// Patient Components
+import Patient_Home from './Patients/Patient_Home/Patient_Home';
+import Patient_Dashboard from './Patients/Patient_Dashboard/Patient_Dashboard';
+import Patient_Bookings from './Patients/Patient_Bookings/Patient_Bookings';
+import Doctor_Details from './Patients/Doctor_Details/Doctor_Details';
+import Patient_Profile from './Patients/Patient_Profile/Patient_Profile';
+import Patient_Settings from './Patients/Patient_Settings/Patient_Settings';
+import Pharmacy_Details from './Patients/Pharmacy_Details/Pharmacy_Details';
+import Patient_Vault from './Patients/Patient_Vault/Patient_Vault'
 
-/**
- * MAIN APPLICATION COMPONENT
- * Handles global routing for the Medico+ Ecosystem.
- */
 function App() {
   return (
     <BrowserRouter>
@@ -48,9 +51,6 @@ function App() {
         <Route path="/patient_auth" element={<Patient_Auth />} />
         <Route path="/doctor_auth" element={<Doctor_Auth />} />
         <Route path="/admin_auth" element={<Admin_Auth />} />
-
-        {/* --- PATIENT ROUTES --- */}
-        <Route path="/patient_home/*" element={<Patient />} /> 
 
         {/* --- ADMIN ROUTES --- */}
         <Route path="/admin" element={<Admin_Home />}>
@@ -77,6 +77,19 @@ function App() {
           <Route path="doctor_review_management" element={<Doctor_Review_Management />} />
           <Route path="doctor_settings" element={<Doctor_Settings />} />
           <Route path="doctor_profile" element={<Doctor_Profile />} />
+        </Route>
+
+        {/* --- Patient ROUTES --- */}
+        <Route path="/patient" element={<Patient_Home />}>
+          <Route index element={<Patient_Dashboard />} />
+          <Route path="patient_dashboard" element={<Patient_Dashboard />} />
+          <Route path="patient_bookings" element={<Patient_Bookings />} />
+          <Route path="doctor_details" element={<Doctor_Details/>} />
+          <Route path="patient_bookings" element={<Patient_Bookings/>} />
+          <Route path="pharmacy_details" element={<Pharmacy_Details/>} />
+          <Route path="patient_vault" element={<Patient_Vault/>} />
+          <Route path="patient_settings" element={<Patient_Settings />} />
+          <Route path="patient_profile" element={<Patient_Profile />} />
         </Route>
 
       </Routes>

@@ -1,20 +1,22 @@
+/* Main Layout Container */
 .pat_home_layout {
   min-height: 100vh;
-  background-color: #f8fafc; /* Standard Medico+ Light Background */
+  background-color: #f8fafc; 
   display: flex;
   flex-direction: column;
 }
 
+/* Dynamic Viewport Spacing */
 .pat_home_content_area {
   flex: 1;
   width: 100%;
-  max-width: 1600px; /* Limits width on ultra-wide screens for better UX */
+  max-width: 1600px; 
   margin: 0 auto;
-  padding-top: 20px; /* Professional gap from the Navbar */
+  padding-top: 20px; 
   box-sizing: border-box;
 }
 
-/* Ensure smooth transitions when switching between patient pages */
+/* Page Transition Animation */
 .pat_home_content_area > div {
   animation: pat_page_entry 0.4s ease-out;
 }
