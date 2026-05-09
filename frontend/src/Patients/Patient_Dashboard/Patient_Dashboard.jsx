@@ -6,34 +6,50 @@ import {
   Calendar as CalIcon
 } from 'lucide-react';
 import './Patient_Dashboard.css';
-
-// Data and Assets
-import patientData from '../../Assets/Data/Patients_Data.json';
-import appointmentsData from '../../Assets/Data/Appointments_Data.json';
 import doctor from '../../Assets/Images/Doctor/doctor_dashboard_2.png';
+import { useAuth } from '../../context/AuthContext';
+import axiosInstance from '../../utils/axios';
 
 export default function Patient_Dashboard() {
   const [dateTime, setDateTime] = useState(new Date());
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [patientProfile, setPatientProfile] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // User Context
-  const user = useMemo(() => patientData.find(p => p.id === 24) || patientData[90], []);
-  
-  // Next Appointment Logic
-  const nextAppt = useMemo(() => 
-    appointmentsData.find(a => a.patient === user.name && a.status === "Upcoming"), 
-  [user.name]);
+  const { user } = useAuth();
 
-  // Schedule Lists
-  const upcomingList = useMemo(() => 
-    appointmentsData.filter(a => a.patient === user.name && a.status === "Upcoming").slice(0, 3),
-  [user.name]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+      try {
+        setLoading(true);
+        const profileRes = await axiosInstance.get(`/patients/${user._id}`)
+        setPatientProfile(profileRes.data.data)
+        const apptRes = await axiosInstance.get(`/appointments/patient/${user._id}`)
+        setAppointments(apptRes.data.data || [])
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load data')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [user])
 
-  const pastList = useMemo(() => 
-    appointmentsData.filter(a => a.patient === user.name && a.status === "Completed").slice(0, 3),
-  [user.name]);
+  const nextAppt = useMemo(() =>
+    appointments.find(a => a.status === 'upcoming'),
+  [appointments])
 
-  // Live Clock Effect
+  const upcomingList = useMemo(() =>
+    appointments.filter(a => a.status === 'upcoming').slice(0, 3),
+  [appointments])
+
+  const pastList = useMemo(() =>
+    appointments.filter(a => a.status === 'completed').slice(0, 3),
+  [appointments])
+
   useEffect(() => {
     const timer = setInterval(() => setDateTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -46,21 +62,20 @@ export default function Patient_Dashboard() {
     return "Good Evening";
   };
 
+  const firstName = user?.firstName || 'Patient'
+
   return (
     <div className="pat_dash_container">
       
-      {/* Main Content Area */}
       <div className="pat_dash_main_content">
         
-        {/* Header Greeting */}
         <div className="pat_dash_row_1">
           <div className="pat_dash_welcome">
-            <h1 className="pat_dash_h1">{getGreeting()}, <span className="pat_dash_span">{user.name.split(' ')[0]}!</span></h1>
+            <h1 className="pat_dash_h1">{getGreeting()}, <span className="pat_dash_span">{firstName}!</span></h1>
             <p className="pat_dash_p">How are You Feeling Today?</p>
           </div>
         </div>
 
-        {/* Branding Hero Banner */}
         <div className="pat_dash_row_2">
           <div className="pat_dash_hero_banner">
             <div className="pat_dash_hero_text_content">
@@ -71,7 +86,6 @@ export default function Patient_Dashboard() {
           </div>
         </div>
 
-        {/* Fast Booking Strip */}
         <div className="pat_dash_row_booking_strip">
           <div className="pat_dash_booking_card">
             <div className="pat_dash_booking_left">
@@ -90,7 +104,6 @@ export default function Patient_Dashboard() {
           </div>
         </div>
 
-        {/* Vital Signs Monitor */}
         <div className="pat_dash_row_3_vitals">
           <div className="pat_dash_vitals_section_header">
             <h3 className="pat_dash_h3">Live Vitals</h3>
@@ -98,32 +111,49 @@ export default function Patient_Dashboard() {
           <div className="pat_dash_vitals_cards_grid">
             <div className="pat_dash_vital_card">
               <Scale size={20} color="#007acc" />
-              <div className="pat_dash_vital_info"><span className="pat_dash_span">Weight</span><strong className="pat_dash_strong">{user.weight}</strong></div>
+              <div className="pat_dash_vital_info">
+                <span className="pat_dash_span">Weight</span>
+                <strong className="pat_dash_strong">
+                  {patientProfile?.weight ? `${patientProfile.weight} kg` : 'N/A'}
+                </strong>
+              </div>
             </div>
             <div className="pat_dash_vital_card">
               <Ruler size={20} color="#007acc" />
-              <div className="pat_dash_vital_info"><span className="pat_dash_span">Height</span><strong className="pat_dash_strong">{user.height}</strong></div>
+              <div className="pat_dash_vital_info">
+                <span className="pat_dash_span">Height</span>
+                <strong className="pat_dash_strong">
+                  {patientProfile?.height ? `${patientProfile.height} cm` : 'N/A'}
+                </strong>
+              </div>
             </div>
             <div className="pat_dash_vital_card">
               <Activity size={20} color="#ef4444" />
-              <div className="pat_dash_vital_info"><span className="pat_dash_span">BP Level</span><strong className="pat_dash_strong">120/80</strong></div>
+              <div className="pat_dash_vital_info">
+                <span className="pat_dash_span">BP Level</span>
+                <strong className="pat_dash_strong">120/80</strong>
+              </div>
             </div>
             <div className="pat_dash_vital_card">
               <Wind size={20} color="#10b981" />
-              <div className="pat_dash_vital_info"><span className="pat_dash_span">Breathing</span><strong className="pat_dash_strong">15 <small className="pat_dash_small">bpm</small></strong></div>
+              <div className="pat_dash_vital_info">
+                <span className="pat_dash_span">Breathing</span>
+                <strong className="pat_dash_strong">15 <small className="pat_dash_small">bpm</small></strong>
+              </div>
             </div>
             <div className="pat_dash_vital_card">
               <HeartPulse size={20} color="#f43f5e" />
-              <div className="pat_dash_vital_info"><span className="pat_dash_span">Pulse Rate</span><strong className="pat_dash_strong">72 <small className="pat_dash_small">bpm</small></strong></div>
+              <div className="pat_dash_vital_info">
+                <span className="pat_dash_span">Pulse Rate</span>
+                <strong className="pat_dash_strong">72 <small className="pat_dash_small">bpm</small></strong>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sidebar Widgets */}
       <aside className="pat_dash_sidebar_widgets">
         
-        {/* Dynamic Calendar/Clock */}
         <div className="pat_dash_sidebar_widget pat_dash_widget_calendar">
           <div className="pat_dash_widget_calendar_header">
             <Clock size={20} color="#007acc" />
@@ -148,53 +178,52 @@ export default function Patient_Dashboard() {
           </div>
         </div>
 
-        {/* Priority Appointment Card */}
         <div className="pat_dash_sidebar_widget pat_dash_widget_on_deck">
           <div className="pat_dash_on_deck_header">
-              <div className="pat_dash_on_deck_flex">
-                <Zap size={16} color="#007acc" fill="#007acc" />
-                <h3 className="pat_dash_h3">Next Appointment</h3>
-              </div>
-              <span className="pat_dash_on_deck_tag">On Deck</span>
+            <div className="pat_dash_on_deck_flex">
+              <Zap size={16} color="#007acc" fill="#007acc" />
+              <h3 className="pat_dash_h3">Next Appointment</h3>
+            </div>
+            <span className="pat_dash_on_deck_tag">On Deck</span>
           </div>
           
           {nextAppt ? (
             <div className="pat_dash_on_deck_content_wrapper">
-                <div className="pat_dash_on_deck_hero">
-                  <div className="pat_dash_on_deck_avatar">{nextAppt.doctor?.charAt(3)}</div>
-                  <div className="pat_dash_on_deck_meta">
-                    <strong className="pat_dash_strong">{nextAppt.doctor}</strong>
-                    <span className="pat_dash_span">Record: #MS-PT{nextAppt.id}</span>
-                  </div>
+              <div className="pat_dash_on_deck_hero">
+                <div className="pat_dash_on_deck_avatar">
+                  {nextAppt.doctorId?.name?.charAt(3) || 'D'}
                 </div>
-                <div className="pat_dash_on_deck_bento_stats">
-                  <div className="pat_dash_bento_tile">
-                    <span className="pat_dash_span">Time</span>
-                    <strong className="pat_dash_strong">{nextAppt.time}</strong>
-                  </div>
-                  <div className="pat_dash_bento_tile">
-                    <span className="pat_dash_span">Type</span>
-                    <strong className="pat_dash_strong">{nextAppt.type}</strong>
-                  </div>
+                <div className="pat_dash_on_deck_meta">
+                  <strong className="pat_dash_strong">{nextAppt.doctorId?.name || 'Doctor'}</strong>
+                  <span className="pat_dash_span">Record: #{nextAppt.recordId || nextAppt._id?.slice(-6)}</span>
                 </div>
-                <button className="pat_dash_on_deck_action_btn">
-                  Join Tele-Lobby <ArrowRight size={14}/>
-                </button>
+              </div>
+              <div className="pat_dash_on_deck_bento_stats">
+                <div className="pat_dash_bento_tile">
+                  <span className="pat_dash_span">Time</span>
+                  <strong className="pat_dash_strong">{nextAppt.time}</strong>
+                </div>
+                <div className="pat_dash_bento_tile">
+                  <span className="pat_dash_span">Type</span>
+                  <strong className="pat_dash_strong">{nextAppt.type}</strong>
+                </div>
+              </div>
+              <button className="pat_dash_on_deck_action_btn">
+                Join Tele-Lobby <ArrowRight size={14}/>
+              </button>
             </div>
           ) : (
             <div className="pat_dash_on_deck_empty_container">
               <div className="pat_dash_on_deck_empty_state">
-                <p className="pat_dash_p">No sessions scheduled for today.</p>
+                <p className="pat_dash_p">No sessions scheduled.</p>
               </div>
             </div>
           )}
         </div>
       </aside>
 
-      {/* Full Width Appointment Lists */}
       <div className="pat_dash_row_4_full_width">
         
-        {/* Upcoming List */}
         <div className="pat_dash_list_card_half">
           <div className="pat_dash_list_header">
             <h3 className="pat_dash_h3">Upcoming Schedule</h3>
@@ -204,11 +233,11 @@ export default function Patient_Dashboard() {
             {upcomingList.length > 0 ? upcomingList.map((appt, i) => (
               <div key={i} className="pat_dash_list_item">
                 <div className="pat_dash_item_date">
-                  <span className="pat_dash_date_num">{appt.date.split(' ')[0]}</span>
-                  <span className="pat_dash_date_month">{appt.date.split(' ')[1]}</span>
+                  <span className="pat_dash_date_num">{appt.date?.split('-')[2]}</span>
+                  <span className="pat_dash_date_month">{new Date(appt.date).toLocaleString('default', { month: 'short' })}</span>
                 </div>
                 <div className="pat_dash_item_info">
-                  <strong className="pat_dash_strong">{appt.doctor}</strong>
+                  <strong className="pat_dash_strong">{appt.doctorId?.name || 'Doctor'}</strong>
                   <span className="pat_dash_span">{appt.type} • {appt.time}</span>
                 </div>
                 <ChevronRight size={18} className="pat_dash_list_chevron" />
@@ -217,7 +246,6 @@ export default function Patient_Dashboard() {
           </div>
         </div>
 
-        {/* Completed History List */}
         <div className="pat_dash_list_card_half">
           <div className="pat_dash_list_header">
             <h3 className="pat_dash_h3">Recent Consultations</h3>
@@ -230,7 +258,7 @@ export default function Patient_Dashboard() {
                   <HeartPulse size={18} color="#10b981" />
                 </div>
                 <div className="pat_dash_item_info">
-                  <strong className="pat_dash_strong">{appt.doctor}</strong>
+                  <strong className="pat_dash_strong">{appt.doctorId?.name || 'Doctor'}</strong>
                   <span className="pat_dash_span">Completed on {appt.date}</span>
                 </div>
                 <div className="pat_dash_status_badge_done">Completed</div>
@@ -240,7 +268,6 @@ export default function Patient_Dashboard() {
         </div>
       </div>
 
-      {/* Global Booking Modal */}
       <AppointmentForm 
         isOpen={isFormOpen} 
         onClose={() => setIsFormOpen(false)} 
