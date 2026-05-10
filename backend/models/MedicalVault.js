@@ -7,25 +7,33 @@ const medicalVaultSchema = new mongoose.Schema(
       ref: 'Patient',
       required: true,
     },
-    documentType: {
+    // What UI shows
+    fileName: {
       type: String,
-      enum: ['prescription', 'lab_report', 'x_ray', 'ct_scan', 'ultrasound', 'pathology', 'medical_history', 'vaccination', 'insurance', 'other'],
+      required: [true, 'Please provide file name'],
+    },
+    fileUrl: {
+      type: String,
+      required: [true, 'Please provide file URL'],
+    },
+    fileSize: {
+      type: String,
+      default: ''
+    },
+    category: {
+      type: String,
+      enum: ['Prescriptions', 'Lab Reports', 'Radiology', 'Invoices'],
       required: true,
     },
-    documentTitle: {
+
+    // Extra info
+    description: {
       type: String,
-      required: [true, 'Please provide document title'],
+      default: ''
     },
-    documentFile: {
-      type: String,
-      required: [true, 'Please provide document file URL'],
-    },
-    fileSize: Number, // in bytes
-    fileFormat: String, // e.g., "pdf", "jpg", "png"
     uploadedBy: {
       type: String,
-      enum: ['patient', 'doctor', 'hospital'],
-      default: 'patient',
+      default: 'patient'
     },
     doctorId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -37,13 +45,8 @@ const medicalVaultSchema = new mongoose.Schema(
       ref: 'Appointment',
       default: null,
     },
-    description: String,
-    issueDate: Date,
-    expiryDate: Date,
-    isPublic: {
-      type: Boolean,
-      default: false,
-    },
+
+    // Sharing
     sharingStatus: [
       {
         doctorId: {
@@ -58,11 +61,16 @@ const medicalVaultSchema = new mongoose.Schema(
         },
       },
     ],
-    tags: [String],
-    uploadedAt: {
-      type: Date,
-      default: Date.now,
-    },
+
+    // Access history
+    accessHistory: [
+      {
+        accessedBy: { type: String },
+        action: { type: String },
+        accessedAt: { type: Date, default: Date.now }
+      }
+    ],
+
     lastAccessedAt: Date,
     isDeleted: {
       type: Boolean,

@@ -69,3 +69,21 @@ exports.getMe = asyncHandler(async (req, res) => {
 exports.logout = (req, res) => {
   res.status(200).json({ success: true, message: 'Logged out' });
 };
+
+exports.updatePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body
+  const user = await User.findById(req.user.id).select('+password')
+  const isMatch = await bcryptjs.compare(currentPassword, user.password)
+  if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect' })
+  user.password = await bcryptjs.hash(newPassword, 10)
+  await user.save()
+  res.status(200).json({ success: true, message: 'Password updated successfully' })
+})
+
+exports.updateEmail = asyncHandler(async (req, res) => {
+  const { email } = req.body
+  const existing = await User.findOne({ email })
+  if (existing) return res.status(400).json({ success: false, message: 'Email already in use' })
+  await User.findByIdAndUpdate(req.user.id, { email })
+  res.status(200).json({ success: true, message: 'Email updated successfully' })
+})

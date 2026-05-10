@@ -1,52 +1,46 @@
 const Order = require('../models/Order');
-const Cart = require('../models/Cart');
 
 // Create Order
 exports.createOrder = async (req, res) => {
   try {
     const { patientId } = req.params;
-    const { paymentMethod, deliveryAddress, notes, prescriptionFile } = req.body;
+    const { items, totalAmount, paymentMethod, deliveryAddress, notes } = req.body;
 
-    // Get cart
-    const cart = await Cart.findOne({ patientId });
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, message: 'No items in order' });
     }
 
-    // Generate order number
-    const orderNumber = `ORD-${Date.now()}`;
+    const orderNumber = `ORD-${Date.now()}`
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    const taxAmount = 50
 
-    // Create order
     const order = await Order.create({
       patientId,
       orderNumber,
-      items: cart.items,
-      totalItems: cart.totalItems,
-      subtotal: cart.totalPrice,
-      taxAmount: cart.taxAmount,
-      discount: cart.discount,
-      totalAmount: cart.totalPrice + cart.taxAmount - cart.discount,
-      paymentMethod,
+      items: items.map(item => ({
+        itemType: item.itemType,
+        itemId: item.itemId,
+        itemName: item.itemName,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+      subtotal,
+      taxAmount,
+      discount: 0,
+      totalAmount: totalAmount || subtotal + taxAmount,
+      paymentMethod: paymentMethod || 'upi',
       paymentStatus: 'pending',
-      deliveryAddress,
+      deliveryAddress: deliveryAddress || '',
       deliveryStatus: 'pending',
-      notes,
-      prescriptionFile,
+      notes: notes || ''
     });
 
-    // Clear cart
-    await Cart.updateOne({ patientId }, {
-      $set: {
-        items: [],
-        totalItems: 0,
-        totalPrice: 0,
-        taxAmount: 0,
-        discount: 0,
-        couponCode: null,
-      },
+    res.status(201).json({ 
+      success: true, 
+      message: 'Order created successfully', 
+      data: order 
     });
-
-    res.status(201).json({ success: true, message: 'Order created successfully', data: order });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -108,7 +102,11 @@ exports.updatePaymentStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Payment status updated', data: order });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Payment status updated', 
+      data: order 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -122,12 +120,7 @@ exports.updateDeliveryStatus = async (req, res) => {
 
     const order = await Order.findByIdAndUpdate(
       orderId,
-      {
-        deliveryStatus,
-        trackingNumber,
-        expectedDeliveryDate,
-        actualDeliveryDate,
-      },
+      { deliveryStatus, trackingNumber, expectedDeliveryDate, actualDeliveryDate },
       { new: true, runValidators: true }
     );
 
@@ -135,7 +128,11 @@ exports.updateDeliveryStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Delivery status updated', data: order });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Delivery status updated', 
+      data: order 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -156,7 +153,11 @@ exports.cancelOrder = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Order cancelled', data: order });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Order cancelled', 
+      data: order 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

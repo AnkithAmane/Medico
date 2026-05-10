@@ -12,26 +12,40 @@ const appointmentSchema = new mongoose.Schema(
       ref: 'Doctor',
       required: true,
     },
-    appointmentDate: {
-      type: Date,
+    date: {
+      type: String,
       required: [true, 'Please provide appointment date'],
     },
-    timeSlot: {
+    time: {
       type: String,
       required: [true, 'Please provide time slot'],
     },
-    appointmentType: {
+    type: {
       type: String,
-      enum: ['consultation', 'follow-up', 'check-up', 'emergency'],
-      default: 'consultation',
+      enum: ['online', 'routine', 'emergency'],
+      default: 'online',
     },
     status: {
       type: String,
-      enum: ['scheduled', 'completed', 'cancelled', 'no-show'],
-      default: 'scheduled',
+      enum: ['upcoming', 'completed', 'cancelled', 'pending'],
+      default: 'upcoming',
     },
-    consultationFee: Number,
-    symptoms: String,
+    reason: {
+      type: String,
+      default: ''
+    },
+    fees: {
+      type: Number,
+      default: 0
+    },
+    recordId: {
+      type: String,
+      default: ''
+    },
+    branch: {
+      type: String,
+      default: 'Main Branch'
+    },
     notes: String,
     prescriptions: [
       {
@@ -47,10 +61,6 @@ const appointmentSchema = new mongoose.Schema(
       },
     ],
     consultationNotes: String,
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     completedAt: Date,
   },
   { timestamps: true }

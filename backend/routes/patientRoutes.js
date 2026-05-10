@@ -21,7 +21,7 @@ router.put('/:patientId', protect, updatePatientProfile);
 router.delete('/:patientId', protect, authorize('admin'), deletePatient);
 
 // General routes last
-router.get('/', protect, authorize('admin'), getAllPatients);
+router.get('/', protect, getAllPatients);
 router.post('/', protect, createPatientProfile);
 
 module.exports = router;

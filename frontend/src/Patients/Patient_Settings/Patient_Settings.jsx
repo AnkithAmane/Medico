@@ -1,13 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   KeyRound, Mail, Bell, LogOut, ShieldCheck, 
   Save, Smartphone, Edit3, X 
 } from 'lucide-react';
 import './Patient_Settings.css';
+import { useAuth } from '../../context/AuthContext';
+import axiosInstance from '../../utils/axios';
 
 export default function Patient_Settings() {
+  const { user, logout } = useAuth()
+
   const [editPass, setEditPass] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
+  const [saving, setSaving] = useState(false)
+
+  // Password form
+  const [passData, setPassData] = useState({
+    currentPassword: '',
+    newPassword: ''
+  })
+
+  // Email form
+  const [email, setEmail] = useState('')
+
+  // Notification settings
+  const [notifications, setNotifications] = useState({
+    documentDownloads: true,
+    nextAppointment: true,
+    appointmentCompleted: true
+  })
+
+  // Load user data
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email || '')
+    }
+  }, [user])
+
+  // Load notification settings from patient profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return
+      try {
+        const res = await axiosInstance.get(`/patients/${user._id}`)
+        const profile = res.data.data
+        if (profile?.notifications) {
+          setNotifications(profile.notifications)
+        }
+      } catch (err) {
+        console.error('Failed to load settings')
+      }
+    }
+    fetchProfile()
+  }, [user])
+
+  // Save password
+  const handleSavePassword = async () => {
+    if (!passData.currentPassword || !passData.newPassword) {
+      alert('Please fill in both password fields')
+      return
+    }
+    if (passData.newPassword.length < 6) {
+      alert('New password must be at least 6 characters')
+      return
+    }
+    try {
+      setSaving(true)
+      await axiosInstance.put(`/auth/update-password`, {
+        currentPassword: passData.currentPassword,
+        newPassword: passData.newPassword
+      })
+      setEditPass(false)
+      setPassData({ currentPassword: '', newPassword: '' })
+      alert('Password updated successfully!')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update password')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Save email
+  const handleSaveEmail = async () => {
+    if (!email) {
+      alert('Please enter an email')
+      return
+    }
+    try {
+      setSaving(true)
+      await axiosInstance.put(`/auth/update-email`, { email })
+      setEditEmail(false)
+      alert('Email updated successfully!')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update email')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Save notification settings
+  const handleNotificationChange = async (key, value) => {
+    const updated = { ...notifications, [key]: value }
+    setNotifications(updated)
+    try {
+      await axiosInstance.put(`/patients/${user._id}`, {
+        notifications: updated
+      })
+    } catch (err) {
+      console.error('Failed to save notification settings')
+    }
+  }
+
+  // Logout
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout()
+    }
+  }
 
   return (
     <div className="pat_set_container">
@@ -40,14 +149,34 @@ export default function Patient_Settings() {
               <div className="pat_set_form_grid">
                 <div className="pat_set_field">
                   <label>Current Password</label>
-                  <input type="password" placeholder="••••••••" disabled={!editPass} />
+                  <input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    disabled={!editPass}
+                    value={passData.currentPassword}
+                    onChange={(e) => setPassData({...passData, currentPassword: e.target.value})}
+                  />
                 </div>
                 <div className="pat_set_field">
                   <label>New Password</label>
-                  <input type="password" placeholder="Enter new password" disabled={!editPass} />
+                  <input 
+                    type="password" 
+                    placeholder="Enter new password" 
+                    disabled={!editPass}
+                    value={passData.newPassword}
+                    onChange={(e) => setPassData({...passData, newPassword: e.target.value})}
+                  />
                 </div>
               </div>
-              {editPass && <button className="pat_set_inner_save"><Save size={14}/> Save Password</button>}
+              {editPass && (
+                <button 
+                  className="pat_set_inner_save"
+                  onClick={handleSavePassword}
+                  disabled={saving}
+                >
+                  <Save size={14}/> {saving ? 'Saving...' : 'Save Password'}
+                </button>
+              )}
             </div>
 
             {/* Email Synchronization */}
@@ -66,9 +195,22 @@ export default function Patient_Settings() {
               </div>
               <div className="pat_set_field">
                 <label>Primary Email</label>
-                <input type="email" defaultValue="arjun.mehta@health.com" disabled={!editEmail} />
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={!editEmail} 
+                />
               </div>
-              {editEmail && <button className="pat_set_inner_save"><Save size={14}/> Verify & Save</button>}
+              {editEmail && (
+                <button 
+                  className="pat_set_inner_save"
+                  onClick={handleSaveEmail}
+                  disabled={saving}
+                >
+                  <Save size={14}/> {saving ? 'Saving...' : 'Verify & Save'}
+                </button>
+              )}
             </div>
 
             {/* Notification Preferences */}
@@ -82,24 +224,39 @@ export default function Patient_Settings() {
               </div>
               <div className="pat_set_matrix">
                 {[
-                  { title: "Document Downloads", desc: "Notification when lab reports/prescriptions are ready." },
-                  { title: "Next Appointment", desc: "Reminders for your scheduled consultations." },
-                  { title: "Appointment Completed", desc: "Summaries and digital billing alerts." }
-                ].map((item, i) => (
-                  <div key={i} className="pat_set_notif_row">
+                  { 
+                    key: 'documentDownloads',
+                    title: "Document Downloads", 
+                    desc: "Notification when lab reports/prescriptions are ready." 
+                  },
+                  { 
+                    key: 'nextAppointment',
+                    title: "Next Appointment", 
+                    desc: "Reminders for your scheduled consultations." 
+                  },
+                  { 
+                    key: 'appointmentCompleted',
+                    title: "Appointment Completed", 
+                    desc: "Summaries and digital billing alerts." 
+                  }
+                ].map((item) => (
+                  <div key={item.key} className="pat_set_notif_row">
                     <div className="notif_text">
                       <strong>{item.title}</strong>
                       <span>{item.desc}</span>
                     </div>
                     <label className="pat_set_switch">
-                      <input type="checkbox" defaultChecked />
+                      <input 
+                        type="checkbox" 
+                        checked={notifications[item.key]}
+                        onChange={(e) => handleNotificationChange(item.key, e.target.checked)}
+                      />
                       <span className="pat_set_slider"></span>
                     </label>
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
 
@@ -113,15 +270,17 @@ export default function Patient_Settings() {
 
           <div className="pat_set_card pat_set_logout_widget">
             <div className="pat_set_card_header">
-              <div className="pat_set_h_left"><Smartphone size={16}/> <h3>Session</h3></div>
+              <div className="pat_set_h_left">
+                <Smartphone size={16}/> 
+                <h3>Session</h3>
+              </div>
             </div>
             <p>Disconnect from this device.</p>
-            <button className="pat_set_logout_btn" onClick={() => window.location.href = '/'}>
+            <button className="pat_set_logout_btn" onClick={handleLogout}>
               <LogOut size={16} /> Logout Option
             </button>
           </div>
         </aside>
-
       </div>
     </div>
   );

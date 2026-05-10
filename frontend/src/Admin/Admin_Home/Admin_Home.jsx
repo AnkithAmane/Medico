@@ -1,33 +1,20 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard,
-  CalendarDays,
-  UserRound,
-  Users,
-  Wallet,
-  BarChart3,
-  PartyPopper,
-  Clock,
-  Settings,
-  LogOut,
-  Bell,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Menu
+  LayoutDashboard, CalendarDays, UserRound, Users,
+  Wallet, BarChart3, Clock, Settings, LogOut,
+  Bell, Search, ChevronLeft, ChevronRight, Menu
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 import "./Admin_Home.css";
-import adminPic from "../../Assets/Images/Admin/default_admin_pic.jpg";
 
 export default function Admin_Home() {
-  /* State Management */
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const { user, logout } = useAuth()
 
-  /* Navigation Configuration */
   const navOptions = [
     { id: 1, label: "Dashboard", path: "/admin/admin_dashboard", icon: <LayoutDashboard size={20} /> },
     { id: 2, label: "Appointments", path: "/admin/appointments_management", icon: <CalendarDays size={20} /> },
@@ -35,36 +22,27 @@ export default function Admin_Home() {
     { id: 4, label: "Patients", path: "/admin/patients_management", icon: <Users size={20} /> },
     { id: 5, label: "Revenue", path: "/admin/revenue_details", icon: <Wallet size={20} /> },
     { id: 6, label: "Statistics", path: "/admin/statistics", icon: <BarChart3 size={20} /> },
-    { id: 7, label: "Events", path: "/admin/events_management", icon: <PartyPopper size={20} /> },
-    { id: 8, label: "Schedules", path: "/admin/availability_management", icon: <Clock size={20} /> },
-    { id: 9, label: "Departments", path: "/admin/departments_management", icon: <Settings size={20} /> },
+    { id: 7, label: "Schedules", path: "/admin/availability_management", icon: <Clock size={20} /> },
+    { id: 8, label: "Departments", path: "/admin/departments_management", icon: <Settings size={20} /> },
   ];
 
-  /* Event Handlers */
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to end your session at Medico+?")) {
-      navigate("/");
+      logout()
     }
   };
 
-  /* Main Layout Render */
+  const avatarUrl = `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=007acc&color=fff&size=35`
+
   return (
     <div className="admin_home_layout">
-      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div 
-          className="admin_home_mobile_overlay" 
-          onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
+        <div className="admin_home_mobile_overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
       )}
 
-      {/* Sidebar Navigation */}
       <aside className={`admin_home_sidebar ${isCollapsed ? "collapsed" : ""} ${isMobileMenuOpen ? "mobile_open" : ""}`}>
         <div className="admin_home_toggle_zone">
-          <button 
-            className="admin_home_toggle_btn" 
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
+          <button className="admin_home_toggle_btn" onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
         </div>
@@ -75,7 +53,7 @@ export default function Admin_Home() {
               key={opt.id}
               to={opt.path}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={({ isActive }) => 
+              className={({ isActive }) =>
                 isActive ? "admin_home_nav_item active" : "admin_home_nav_item"
               }
             >
@@ -94,15 +72,10 @@ export default function Admin_Home() {
         </div>
       </aside>
 
-      {/* Content Area */}
       <main className="admin_home_main_viewport">
-        {/* Top Header Bar */}
         <header className="admin_home_top_header">
           <div className="admin_home_header_left">
-            <button 
-              className="admin_home_hamburger" 
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
+            <button className="admin_home_hamburger" onClick={() => setIsMobileMenuOpen(true)}>
               <Menu size={24} />
             </button>
             <div className="admin_home_brand_header">
@@ -130,19 +103,19 @@ export default function Admin_Home() {
               <Bell size={22} />
               <span className="admin_home_notif_ping"></span>
             </button>
-
             <div className="admin_home_profile_hub">
               <div className="admin_home_profile_meta">
-                <span className="admin_home_admin_name">Admin</span>
+                <span className="admin_home_admin_name">
+                  {user?.firstName} {user?.lastName}
+                </span>
               </div>
               <div className="admin_home_avatar_container">
-                <img src={adminPic} alt="Admin" />
+                <img src={avatarUrl} alt="Admin" />
               </div>
             </div>
           </div>
         </header>
 
-        {/* Dynamic Page Content */}
         <section className="admin_home_page_container">
           <Outlet context={{ searchTerm }} />
         </section>

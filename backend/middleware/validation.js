@@ -40,10 +40,9 @@ const patientValidation = {
 
 const appointmentValidation = {
   book: [
-    body('patientId').notEmpty().withMessage('Patient ID is required'),
     body('doctorId').notEmpty().withMessage('Doctor ID is required'),
-    body('appointmentDate').isISO8601().withMessage('Valid date is required'),
-    body('timeSlot').notEmpty().withMessage('Time slot is required'),
+    body('date').notEmpty().withMessage('Date is required'),
+    body('time').notEmpty().withMessage('Time is required'),
     validate,
   ],
 };

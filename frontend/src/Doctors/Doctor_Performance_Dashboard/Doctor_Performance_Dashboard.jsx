@@ -1,125 +1,84 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement,
   LineElement, ArcElement, Tooltip, Legend, Filler,
 } from "chart.js";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import { 
-  FiZap, FiCalendar, FiActivity, FiAward, FiCheckCircle, FiBriefcase, FiMapPin, FiStar
+  FiZap, FiAward, FiCheckCircle, FiActivity, FiStar
 } from "react-icons/fi";
-
-// Data and Assets
-import doctorsList from "../../Assets/Data/Doctors_Data.json"; 
-import appointmentsData from "../../Assets/Data/Appointments_Data.json"; 
+import { useAuth } from "../../context/AuthContext";
+import axiosInstance from "../../utils/axios";
 import "./Doctor_Performance_Dashboard.css";
 
-// ChartJS registration
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
 
 export default function PerformanceDashboard() {
-  // Sync state
-  const [lastSynced] = useState(new Date().toLocaleTimeString());
-  
-  // Filtering state management
-  const [bookingView, setBookingView] = useState("Month"); 
-  const [selectedYear, setSelectedYear] = useState("2026");
-  const [selectedWeek, setSelectedWeek] = useState("2026-W14");
-  const [rankMonth, setRankMonth] = useState("2026-03"); 
+  const { user } = useAuth()
+  const [lastSynced] = useState(new Date().toLocaleTimeString())
 
-  // Specialist context (Dr. DOC-006)
-  const currentDoc = useMemo(() => {
-    return doctorsList.find(doc => doc.id === "DOC-006") || doctorsList[0];
-  }, [doctorsList]);
+  // Data states
+  const [doctorProfile, setDoctorProfile] = useState(null)
+  const [appointments, setAppointments] = useState([])
+  const [reviews, setReviews] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Main KPI Calculation logic
+  // Filter states
+  const [bookingView, setBookingView] = useState("Month")
+  const [selectedYear, setSelectedYear] = useState("2026")
+  const [selectedWeek, setSelectedWeek] = useState("2026-W14")
+  const [rankMonth, setRankMonth] = useState("2026-05")
+
+  // Fetch all data
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return
+      try {
+        setLoading(true)
+        const docRes = await axiosInstance.get(`/doctors/user/${user._id}`)
+        const doctor = docRes.data.data
+        setDoctorProfile(doctor)
+
+        const [apptRes, revRes] = await Promise.all([
+          axiosInstance.get(`/appointments/doctor/${doctor._id}`),
+          axiosInstance.get(`/reviews/doctor/${doctor._id}`)
+        ])
+        setAppointments(apptRes.data.data || [])
+        setReviews(revRes.data.data || [])
+      } catch (err) {
+        console.error('Failed to load performance data:', err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [user])
+
+  // KPIs
   const kpis = useMemo(() => {
-    const myAppts = appointmentsData.filter(a => a.doctor === currentDoc.name);
-    const completedCount = myAppts.filter(a => a.status === "Completed").length;
-    
-    const ratings = currentDoc.reviews?.map(r => r.rating) || [];
-    const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : "N/A";
-
-    const totalEvents = (currentDoc.events?.completed?.length || 0) + (currentDoc.events?.upcoming?.length || 0);
-    const totalLeaves = (currentDoc.leaves?.completed?.length || 0) + (currentDoc.leaves?.upcoming?.length || 0);
-
+    const completed = appointments.filter(a => a.status === 'completed').length
+    const ratings = reviews.map(r => r.rating).filter(Boolean)
+    const avgRating = ratings.length 
+      ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) 
+      : 'N/A'
     return {
-      total: myAppts.length,
-      completed: completedCount,
+      total: appointments.length,
+      completed,
       rating: avgRating,
-      events: totalEvents,
-      leaves: totalLeaves
-    };
-  }, [currentDoc, appointmentsData]);
+      reviews: reviews.length
+    }
+  }, [appointments, reviews])
 
-  // Patient Demographics and Specialty Insights logic
-  const demographics = useMemo(() => {
-    const specialtyMap = {
-      "Cardiology": [ { label: "Hypertension", value: "42%" }, { label: "Arrhythmia", value: "28%" }, { label: "Heart Failure", value: "18%" } ],
-      "Neurology": [ { label: "Migraine", value: "35%" }, { label: "Epilepsy", value: "30%" }, { label: "Stroke Rehab", value: "20%" } ],
-      "Pediatrics": [ { label: "Vaccination", value: "45%" }, { label: "Common Cold", value: "25%" }, { label: "Asthma", value: "15%" } ],
-      "Default": [ { label: "General Care", value: "40%" }, { label: "Routine Check", value: "35%" }, { label: "Acute Care", value: "15%" } ]
-    };
-
-    const caseMix = specialtyMap[currentDoc.department] || specialtyMap["Default"];
-    
-    const ageData = {
-      labels: ["0-18", "19-40", "41-60", "60+"],
-      datasets: [{
-        label: "Patient Volume",
-        data: [150, 420, 310, 180],
-        backgroundColor: "#007acc",
-        borderRadius: 8,
-      }]
-    };
-
-    const caseMixChart = {
-      labels: caseMix.map(c => c.label).concat("Others"),
-      datasets: [{
-        data: caseMix.map(c => parseInt(c.value)).concat(10),
-        backgroundColor: ["#007acc", "#00d2ff", "#10b981", "#f59e0b"],
-        borderWidth: 0, cutout: "75%"
-      }]
-    };
-
-    return { ageData, caseMixChart, topConditions: caseMix };
-  }, [currentDoc]);
-
-  // Ranking and Percentile logic
-  const rankAnalysis = useMemo(() => {
-    const [year, month] = rankMonth.split("-");
-    const leaderboard = doctorsList.map(doc => ({
-      id: doc.id,
-      name: doc.name,
-      count: appointmentsData.filter(a => 
-        a.doctor === doc.name && a.date.startsWith(`${year}-${month}`)
-      ).length
-    })).sort((a, b) => b.count - a.count);
-
-    const myRank = leaderboard.findIndex(d => d.id === currentDoc.id) + 1;
-    const totalSessions = leaderboard.find(d => d.id === currentDoc.id)?.count || 0;
-    const percentile = Math.round(((doctorsList.length - myRank) / doctorsList.length) * 100);
-
-    return { 
-      currentRank: myRank || "N/A", 
-      percentile: percentile || 0, 
-      totalSessions, 
-      totalDocs: doctorsList.length 
-    };
-  }, [rankMonth, currentDoc, doctorsList, appointmentsData]);
-
-  // Dynamic booking and volume trend logic
+  // Booking trend data
   const bookingData = useMemo(() => {
-    const myAppts = appointmentsData.filter(appt => appt.doctor === currentDoc.name);
-
     if (bookingView === "Month") {
-      const monthlyCounts = Array(12).fill(0);
-      myAppts.forEach(appt => {
-        const [y, m] = appt.date.split("-");
+      const monthlyCounts = Array(12).fill(0)
+      appointments.forEach(appt => {
+        const [y, m] = appt.date.split("-")
         if (parseInt(y) === parseInt(selectedYear)) {
-          monthlyCounts[parseInt(m) - 1]++;
+          monthlyCounts[parseInt(m) - 1]++
         }
-      });
-
+      })
       return {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         datasets: [{
@@ -129,27 +88,23 @@ export default function PerformanceDashboard() {
           backgroundColor: "rgba(0, 122, 204, 0.08)",
           fill: true, tension: 0.4, borderWidth: 3, pointRadius: 5
         }]
-      };
+      }
     } else {
-      const dayCounts = Array(7).fill(0);
-      const [filterYear, filterWeek] = selectedWeek.split("-W");
-      
-      myAppts.forEach(appt => {
-        const d = new Date(appt.date);
-        const [y] = appt.date.split("-");
-        
-        const tempDate = new Date(d.getTime());
-        tempDate.setHours(0, 0, 0, 0);
-        tempDate.setDate(tempDate.getDate() + 3 - (tempDate.getDay() + 6) % 7);
-        const week1 = new Date(tempDate.getFullYear(), 0, 4);
-        const apptWeek = 1 + Math.round(((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-
+      const dayCounts = Array(7).fill(0)
+      const [filterYear, filterWeek] = selectedWeek.split("-W")
+      appointments.forEach(appt => {
+        const d = new Date(appt.date)
+        const [y] = appt.date.split("-")
+        const tempDate = new Date(d.getTime())
+        tempDate.setHours(0, 0, 0, 0)
+        tempDate.setDate(tempDate.getDate() + 3 - (tempDate.getDay() + 6) % 7)
+        const week1 = new Date(tempDate.getFullYear(), 0, 4)
+        const apptWeek = 1 + Math.round(((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7)
         if (apptWeek === parseInt(filterWeek) && y === filterYear) {
-          const dayIdx = (d.getDay() + 6) % 7; 
-          dayCounts[dayIdx]++;
+          const dayIdx = (d.getDay() + 6) % 7
+          dayCounts[dayIdx]++
         }
-      });
-
+      })
       return {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         datasets: [{
@@ -159,70 +114,106 @@ export default function PerformanceDashboard() {
           borderRadius: 8,
           barThickness: 32
         }]
-      };
+      }
     }
-  }, [bookingView, selectedYear, selectedWeek, currentDoc, appointmentsData]);
-  
-  // Returning vs First Visit composition logic
+  }, [bookingView, selectedYear, selectedWeek, appointments])
+
+  // Patient composition
   const compositionData = useMemo(() => {
-    const myAppts = appointmentsData.filter(appt => appt.doctor === currentDoc.name);
-    const pCounts = {};
-    myAppts.forEach(a => pCounts[a.patient] = (pCounts[a.patient] || 0) + 1);
-    const returning = Object.values(pCounts).filter(c => c > 1).length;
-    const firstTime = Object.keys(pCounts).length - returning;
+    const pCounts = {}
+    appointments.forEach(a => {
+      const pid = a.patientId?._id?.toString()
+      if (pid) pCounts[pid] = (pCounts[pid] || 0) + 1
+    })
+    const returning = Object.values(pCounts).filter(c => c > 1).length
+    const firstTime = Object.keys(pCounts).length - returning
     return {
       labels: ["Returning", "First Visit"],
       datasets: [{
-        data: [returning, firstTime],
+        data: [returning || 0, firstTime || 0],
         backgroundColor: ["#007acc", "#00d2ff"],
         borderWidth: 0, cutout: "75%"
       }]
-    };
-  }, [currentDoc, appointmentsData]);
+    }
+  }, [appointments])
+
+  // Rating distribution
+  const ratingData = useMemo(() => {
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    reviews.forEach(r => {
+      const star = Math.round(r.rating)
+      if (counts[star] !== undefined) counts[star]++
+    })
+    return counts
+  }, [reviews])
+
+  // Quarterly data
+  const quarterlyData = useMemo(() => {
+    const quarters = [0, 0, 0, 0]
+    appointments.forEach(a => {
+      const m = new Date(a.date).getMonth()
+      if (m <= 2) quarters[0]++
+      else if (m <= 5) quarters[1]++
+      else if (m <= 8) quarters[2]++
+      else quarters[3]++
+    })
+    return quarters
+  }, [appointments])
+
+  const totalComposition = compositionData.datasets[0].data[0] + compositionData.datasets[0].data[1]
+  const returningPercent = totalComposition > 0 
+    ? Math.round((compositionData.datasets[0].data[0] / totalComposition) * 100) 
+    : 0
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <p>Loading performance data...</p>
+    </div>
+  )
 
   return (
     <div className="doc_perf_dash_wrapper doc_perf_dash_fade_in">
       
-      {/* Header section */}
+      {/* Header */}
       <header className="doc_perf_dash_header">
         <div className="doc_perf_dash_header_text">
           <h1>Clinical <span>Intelligence</span></h1>
-          <p>{currentDoc.name} • {currentDoc.degrees} • {lastSynced}</p>
+          <p>{doctorProfile?.name} • {lastSynced}</p>
         </div>
-        <button className="doc_perf_dash_btn_primary" onClick={() => window.location.reload()}><FiZap /> Sync Data</button>
+        <button className="doc_perf_dash_btn_primary" onClick={() => window.location.reload()}>
+          <FiZap /> Sync Data
+        </button>
       </header>
 
-      {/* KPI Stats Grid */}
+      {/* KPI Stats */}
       <div className="doc_perf_dash_stats_row">
         <div className="doc_perf_dash_stat_card doc_perf_dash_primary">
-           <span className="doc_perf_dash_label">Total Appointments</span>
-           <h2 className="doc_perf_dash_value_small">{kpis.total}</h2>
+          <span className="doc_perf_dash_label">Total Appointments</span>
+          <h2 className="doc_perf_dash_value_small">{kpis.total}</h2>
         </div>
-
         <div className="doc_perf_dash_stat_card">
-           <span className="doc_perf_dash_label">Completed Sessions</span>
-           <h2 className="doc_perf_dash_value_small" style={{color: 'var(--sa-success)'}}>{kpis.completed}</h2>
+          <span className="doc_perf_dash_label">Completed Sessions</span>
+          <h2 className="doc_perf_dash_value_small" style={{color: 'var(--sa-success)'}}>{kpis.completed}</h2>
         </div>
-
         <div className="doc_perf_dash_stat_card">
-           <span className="doc_perf_dash_label">Patient Rating</span>
-           <h2 className="doc_perf_dash_value_small">
-             <FiStar style={{color: 'var(--sa-warning)', marginRight: '6px'}}/> {kpis.rating}
-           </h2>
+          <span className="doc_perf_dash_label">Patient Rating</span>
+          <h2 className="doc_perf_dash_value_small">
+            <FiStar style={{color: 'var(--sa-warning)', marginRight: '6px'}}/> {kpis.rating}
+          </h2>
         </div>
-
         <div className="doc_perf_dash_stat_card">
-           <span className="doc_perf_dash_label">Events Attended</span>
-           <h2 className="doc_perf_dash_value_small">{kpis.events}</h2>
+          <span className="doc_perf_dash_label">Total Reviews</span>
+          <h2 className="doc_perf_dash_value_small">{kpis.reviews}</h2>
         </div>
-
         <div className="doc_perf_dash_stat_card">
-           <span className="doc_perf_dash_label">Leaves Taken</span>
-           <h2 className="doc_perf_dash_value_small" style={{color: 'var(--sa-danger)'}}>{kpis.leaves}</h2>
+          <span className="doc_perf_dash_label">Upcoming</span>
+          <h2 className="doc_perf_dash_value_small" style={{color: 'var(--sa-primary)'}}>
+            {appointments.filter(a => a.status === 'upcoming').length}
+          </h2>
         </div>
       </div>
 
-      {/* Analysis Grid (Volume & Composition) */}
+      {/* Volume & Composition */}
       <div className="doc_perf_dash_dual_row">
         <div className="doc_perf_dash_bento_item flex_2">
           <div className="doc_perf_dash_card_head">
@@ -241,7 +232,10 @@ export default function PerformanceDashboard() {
             </div>
           </div>
           <div className="doc_perf_dash_canvas_holder">
-            <Line data={bookingData} options={{ responsive: true, maintainAspectRatio: false }} />
+            {bookingView === "Month" 
+              ? <Line data={bookingData} options={{ responsive: true, maintainAspectRatio: false }} />
+              : <Bar data={bookingData} options={{ responsive: true, maintainAspectRatio: false }} />
+            }
           </div>
         </div>
 
@@ -253,7 +247,7 @@ export default function PerformanceDashboard() {
               options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} 
             />
             <div className="doc_perf_dash_donut_center">
-              <strong>{Math.round((compositionData.datasets[0].data[0] / (compositionData.datasets[0].data[0] + compositionData.datasets[0].data[1])) * 100) || 0}%</strong>
+              <strong>{returningPercent}%</strong>
               <span>Recurring</span>
             </div>
           </div>
@@ -261,89 +255,117 @@ export default function PerformanceDashboard() {
             <div className="doc_perf_dash_comp_pill">
               <div className="doc_perf_dash_comp_info">
                 <span className="doc_perf_dash_dot dot_returning"></span>
-                <span className="doc_perf_dash_comp_name">Returning</span>
+                <span>Returning</span>
               </div>
-              <span className="doc_perf_dash_comp_perc">{Math.round((compositionData.datasets[0].data[0] / (compositionData.datasets[0].data[0] + compositionData.datasets[0].data[1])) * 100)}%</span>
+              <span>{returningPercent}%</span>
             </div>
             <div className="doc_perf_dash_comp_pill">
               <div className="doc_perf_dash_comp_info">
                 <span className="doc_perf_dash_dot dot_first"></span>
-                <span className="doc_perf_dash_comp_name">First Visit</span>
+                <span>First Visit</span>
               </div>
-              <span className="doc_perf_dash_comp_perc">{Math.round((compositionData.datasets[0].data[1] / (compositionData.datasets[0].data[0] + compositionData.datasets[0].data[1])) * 100)}%</span>
+              <span>{100 - returningPercent}%</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Leaderboard/Rank section */}
+      {/* Rank Hub */}
       <div className="doc_perf_dash_bento_item doc_perf_dash_margin_top">
-          <div className="doc_perf_dash_card_head">
-            <h3>Rank Authority Hub</h3>
-            <input type="month" className="doc_perf_dash_select_filter_mini" value={rankMonth} onChange={(e) => setRankMonth(e.target.value)} />
-          </div>
-          <div className="doc_perf_dash_rank_ribbon">
-            <div className="doc_perf_dash_rank_focus_box">
-                <div className="doc_perf_dash_rank_num_hero">{rankAnalysis.currentRank}</div>
-                <div className="doc_perf_dash_rank_meta_label">Global Position</div>
+        <div className="doc_perf_dash_card_head">
+          <h3>Rank Authority Hub</h3>
+          <input 
+            type="month" 
+            className="doc_perf_dash_select_filter_mini" 
+            value={rankMonth} 
+            onChange={(e) => setRankMonth(e.target.value)} 
+          />
+        </div>
+        <div className="doc_perf_dash_rank_ribbon">
+          <div className="doc_perf_dash_rank_focus_box">
+            <div className="doc_perf_dash_rank_num_hero">
+              {appointments.filter(a => {
+                const [y, m] = rankMonth.split('-')
+                return a.date.startsWith(`${y}-${m}`)
+              }).length}
             </div>
-            <div className="doc_perf_dash_rank_stats_grid">
-                <div className="doc_perf_dash_rank_stat_node">
-                  <FiAward className="doc_perf_dash_node_icon" />
-                  <div><label>Percentile</label><strong>{rankAnalysis.percentile}%</strong></div>
-                </div>
-                <div className="doc_perf_dash_rank_stat_node">
-                  <FiCheckCircle className="doc_perf_dash_node_icon" />
-                  <div><label>Month Sessions</label><strong>{rankAnalysis.totalSessions}</strong></div>
-                </div>
-                <div className="doc_perf_dash_rank_stat_node">
-                  <FiActivity className="doc_perf_dash_node_icon" />
-                  <div><label>System Avg Rate</label><strong>88.4%</strong></div>
-                </div>
+            <div className="doc_perf_dash_rank_meta_label">Sessions This Month</div>
+          </div>
+          <div className="doc_perf_dash_rank_stats_grid">
+            <div className="doc_perf_dash_rank_stat_node">
+              <FiAward className="doc_perf_dash_node_icon" />
+              <div>
+                <label>Avg Rating</label>
+                <strong>{kpis.rating}</strong>
+              </div>
+            </div>
+            <div className="doc_perf_dash_rank_stat_node">
+              <FiCheckCircle className="doc_perf_dash_node_icon" />
+              <div>
+                <label>Completed</label>
+                <strong>{kpis.completed}</strong>
+              </div>
+            </div>
+            <div className="doc_perf_dash_rank_stat_node">
+              <FiActivity className="doc_perf_dash_node_icon" />
+              <div>
+                <label>Total Reviews</label>
+                <strong>{kpis.reviews}</strong>
+              </div>
             </div>
           </div>
+        </div>
       </div>
 
-      {/* Demographics and Diagnosis Mix section */}
+      {/* Demographics & Quarterly */}
       <div className="doc_perf_dash_dual_row doc_perf_dash_margin_top">
-        {/* Age chart */}
         <div className="doc_perf_dash_bento_item doc_perf_dash_flex_half">
-          <div className="doc_perf_dash_card_head"><h3>Patient Age Demographics</h3></div>
+          <div className="doc_perf_dash_card_head"><h3>Quarterly Overview</h3></div>
           <div className="doc_perf_dash_canvas_holder">
-            <Bar data={demographics.ageData} options={{ responsive: true, maintainAspectRatio: false }} />
+            <Bar 
+              data={{
+                labels: ["Q1", "Q2", "Q3", "Q4"],
+                datasets: [{
+                  label: "Appointments",
+                  data: quarterlyData,
+                  backgroundColor: ["#007acc", "#00d2ff", "#10b981", "#f59e0b"],
+                  borderRadius: 8
+                }]
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
           </div>
         </div>
 
-        {/* Diagnosis mix Doughnut */}
         <div className="doc_perf_dash_bento_item doc_perf_dash_flex_half">
-          <div className="doc_perf_dash_card_head"><h3>Top Diagnoses (Case Mix)</h3></div>
+          <div className="doc_perf_dash_card_head"><h3>Rating Distribution</h3></div>
           <div className="doc_perf_dash_chart_focus_mini">
             <Doughnut 
-              key={currentDoc.id}
-              data={demographics.caseMixChart} 
-              options={{ 
-                responsive: true, 
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } } 
-              }} 
+              data={{
+                labels: ["5★", "4★", "3★", "2★", "1★"],
+                datasets: [{
+                  data: [ratingData[5], ratingData[4], ratingData[3], ratingData[2], ratingData[1]],
+                  backgroundColor: ["#007acc", "#00d2ff", "#10b981", "#f59e0b", "#ef4444"],
+                  borderWidth: 0, cutout: "75%"
+                }]
+              }}
+              options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }}
             />
             <div className="doc_perf_dash_donut_center">
-              <strong>{demographics.topConditions.length}</strong>
-              <span>Clusters</span>
+              <strong>{kpis.rating}</strong>
+              <span>Avg</span>
             </div>
           </div>
-
           <div className="doc_perf_dash_custom_legend_v2">
-            {demographics.topConditions.map((item, idx) => (
-              <div key={idx} className="doc_perf_dash_legend_row">
+            {[5, 4, 3, 2, 1].map((star, idx) => (
+              <div key={star} className="doc_perf_dash_legend_row">
                 <div className="doc_perf_dash_legend_left">
-                  <span 
-                    className="doc_perf_dash_legend_dot" 
-                    style={{ backgroundColor: demographics.caseMixChart.datasets[0].backgroundColor[idx] }}
-                  ></span>
-                  <span className="doc_patn_m_legend_label">{item.label}</span>
+                  <span className="doc_perf_dash_legend_dot" style={{ 
+                    backgroundColor: ["#007acc", "#00d2ff", "#10b981", "#f59e0b", "#ef4444"][idx] 
+                  }}></span>
+                  <span>{star} Stars</span>
                 </div>
-                <span className="doc_perf_dash_legend_value">{item.value}</span>
+                <span>{ratingData[star]}</span>
               </div>
             ))}
           </div>

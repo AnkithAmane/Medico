@@ -7,7 +7,7 @@ exports.getAllDiagnosticTests = async (req, res) => {
 
     let query = { isAvailable: true };
     if (category) query.category = category;
-    if (search) query.testName = { $regex: search, $options: 'i' };
+    if (search) query.name = { $regex: search, $options: 'i' };
 
     const tests = await DiagnosticTest.find(query)
       .limit(limit * 1)
@@ -45,22 +45,34 @@ exports.getTestDetails = async (req, res) => {
 // Create Diagnostic Test (Admin)
 exports.createDiagnosticTest = async (req, res) => {
   try {
-    const { testName, category, price, description, sampleType, preparationInstructions, resultDeliveryTime, normalRange, laboratory, homeCollectionAvailable } = req.body;
+    const { 
+      name, category, price, description,
+      fastingRequired, fastingNote,
+      sampleType, preparationInstructions,
+      resultDeliveryTime, normalRange,
+      laboratory, homeCollectionAvailable
+    } = req.body;
 
     const test = await DiagnosticTest.create({
-      testName,
+      name,
       category,
       price,
       description,
+      fastingRequired: fastingRequired || false,
+      fastingNote: fastingNote || '',
       sampleType,
       preparationInstructions,
       resultDeliveryTime,
       normalRange,
       laboratory,
-      homeCollectionAvailable,
+      homeCollectionAvailable: homeCollectionAvailable || false,
     });
 
-    res.status(201).json({ success: true, message: 'Diagnostic test created', data: test });
+    res.status(201).json({ 
+      success: true, 
+      message: 'Diagnostic test created', 
+      data: test 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -72,12 +84,20 @@ exports.updateDiagnosticTest = async (req, res) => {
     const { testId } = req.params;
     const updateData = req.body;
 
-    const test = await DiagnosticTest.findByIdAndUpdate(testId, updateData, { new: true, runValidators: true });
+    const test = await DiagnosticTest.findByIdAndUpdate(
+      testId, 
+      updateData, 
+      { new: true, runValidators: true }
+    );
     if (!test) {
       return res.status(404).json({ success: false, message: 'Diagnostic test not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Test updated', data: test });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Test updated', 
+      data: test 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

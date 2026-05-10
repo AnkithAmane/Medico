@@ -5,35 +5,32 @@ const Patient = require('../models/Patient');
 exports.uploadMedicalRecord = async (req, res) => {
   try {
     const { patientId } = req.params;
-    const { documentType, documentTitle, documentFile, fileSize, fileFormat, uploadedBy, doctorId, appointmentId, description, issueDate, expiryDate } = req.body;
+    const { fileName, fileUrl, fileSize, category } = req.body;
 
-    // Verify patient exists
-    const patient = await Patient.findById(patientId);
+    // Find patient by userId
+    const patient = await Patient.findOne({ userId: patientId });
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found' });
     }
 
     // Create medical record
     const record = await MedicalVault.create({
-      patientId,
-      documentType,
-      documentTitle,
-      documentFile,
+      patientId: patient._id,
+      fileName,
+      fileUrl,
       fileSize,
-      fileFormat,
-      uploadedBy,
-      doctorId,
-      appointmentId,
-      description,
-      issueDate,
-      expiryDate,
+      category: category || 'Lab Reports',
     });
 
     // Add to patient's medical records
     patient.medicalRecords.push(record._id);
     await patient.save();
 
-    res.status(201).json({ success: true, message: 'Record uploaded successfully', data: record });
+    res.status(201).json({ 
+      success: true, 
+      message: 'Record uploaded successfully', 
+      data: record 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -43,14 +40,19 @@ exports.uploadMedicalRecord = async (req, res) => {
 exports.getPatientMedicalRecords = async (req, res) => {
   try {
     const { patientId } = req.params;
-    const { documentType } = req.query;
+    const { category } = req.query;
 
-    let query = { patientId, isDeleted: false };
-    if (documentType) query.documentType = documentType;
+    // Find patient by userId first
+    const patient = await Patient.findOne({ userId: patientId });
+    
+    let query = { 
+      patientId: patient ? patient._id : patientId,
+      isDeleted: false 
+    };
+    if (category) query.category = category;
 
     const records = await MedicalVault.find(query)
-      .populate('doctorId', 'name specialization')
-      .sort({ uploadedAt: -1 });
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: records });
   } catch (error) {
@@ -67,7 +69,7 @@ exports.getRecordDetails = async (req, res) => {
       recordId,
       { lastAccessedAt: new Date() },
       { new: true }
-    ).populate('doctorId', 'name specialization');
+    );
 
     if (!record) {
       return res.status(404).json({ success: false, message: 'Record not found' });
@@ -90,8 +92,9 @@ exports.shareRecordWithDoctor = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Record not found' });
     }
 
-    // Check if already shared with this doctor
-    const existingShare = record.sharingStatus.find(s => s.doctorId.toString() === doctorId);
+    const existingShare = record.sharingStatus.find(
+      s => s.doctorId.toString() === doctorId
+    );
     if (!existingShare) {
       record.sharingStatus.push({
         doctorId,
@@ -102,13 +105,17 @@ exports.shareRecordWithDoctor = async (req, res) => {
 
     await record.save();
 
-    res.status(200).json({ success: true, message: 'Record shared successfully', data: record });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Record shared successfully', 
+      data: record 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Revoke Record Access from Doctor
+// Revoke Record Access
 exports.revokeRecordAccess = async (req, res) => {
   try {
     const { recordId, doctorId } = req.params;
@@ -133,16 +140,11 @@ exports.revokeRecordAccess = async (req, res) => {
 exports.updateRecord = async (req, res) => {
   try {
     const { recordId } = req.params;
-    const { documentTitle, description, tags, isPublic } = req.body;
+    const { fileName, category, description } = req.body;
 
     const record = await MedicalVault.findByIdAndUpdate(
       recordId,
-      {
-        documentTitle,
-        description,
-        tags,
-        isPublic,
-      },
+      { fileName, category, description },
       { new: true, runValidators: true }
     );
 
@@ -150,7 +152,11 @@ exports.updateRecord = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Record not found' });
     }
 
-    res.status(200).json({ success: true, message: 'Record updated', data: record });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Record updated', 
+      data: record 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -171,8 +177,10 @@ exports.deleteRecord = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Record not found' });
     }
 
-    // Remove from patient's records
-    await Patient.updateOne({ _id: record.patientId }, { $pull: { medicalRecords: recordId } });
+    await Patient.updateOne(
+      { _id: record.patientId }, 
+      { $pull: { medicalRecords: recordId } }
+    );
 
     res.status(200).json({ success: true, message: 'Record deleted' });
   } catch (error) {
@@ -188,9 +196,7 @@ exports.getSharedRecords = async (req, res) => {
     const records = await MedicalVault.find({
       'sharingStatus.doctorId': doctorId,
       isDeleted: false,
-    })
-      .populate('patientId', 'firstName lastName')
-      .sort({ uploadedAt: -1 });
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: records });
   } catch (error) {

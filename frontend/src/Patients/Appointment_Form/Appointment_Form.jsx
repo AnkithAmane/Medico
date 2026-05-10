@@ -2,65 +2,101 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Calendar, Clock, User, MessageSquare, ChevronDown } from 'lucide-react';
 import './Appointment_Form.css';
+import { useAuth } from '../../context/AuthContext';
+import axiosInstance from '../../utils/axios';
 
 export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
   const navigate = useNavigate();
+  const { user } = useAuth()
 
-  // Form State
+  const [doctors, setDoctors] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+
   const [formData, setFormData] = useState({
-    doctor: '',
+    doctorId: '',
+    doctorName: '',
     date: '',
     time: '',
     reason: '',
-    department: 'General'
+    type: 'online'
   });
 
-  // Handle Initial Doctor Injection
+  // Fetch doctors when form opens
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true)
+        const res = await axiosInstance.get('/doctors')
+        setDoctors(res.data.data || [])
+      } catch (err) {
+        console.error('Failed to load doctors')
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (isOpen) fetchDoctors()
+  }, [isOpen])
+
+  // Handle Initial Doctor
   useEffect(() => {
     if (initialDoctor) {
       setFormData((prev) => ({
         ...prev,
-        doctor: initialDoctor.name,
-        department: initialDoctor.department || 'General'
+        doctorId: initialDoctor._id,
+        doctorName: initialDoctor.name,
       }));
     }
   }, [initialDoctor]);
 
+  // Reset form when closed
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({
+        doctorId: '',
+        doctorName: '',
+        date: '',
+        time: '',
+        reason: '',
+        type: 'online'
+      })
+      setError(null)
+    }
+  }, [isOpen])
+
   if (!isOpen) return null;
 
-  // Submit Handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newBooking = {
-      id: `BK-${Date.now()}`,
-      patient: "Arjun Mehta",
-      doctor: formData.doctor || "Specialist",
-      department: formData.department,
-      date: formData.date,
-      time: formData.time,
-      reason: formData.reason,
-      status: "Upcoming",
-      type: "Online", 
-      branch: initialDoctor?.branch || "Main Branch"
-    };
-
-    // Persistence Logic
-    const existing = JSON.parse(localStorage.getItem('my_appointments')) || [];
-    const updated = [newBooking, ...existing];
-    localStorage.setItem('my_appointments', JSON.stringify(updated));
-
-    // Update system and navigate
-    window.dispatchEvent(new Event("storage_update"));
-    onClose();
-    navigate('/patient/bookings');
+    if (!formData.doctorId) {
+      setError('Please select a doctor')
+      return
+    }
+    try {
+      setSubmitting(true)
+      setError(null)
+      await axiosInstance.post('/appointments', {
+        patientId: user._id,
+        doctorId: formData.doctorId,
+        date: formData.date,
+        time: formData.time,
+        reason: formData.reason,
+        type: formData.type
+      })
+      onClose()
+      navigate('/patient/patient_bookings')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to book appointment')
+    } finally {
+      setSubmitting(false)
+    }
   };
 
   return (
     <div className="pat_form_overlay">
       <div className="pat_form_modal">
         
-        {/* Header */}
         <div className="pat_form_header">
           <div className="pat_form_title">
             <h2>Book New Appointment</h2>
@@ -71,18 +107,27 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
           </button>
         </div>
 
-        {/* Booking Form */}
+        {error && (
+          <div style={{ 
+            background: '#fee2e2', color: '#ef4444', 
+            padding: '12px 16px', borderRadius: '12px', 
+            marginBottom: '20px', fontWeight: '600',
+            fontSize: '0.9rem'
+          }}>
+            {error}
+          </div>
+        )}
+
         <form className="pat_form_body" onSubmit={handleSubmit}>
           <div className="pat_form_grid">
             
-            {/* Specialist Selection */}
             <div className="pat_form_group full">
               <label><User size={16} /> Specialist</label>
               <div className="pat_select_wrapper">
                 {initialDoctor ? (
                   <input 
                     type="text" 
-                    value={formData.doctor} 
+                    value={formData.doctorName} 
                     readOnly 
                     className="pat_form_input_readonly"
                   />
@@ -90,13 +135,24 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
                   <>
                     <select 
                       required
-                      value={formData.doctor}
-                      onChange={(e) => setFormData({...formData, doctor: e.target.value})}
+                      value={formData.doctorId}
+                      onChange={(e) => {
+                        const selected = doctors.find(d => d._id === e.target.value)
+                        setFormData({
+                          ...formData, 
+                          doctorId: e.target.value,
+                          doctorName: selected?.name || ''
+                        })
+                      }}
                     >
-                      <option value="">Choose a doctor...</option>
-                      <option value="Dr. Katherine Cole">Dr. Katherine Cole (Cardiology)</option>
-                      <option value="Dr. Arjun Mehta">Dr. Arjun Mehta (General Physician)</option>
-                      <option value="Dr. Vijay K">Dr. Vijay K (General)</option>
+                      <option value="">
+                        {loading ? 'Loading doctors...' : 'Choose a doctor...'}
+                      </option>
+                      {doctors.map(doc => (
+                        <option key={doc._id} value={doc._id}>
+                          {doc.name} ({doc.specialization})
+                        </option>
+                      ))}
                     </select>
                     <ChevronDown className="pat_select_icon" size={18} />
                   </>
@@ -104,7 +160,6 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
               </div>
             </div>
 
-            {/* Date and Time */}
             <div className="pat_form_group">
               <label><Calendar size={16} /> Preferred Date</label>
               <input 
@@ -126,7 +181,6 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
               />
             </div>
 
-            {/* Visit Details */}
             <div className="pat_form_group full">
               <label><MessageSquare size={16} /> Reason for Visit</label>
               <textarea 
@@ -137,17 +191,19 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="pat_form_footer">
             <button type="button" className="pat_form_cancel" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="pat_form_submit">
-              Confirm & Book
+            <button 
+              type="submit" 
+              className="pat_form_submit"
+              disabled={submitting}
+            >
+              {submitting ? 'Booking...' : 'Confirm & Book'}
             </button>
           </div>
         </form>
-
       </div>
     </div>
   );

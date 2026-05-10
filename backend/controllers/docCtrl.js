@@ -4,44 +4,31 @@ const Doctor = require('../models/Doctor');
 // Create Doctor Profile
 exports.createDoctorProfile = async (req, res) => {
   try {
-    const { userId, specialization, qualification, licenseNumber, yearsOfExperience, department, hospital, consultationFee, bio, availableSlots } = req.body;
+    const { 
+      name, specialization, experience, fees, 
+      location, isAvailable, bio, branch 
+    } = req.body;
 
-    // Check if user exists
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    // Check if doctor profile already exists
-    const existingDoctor = await Doctor.findOne({ userId });
-    if (existingDoctor) {
-      return res.status(400).json({ success: false, message: 'Doctor profile already exists for this user' });
-    }
-
-    // Create doctor profile
     const doctor = await Doctor.create({
-      userId,
+      name,
       specialization,
-      qualification,
-      licenseNumber,
-      yearsOfExperience,
-      department,
-      hospital,
-      consultationFee,
-      bio,
-      availableSlots: availableSlots || [],
+      experience,
+      fees,
+      location,
+      isAvailable: isAvailable !== undefined ? isAvailable : true,
+      bio: bio || '',
+      branch: branch || 'Main Branch'
     });
 
     res.status(201).json({
       success: true,
-      message: 'Doctor profile created successfully',
+      message: 'Doctor created successfully',
       data: doctor,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 // Get Doctor Profile by ID
 exports.getDoctorProfile = async (req, res) => {
   try {
@@ -155,3 +142,52 @@ exports.deleteDoctor = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+// Get Doctor by UserId (for logged in doctor)
+exports.getDoctorByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const doctor = await Doctor.findOne({ userId })
+      .populate('appointments')
+      .populate('reviews');
+
+    if (!doctor) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Doctor profile not found' 
+      });
+    }
+
+    res.status(200).json({ success: true, data: doctor });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+exports.updateDoctorProfile = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const updateData = req.body  // ← accept any fields from body
+
+    const doctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      updateData,  // ← update with whatever is sent
+      { new: true, runValidators: true }
+    );
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found' });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Profile updated successfully', 
+      data: doctor 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

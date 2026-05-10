@@ -5,7 +5,11 @@ const doctorSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      default: null
+    },
+    name: {
+      type: String,
+      required: [true, 'Please provide doctor name'],
     },
     specialization: {
       type: String,
@@ -14,22 +18,33 @@ const doctorSchema = new mongoose.Schema(
     qualification: String,
     licenseNumber: {
       type: String,
-      unique: true,
-      required: true,
+      sparse: true,
+      default: null
     },
-    yearsOfExperience: Number,
+    experience: {
+      type: Number,
+      default: 0
+    },
     department: String,
     hospital: String,
-    consultationFee: {
+    fees: {
       type: Number,
-      required: true,
+      required: [true, 'Please provide consultation fee'],
+    },
+    location: {
+      type: String,
+      default: ''
+    },
+    branch: {
+      type: String,
+      default: 'Main Branch'
     },
     availableSlots: [
       {
         day: String,
         startTime: String,
         endTime: String,
-        slotDuration: Number, // in minutes
+        slotDuration: Number,
       },
     ],
     rating: {
@@ -43,10 +58,17 @@ const doctorSchema = new mongoose.Schema(
       default: 0,
     },
     bio: String,
-    photo: String,
+    profilePic: {
+      type: String,
+      default: ''
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true
+    },
     isApproved: {
       type: Boolean,
-      default: false,
+      default: true
     },
     appointments: [
       {
@@ -60,10 +82,6 @@ const doctorSchema = new mongoose.Schema(
         ref: 'Review',
       },
     ],
-    registrationDate: {
-      type: Date,
-      default: Date.now,
-    },
   },
   { timestamps: true }
 );

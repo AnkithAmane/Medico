@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema(
       {
         itemType: {
           type: String,
-          enum: ['medicine', 'diagnosticTest'],
+          enum: ['medicine', 'test'],  // ← changed diagnosticTest to test
           required: true,
         },
         itemId: {
@@ -41,8 +41,8 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['credit_card', 'debit_card', 'upi', 'netbanking', 'wallet'],
-      required: true,
+      enum: ['credit_card', 'debit_card', 'upi', 'netbanking', 'wallet', 'cash'],
+      default: 'upi'
     },
     paymentStatus: {
       type: String,
@@ -50,11 +50,8 @@ const orderSchema = new mongoose.Schema(
       default: 'pending',
     },
     deliveryAddress: {
-      street: String,
-      city: String,
-      state: String,
-      postalCode: String,
-      country: String,
+      type: String,
+      default: ''
     },
     deliveryStatus: {
       type: String,
@@ -65,15 +62,7 @@ const orderSchema = new mongoose.Schema(
     expectedDeliveryDate: Date,
     actualDeliveryDate: Date,
     notes: String,
-    prescriptionFile: String, // URL to uploaded prescription if needed
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
+    prescriptionFile: String,
   },
   { timestamps: true }
 );

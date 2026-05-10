@@ -26,21 +26,22 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       maxlength: [1000, 'Feedback cannot exceed 1000 characters'],
     },
+    reply: {
+      type: String,
+      default: ''
+    },
+    status: {
+      type: String,
+      enum: ['new', 'replied', 'resolved', 'flagged'],
+      default: 'new'
+    },
     professionalism: Number,
     communication: Number,
     cleanliness: Number,
     punctuality: Number,
     isVerified: {
       type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
+      default: true,
     },
   },
   { timestamps: true }

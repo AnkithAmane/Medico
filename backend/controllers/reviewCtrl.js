@@ -5,9 +5,8 @@ const Patient = require('../models/Patient');
 // Create Review
 exports.createReview = async (req, res) => {
   try {
-    const { patientId, doctorId, appointmentId, rating, feedback, professionalism, communication, cleanliness, punctuality } = req.body;
+    const { patientId, doctorId, appointmentId, rating, feedback } = req.body;
 
-    // Verify patient and doctor exist
     const patient = await Patient.findById(patientId);
     const doctor = await Doctor.findById(doctorId);
 
@@ -15,27 +14,19 @@ exports.createReview = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Patient or Doctor not found' });
     }
 
-    // Create review
     const review = await Review.create({
       patientId,
       doctorId,
       appointmentId,
       rating,
       feedback,
-      professionalism,
-      communication,
-      cleanliness,
-      punctuality,
+      status: 'new'
     });
 
-    // Add review to patient's list
     patient.reviews.push(review._id);
     await patient.save();
 
-    // Add review to doctor's list
     doctor.reviews.push(review._id);
-
-    // Update doctor's rating
     const allReviews = await Review.find({ doctorId });
     const averageRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
     doctor.rating = averageRating;
@@ -54,13 +45,19 @@ exports.getDoctorReviews = async (req, res) => {
     const { doctorId } = req.params;
     const { page = 1, limit = 10 } = req.query;
 
-    const reviews = await Review.find({ doctorId, isVerified: true })
-      .populate('patientId', 'firstName lastName')
+    const reviews = await Review.find({ doctorId })
+      .populate({
+        path: 'patientId',
+        populate: {
+          path: 'userId',
+          model: 'User'
+        }
+      })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ createdAt: -1 });
 
-    const count = await Review.countDocuments({ doctorId, isVerified: true });
+    const count = await Review.countDocuments({ doctorId });
 
     res.status(200).json({
       success: true,
@@ -79,7 +76,7 @@ exports.getPatientReviews = async (req, res) => {
     const { patientId } = req.params;
 
     const reviews = await Review.find({ patientId })
-      .populate('doctorId', 'specialization')
+      .populate('doctorId')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: reviews });
@@ -111,19 +108,11 @@ exports.getReviewDetails = async (req, res) => {
 exports.updateReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const { rating, feedback, professionalism, communication, cleanliness, punctuality } = req.body;
+    const updateData = req.body  // accept any fields including reply and status
 
     const review = await Review.findByIdAndUpdate(
       reviewId,
-      {
-        rating,
-        feedback,
-        professionalism,
-        communication,
-        cleanliness,
-        punctuality,
-        updatedAt: new Date(),
-      },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -131,12 +120,15 @@ exports.updateReview = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Review not found' });
     }
 
-    // Update doctor's rating
-    const doctor = await Doctor.findById(review.doctorId);
-    const allReviews = await Review.find({ doctorId: review.doctorId });
-    const averageRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-    doctor.rating = averageRating;
-    await doctor.save();
+    // Update doctor rating if rating changed
+    if (updateData.rating) {
+      const doctor = await Doctor.findById(review.doctorId);
+      if (doctor) {
+        const allReviews = await Review.find({ doctorId: review.doctorId });
+        doctor.rating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+        await doctor.save();
+      }
+    }
 
     res.status(200).json({ success: true, message: 'Review updated', data: review });
   } catch (error) {
@@ -154,16 +146,18 @@ exports.deleteReview = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Review not found' });
     }
 
-    // Remove from patient
     await Patient.updateOne({ _id: review.patientId }, { $pull: { reviews: reviewId } });
 
-    // Remove from doctor and update rating
     const doctor = await Doctor.findById(review.doctorId);
-    doctor.reviews = doctor.reviews.filter(r => r.toString() !== reviewId);
-    const allReviews = await Review.find({ doctorId: review.doctorId });
-    doctor.rating = allReviews.length > 0 ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length : 0;
-    doctor.totalReviews = allReviews.length;
-    await doctor.save();
+    if (doctor) {
+      doctor.reviews = doctor.reviews.filter(r => r.toString() !== reviewId);
+      const allReviews = await Review.find({ doctorId: review.doctorId });
+      doctor.rating = allReviews.length > 0 
+        ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length 
+        : 0;
+      doctor.totalReviews = allReviews.length;
+      await doctor.save();
+    }
 
     res.status(200).json({ success: true, message: 'Review deleted' });
   } catch (error) {
