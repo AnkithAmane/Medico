@@ -386,3 +386,66 @@
   .doc_avail_m_modal_card_compact { padding: 25px; }
   .doc_avail_m_modal_form_row { grid-template-columns: 1fr; }
 }
+
+/* MODAL FIELD SPACING FIX */
+.doc_avail_m_leave_form_body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.doc_avail_m_modal_form_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 0;
+}
+
+.doc_avail_m_modal_field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.doc_avail_m_modal_field label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.doc_avail_m_modal_field input,
+.doc_avail_m_modal_field select,
+.doc_avail_m_modal_field textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  color: #1e293b;
+  transition: 0.2s;
+  box-sizing: border-box;
+}
+
+.doc_avail_m_modal_field input:focus,
+.doc_avail_m_modal_field select:focus,
+.doc_avail_m_modal_field textarea:focus {
+  border-color: #007acc;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.08);
+}
+
+.doc_avail_m_modal_field textarea {
+  resize: none;
+  min-height: 100px;
+}
+
+.doc_avail_m_modal_field select {
+  appearance: auto;
+  cursor: pointer;
+}

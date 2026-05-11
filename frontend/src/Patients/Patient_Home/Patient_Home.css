@@ -4,13 +4,14 @@
   background-color: #f8fafc; 
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 /* Dynamic Viewport Spacing */
 .pat_home_content_area {
   flex: 1;
   width: 100%;
-  max-width: 1600px; 
+  max-width: 100%;
   margin: 0 auto;
   padding-top: 20px; 
   box-sizing: border-box;

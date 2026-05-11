@@ -1,17 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search, MapPin, CalendarCheck, Award, 
-  Clock, ChevronLeft, User, DollarSign 
+  Clock, ChevronLeft
 } from 'lucide-react';
 import './Doctor_Details.css';
-
-// Component Import
-import AppointmentForm from '../Appointment_Form/Appointment_Form'; 
-
-// Data Imports
-import doctorsData from '../../Assets/Data/Doctors_Data.json';
+import AppointmentForm from '../Appointment_Form/Appointment_Form';
+import axiosInstance from '../../utils/axios';
 
 export default function Doctor_Details() {
+  // Data States
+  const [doctors, setDoctors] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   // Filter States
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
@@ -23,23 +24,53 @@ export default function Doctor_Details() {
   const [targetDoctor, setTargetDoctor] = useState(null);
 
   const departments = ["All", "Cardiology", "Neurology", "Orthopedics", "Pediatrics", "Dermatology", "General"];
-  const locations = ["All", "Hyderabad", "Mumbai", "Bangalore", "Delhi"];
+  const locations = ["All", "Hyderabad", "Mumbai", "Bangalore", "Delhi", "Chennai", "Kolkata"];
+
+  // Fetch doctors from backend
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true)
+        const res = await axiosInstance.get('/doctors')
+        setDoctors(res.data.data || [])
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load doctors')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDoctors()
+  }, [])
 
   // Multi-factor Search Logic
   const filteredDoctors = useMemo(() => {
-    return doctorsData.filter(doc => {
-      const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDept = selectedDept === "All" || doc.department === selectedDept;
-      const matchesLoc = selectedLoc === "All" || doc.branch === selectedLoc;
-      return matchesSearch && matchesDept && matchesLoc;
+    return doctors.filter(doc => {
+      const matchesSearch = 
+        doc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.specialization?.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesDept = selectedDept === "All" || doc.specialization === selectedDept
+      const matchesLoc = selectedLoc === "All" || doc.location === selectedLoc
+      return matchesSearch && matchesDept && matchesLoc
     });
-  }, [searchTerm, selectedDept, selectedLoc]);
+  }, [searchTerm, selectedDept, selectedLoc, doctors]);
 
   // Open Booking Modal
   const handleOpenBooking = (doc) => {
     setTargetDoctor(doc);
     setIsFormOpen(true);
   };
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <p>Loading specialists...</p>
+    </div>
+  )
+
+  if (error) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <p style={{ color: 'red' }}>{error}</p>
+    </div>
+  )
 
   return (
     <div className="pat_spec_container_full">
@@ -53,34 +84,44 @@ export default function Doctor_Details() {
             </button>
             
             <div className="panel_header">
-              <img src={viewingDoctor.photo} alt={viewingDoctor.name} className="panel_img" />
+              <img 
+                src={viewingDoctor.profilePic || `https://ui-avatars.com/api/?name=${viewingDoctor.name}&background=007acc&color=fff`}
+                alt={viewingDoctor.name} 
+                className="panel_img" 
+              />
               <div className="panel_title_group">
                 <h2 className="pat_spec_h2">{viewingDoctor.name}</h2>
-                <span className="panel_dept_tag">{viewingDoctor.department} Specialist</span>
+                <span className="panel_dept_tag">{viewingDoctor.specialization} Specialist</span>
               </div>
             </div>
 
             <div className="panel_scroll_area">
               <div className="panel_stats_grid">
-                <div className="p_stat"><strong>Exp.</strong><span>{viewingDoctor.experience}</span></div>
-                <div className="p_stat"><strong>Fee</strong><span>₹{viewingDoctor.fee}</span></div>
-                <div className="p_stat"><strong>Age</strong><span>{viewingDoctor.age}</span></div>
-              </div>
-
-              <div className="panel_section">
-                <h3 className="pat_spec_h3">Education & Degrees</h3>
-                <p className="pat_spec_p">{viewingDoctor.degrees}</p>
+                <div className="p_stat">
+                  <strong>Exp.</strong>
+                  <span>{viewingDoctor.experience} yrs</span>
+                </div>
+                <div className="p_stat">
+                  <strong>Fee</strong>
+                  <span>₹{viewingDoctor.fees}</span>
+                </div>
+                <div className="p_stat">
+                  <strong>Status</strong>
+                  <span>{viewingDoctor.isAvailable ? 'Available' : 'Busy'}</span>
+                </div>
               </div>
 
               <div className="panel_section">
                 <h3 className="pat_spec_h3">About Specialist</h3>
-                <p className="pat_spec_p">{viewingDoctor.description}</p>
+                <p className="pat_spec_p">
+                  {viewingDoctor.bio || 'Experienced specialist dedicated to patient care.'}
+                </p>
               </div>
 
               <div className="panel_section">
                 <h3 className="pat_spec_h3">Branch Location</h3>
                 <div className="panel_loc_pill">
-                  <MapPin size={14}/> {viewingDoctor.branch}
+                  <MapPin size={14}/> {viewingDoctor.location || viewingDoctor.branch || 'Main Branch'}
                 </div>
               </div>
             </div>
@@ -132,28 +173,41 @@ export default function Doctor_Details() {
           {filteredDoctors.length > 0 ? (
             filteredDoctors.map((doc) => (
               <div 
-                className={`pat_spec_card ${viewingDoctor?.id === doc.id ? 'selected' : ''}`} 
-                key={doc.id}
+                className={`pat_spec_card ${viewingDoctor?._id === doc._id ? 'selected' : ''}`} 
+                key={doc._id}
               >
                 <div className="pat_spec_card_top">
                   <div className="pat_spec_avatar_frame">
-                     <img src={doc.photo} alt={doc.name} />
-                     <span className={`status_dot ${doc.availability === 'Available' ? 'online' : 'offline'}`}></span>
+                    <img 
+                      src={doc.profilePic || `https://ui-avatars.com/api/?name=${doc.name}&background=007acc&color=fff`}
+                      alt={doc.name} 
+                    />
+                    <span className={`status_dot ${doc.isAvailable ? 'online' : 'offline'}`}></span>
                   </div>
                   <div className="pat_spec_core_info">
                     <h3 className="pat_spec_h3">{doc.name}</h3>
-                    <span className="pat_spec_dept_tag_small">{doc.department}</span>
-                    <div className="pat_spec_branch_tag"><MapPin size={10}/> {doc.branch}</div>
+                    <span className="pat_spec_dept_tag_small">{doc.specialization}</span>
+                    <div className="pat_spec_branch_tag">
+                      <MapPin size={10}/> {doc.location || doc.branch || 'Main Branch'}
+                    </div>
                   </div>
                 </div>
                 
                 <div className="pat_spec_card_meta">
-                  <div className="meta_item"><Award size={14}/> <span>{doc.experience} Experience</span></div>
-                  <div className="meta_item"><Clock size={14}/> <span>{doc.availability}</span></div>
+                  <div className="meta_item">
+                    <Award size={14}/> 
+                    <span>{doc.experience} years Experience</span>
+                  </div>
+                  <div className="meta_item">
+                    <Clock size={14}/> 
+                    <span>{doc.isAvailable ? 'Available' : 'Not Available'}</span>
+                  </div>
                 </div>
 
                 <div className="pat_spec_card_actions">
-                  <button className="btn_view_profile" onClick={() => setViewingDoctor(doc)}>View Profile</button>
+                  <button className="btn_view_profile" onClick={() => setViewingDoctor(doc)}>
+                    View Profile
+                  </button>
                   <button className="btn_book_now" onClick={() => handleOpenBooking(doc)}>
                     Book <CalendarCheck size={14} />
                   </button>
@@ -161,18 +215,22 @@ export default function Doctor_Details() {
               </div>
             ))
           ) : (
-            <div className="pat_spec_empty_text">No specialists found matching your criteria.</div>
+            <div className="pat_spec_empty_text">
+              {doctors.length === 0 
+                ? 'No doctors available yet.' 
+                : 'No specialists found matching your criteria.'
+              }
+            </div>
           )}
         </div>
       </main>
 
-      {/* Modal Injection */}
+      {/* Modal */}
       <AppointmentForm 
         isOpen={isFormOpen} 
         onClose={() => setIsFormOpen(false)} 
         initialDoctor={targetDoctor} 
       />
-
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 
 /* --- COMPONENT IMPORTS --- */
 import Landing_Page from "./Home/Landing_Page/Landing_Page";
@@ -41,8 +42,9 @@ import Patient_Vault from './Patients/Patient_Vault/Patient_Vault'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
         {/* --- PUBLIC ROUTES --- */}
         <Route path="/" element={<Landing_Page />} />
         <Route path="/landing_page" element={<Landing_Page />} />
@@ -79,21 +81,46 @@ function App() {
           <Route path="doctor_profile" element={<Doctor_Profile />} />
         </Route>
 
-        {/* --- Patient ROUTES --- */}
+        {/* --- DOCTOR HOME ALIAS --- */}
+        <Route path="/doctor_home" element={<Doctor_Home />}>
+          <Route index element={<Doctor_Dashboard />} />
+          <Route path="doctor_dashboard" element={<Doctor_Dashboard />} />
+          <Route path="doctor_appointments_management" element={<Doctor_Appointment_Management />} />
+          <Route path="doctor_patients_management" element={<Doctor_Patient_Management />} />
+          <Route path="doctor_availability_management" element={<Doctor_Availability_Management />} />
+          <Route path="doctor_performance_dashboard" element={<Doctor_Performance_Dashboard />} />
+          <Route path="doctor_review_management" element={<Doctor_Review_Management />} />
+          <Route path="doctor_settings" element={<Doctor_Settings />} />
+          <Route path="doctor_profile" element={<Doctor_Profile />} />
+        </Route>
+
+        {/* --- PATIENT ROUTES --- */}
         <Route path="/patient" element={<Patient_Home />}>
           <Route index element={<Patient_Dashboard />} />
           <Route path="patient_dashboard" element={<Patient_Dashboard />} />
           <Route path="patient_bookings" element={<Patient_Bookings />} />
-          <Route path="doctor_details" element={<Doctor_Details/>} />
-          <Route path="patient_bookings" element={<Patient_Bookings/>} />
-          <Route path="pharmacy_details" element={<Pharmacy_Details/>} />
-          <Route path="patient_vault" element={<Patient_Vault/>} />
+          <Route path="doctor_details" element={<Doctor_Details />} />
+          <Route path="pharmacy_details" element={<Pharmacy_Details />} />
+          <Route path="patient_vault" element={<Patient_Vault />} />
+          <Route path="patient_settings" element={<Patient_Settings />} />
+          <Route path="patient_profile" element={<Patient_Profile />} />
+        </Route>
+
+        {/* --- PATIENT HOME ALIAS --- */}
+        <Route path="/patient_home" element={<Patient_Home />}>
+          <Route index element={<Patient_Dashboard />} />
+          <Route path="patient_dashboard" element={<Patient_Dashboard />} />
+          <Route path="patient_bookings" element={<Patient_Bookings />} />
+          <Route path="doctor_details" element={<Doctor_Details />} />
+          <Route path="pharmacy_details" element={<Pharmacy_Details />} />
+          <Route path="patient_vault" element={<Patient_Vault />} />
           <Route path="patient_settings" element={<Patient_Settings />} />
           <Route path="patient_profile" element={<Patient_Profile />} />
         </Route>
 
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
