@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Calendar, Clock, FileText, Video, MapPin, 
-  Plus, Search, ChevronRight, X, Star 
+import { useLocation } from 'react-router-dom';
+import {
+  Calendar, Clock, FileText, Video, MapPin,
+  Plus, Search, ChevronRight, X, Star
 } from 'lucide-react';
 import AppointmentForm from '../Appointment_Form/Appointment_Form';
 import './Patient_Bookings.css';
@@ -10,14 +11,15 @@ import axiosInstance from '../../utils/axios';
 
 export default function Patient_Bookings() {
   const { user } = useAuth()
-  
+  const location = useLocation()
+
   // Data States
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   // UI States
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState(location.state?.filter || "All");
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedAppt, setSelectedAppt] = useState(null);
@@ -40,6 +42,15 @@ export default function Patient_Bookings() {
     }
     fetchAppointments()
   }, [user])
+
+  // Auto-select appointment when navigated from dashboard
+  useEffect(() => {
+    const targetId = location.state?.selectedApptId
+    if (targetId && appointments.length > 0) {
+      const match = appointments.find(a => a._id === targetId)
+      if (match) setSelectedAppt(match)
+    }
+  }, [appointments, location.state])
 
   // Filter appointments
   const myBookings = useMemo(() => {

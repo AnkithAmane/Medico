@@ -48,7 +48,7 @@ export default function Appointment_Form({ isOpen, onClose, initialDoctor }) {
         doctorName: initialDoctor.name,
       }));
     }
-  }, [initialDoctor]);
+  }, );
 
   // Reset form when closed
   useEffect(() => {

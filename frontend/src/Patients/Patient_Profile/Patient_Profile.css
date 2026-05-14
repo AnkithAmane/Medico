@@ -333,3 +333,154 @@
     color: #007acc;
     background: #f0f7ff;
 }
+
+/* Digital Vault card */
+.pat_vault_card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.pat_vault_card_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pat_vault_count {
+    background: #e0f2fe;
+    color: #007acc;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    min-width: 26px;
+    text-align: center;
+}
+
+.pat_vault_scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+}
+
+.pat_vault_scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.pat_vault_scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.pat_vault_scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.pat_vault_scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.pat_vault_item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pat_vault_item:hover {
+    background: #f0f7ff;
+    border-color: #bae6fd;
+}
+
+.pat_vault_icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.pat_vault_icon.pdf {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.pat_vault_icon.img {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.pat_vault_meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pat_vault_meta strong {
+    font-size: 0.78rem;
+    color: #1e293b;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pat_vault_meta span {
+    font-size: 0.68rem;
+    color: #64748b;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pat_vault_chev {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.pat_vault_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 12px;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.pat_vault_viewall {
+    margin-top: 4px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #007acc;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: 0.2s;
+}
+
+.pat_vault_viewall:hover {
+    background: #f0f7ff;
+    border-color: #bae6fd;
+}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppointmentForm from '../Appointment_Form/Appointment_Form';
-import { 
-  Activity, Scale, Ruler, HeartPulse, Wind, 
+import {
+  Activity, Scale, Ruler, HeartPulse, Wind,
   Clock, Zap, ArrowRight, ChevronRight,
   Calendar as CalIcon
 } from 'lucide-react';
@@ -11,6 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import axiosInstance from '../../utils/axios';
 
 export default function Patient_Dashboard() {
+  const navigate = useNavigate();
   const [dateTime, setDateTime] = useState(new Date());
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [patientProfile, setPatientProfile] = useState(null);
@@ -227,11 +229,19 @@ export default function Patient_Dashboard() {
         <div className="pat_dash_list_card_half">
           <div className="pat_dash_list_header">
             <h3 className="pat_dash_h3">Upcoming Schedule</h3>
-            <button className="pat_dash_view_all">View All</button>
+            <button
+              className="pat_dash_view_all"
+              onClick={() => navigate('/patient/patient_bookings', { state: { filter: 'Upcoming' } })}
+            >View All</button>
           </div>
           <div className="pat_dash_list_body">
             {upcomingList.length > 0 ? upcomingList.map((appt, i) => (
-              <div key={i} className="pat_dash_list_item">
+              <div
+                key={i}
+                className="pat_dash_list_item"
+                onClick={() => navigate('/patient/patient_bookings', { state: { filter: 'Upcoming', selectedApptId: appt._id } })}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="pat_dash_item_date">
                   <span className="pat_dash_date_num">{appt.date?.split('-')[2]}</span>
                   <span className="pat_dash_date_month">{new Date(appt.date).toLocaleString('default', { month: 'short' })}</span>
@@ -249,11 +259,19 @@ export default function Patient_Dashboard() {
         <div className="pat_dash_list_card_half">
           <div className="pat_dash_list_header">
             <h3 className="pat_dash_h3">Recent Consultations</h3>
-            <button className="pat_dash_view_all">History</button>
+            <button
+              className="pat_dash_view_all"
+              onClick={() => navigate('/patient/patient_bookings', { state: { filter: 'Completed' } })}
+            >History</button>
           </div>
           <div className="pat_dash_list_body">
             {pastList.length > 0 ? pastList.map((appt, i) => (
-              <div key={i} className="pat_dash_list_item">
+              <div
+                key={i}
+                className="pat_dash_list_item"
+                onClick={() => navigate('/patient/patient_bookings', { state: { filter: 'Completed', selectedApptId: appt._id } })}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="pat_dash_item_icon_past">
                   <HeartPulse size={18} color="#10b981" />
                 </div>
@@ -262,6 +280,7 @@ export default function Patient_Dashboard() {
                   <span className="pat_dash_span">Completed on {appt.date}</span>
                 </div>
                 <div className="pat_dash_status_badge_done">Completed</div>
+                <ChevronRight size={18} className="pat_dash_list_chevron" />
               </div>
             )) : <p className="pat_dash_empty_text">No history found</p>}
           </div>
