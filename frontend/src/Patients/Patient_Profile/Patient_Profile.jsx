@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  User, ShieldCheck, Scale, Ruler, Activity, 
-  FileText, Edit3, Save, Download, 
-  Dna, Syringe, ClipboardList, Info
+import {
+  User, ShieldCheck, Scale, Ruler, Activity,
+  FileText, Edit3, Save, Download,
+  Dna, Syringe, ClipboardList, Info,
+  FileDigit, ChevronRight
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './Patient_Profile.css';
 import { useAuth } from '../../context/AuthContext';
 import axiosInstance from '../../utils/axios';
 
 export default function Patient_Profile() {
   const { user } = useAuth()
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -328,22 +331,51 @@ export default function Patient_Profile() {
           </div>
 
           {/* Digital Vault Quick Access */}
-          <div className="pat_prof_card">
-            <div className="pat_card_title"><FileText size={18}/> Digital Vault</div>
-            {vaultFiles.slice(0, 3).map(file => (
-              <div 
-                className="pat_file_row" 
-                key={file._id}
-                onClick={() => window.open(file.fileUrl, '_blank')}
-              >
-                <span>{file.fileName}</span>
+          <div className="pat_prof_card pat_vault_card">
+            <div className="pat_vault_card_head">
+              <div className="pat_card_title" style={{ marginBottom: 0 }}>
+                <FileText size={18}/> Digital Vault
               </div>
-            ))}
-            {vaultFiles.length === 0 && (
-              <div className="pat_file_row">
-                <span>No records uploaded yet</span>
-              </div>
-            )}
+              <span className="pat_vault_count">{vaultFiles.length}</span>
+            </div>
+
+            <div className="pat_vault_scroll">
+              {vaultFiles.length > 0 ? vaultFiles.map(file => {
+                const isPdf = file.fileName?.toLowerCase().endsWith('.pdf')
+                return (
+                  <div
+                    className="pat_vault_item"
+                    key={file._id}
+                    onClick={() => window.open(file.fileUrl, '_blank')}
+                    title={file.fileName}
+                  >
+                    <div className={`pat_vault_icon ${isPdf ? 'pdf' : 'img'}`}>
+                      {isPdf ? <FileText size={16}/> : <FileDigit size={16}/>}
+                    </div>
+                    <div className="pat_vault_meta">
+                      <strong>{file.fileName}</strong>
+                      <span>
+                        {file.category || 'Uncategorized'}
+                        {file.fileSize ? ` • ${file.fileSize}` : ''}
+                      </span>
+                    </div>
+                    <ChevronRight size={14} className="pat_vault_chev"/>
+                  </div>
+                )
+              }) : (
+                <div className="pat_vault_empty">
+                  <FileText size={22}/>
+                  <span>No records uploaded yet</span>
+                </div>
+              )}
+            </div>
+
+            <button
+              className="pat_vault_viewall"
+              onClick={() => navigate('/patient/patient_vault')}
+            >
+              Open Vault <ChevronRight size={14}/>
+            </button>
           </div>
         </aside>
       </div>
