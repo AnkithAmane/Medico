@@ -1,0 +1,220 @@
+/* ==========================================================================
+   MEDICO+ ELITE: SENTIMENT INTELLIGENCE SYSTEM (FULL SPEC)
+   ========================================================================== */
+
+.admin_rev_intel_root {
+    padding: 20px 0;
+    min-height: 100vh;
+    animation: medicoPageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes medicoPageFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.admin_rev_intel_cyan {
+    color: #007acc;
+  font-weight: 300;
+}
+
+/* --- TIER 0: Header & Controls --- */
+.admin_rev_intel_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.admin_rev_intel_branding h1 { font-size: 32px; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -1px; }
+.admin_rev_intel_branding p { color: #94a3b8; font-weight: 600; margin: 5px 0 0; font-size: 14px; }
+
+.admin_rev_intel_header_btns {
+    display: flex;
+    gap: 12px;
+}
+
+.admin_rev_intel_sync_btn {
+    width: 44px; height: 44px; border-radius: 14px; border: 1px solid #f1f5f9;
+    background: white; color: #64748b; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; transition: all 0.3s ease;
+}
+
+.admin_rev_intel_sync_btn:hover { border-color: #007acc; color: #007acc; transform: rotate(180deg); }
+
+.admin_rev_intel_primary_btn {
+    background: #1e293b; color: white; border: none; padding: 10px 22px; 
+    border-radius: 14px; font-weight: 800; display: flex; align-items: center; 
+    gap: 10px; cursor: pointer; transition: 0.3s; font-size: 14px;
+}
+
+.admin_rev_intel_primary_btn:hover { background: #0f172a; transform: translateY(-2px); }
+
+/* --- TIER 1: KPI Statistics --- */
+.admin_rev_intel_kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.admin_rev_intel_kpi_card {
+    background: white;
+    padding: 22px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.admin_rev_intel_kpi_icon {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.admin_rev_intel_kpi_icon.blue { background: #eff6ff; color: #3b82f6; }
+.admin_rev_intel_kpi_icon.green { background: #f0fdf4; color: #22c55e; }
+.admin_rev_intel_kpi_icon.red { background: #fef2f2; color: #ef4444; }
+
+.admin_rev_intel_kpi_info span { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+.admin_rev_intel_kpi_info strong { font-size: 18px; color: #1e293b; font-weight: 900; }
+
+/* --- TIER 2: Global Distribution Banner --- */
+.admin_rev_intel_dist_banner {
+    display: flex; justify-content: space-between; background: white;
+    padding: 30px; border-radius: 28px; margin-bottom: 35px;
+    border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0, 122, 204, 0.03);
+}
+
+.admin_rev_intel_dist_item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 12px; padding: 0 15px; border-right: 1px solid #f1f5f9;
+}
+
+.admin_rev_intel_dist_item:last-child { border-right: none; }
+.admin_rev_intel_dist_label { font-weight: 800; color: #1e293b; font-size: 14px; }
+.admin_rev_intel_dist_bar_bg { width: 100%; height: 10px; background: #f1f5f9; border-radius: 12px; overflow: hidden; }
+.admin_rev_intel_dist_bar_fill { height: 100%; border-radius: 12px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+.admin_rev_intel_dist_count { font-size: 12px; font-weight: 800; color: #94a3b8; }
+
+/* --- TIER 3: Leaderboards --- */
+.admin_rev_intel_leaderboard_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.admin_rev_intel_leaderboard_col { background: white; padding: 25px; border-radius: 30px; border: 1px solid #f1f5f9; }
+
+.admin_rev_intel_col_header_group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.admin_rev_intel_col_title { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.admin_rev_intel_count_pill { background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 900; color: #475569; }
+.admin_rev_intel_count_pill.red { background: #fee2e2; color: #ef4444; }
+
+.admin_rev_intel_list { display: flex; flex-direction: column; gap: 12px; }
+
+.admin_rev_intel_row {
+    display: flex; align-items: center; justify-content: space-between; padding: 16px;
+    border-radius: 20px; border: 1px solid #f8fafc; cursor: pointer; transition: all 0.3s ease;
+}
+
+.admin_rev_intel_row:hover { background: #f8fafc; transform: translateX(8px); border-color: #007acc20; }
+.admin_rev_intel_row_main { display: flex; align-items: center; gap: 14px; }
+.admin_rev_intel_row img { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; border: 2px solid white; }
+
+.admin_rev_intel_row_info strong { display: block; font-size: 15px; color: #1e293b; font-weight: 800; }
+.admin_rev_intel_row_info span { font-size: 12px; color: #94a3b8; font-weight: 600; }
+
+.admin_rev_intel_score { padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 900; }
+.admin_rev_intel_score.positive { background: #dcfce7; color: #15803d; }
+.admin_rev_intel_score.negative { background: #fee2e2; color: #b91c1c; }
+
+/* --- SPECIALIST WORKSPACE --- */
+.admin_rev_intel_workspace_nav {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+}
+
+.admin_rev_intel_back_btn {
+    background: #1e293b; color: white; border: none; padding: 12px 24px;
+    border-radius: 14px; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s;
+}
+.admin_rev_intel_back_btn:hover { background: #000; transform: translateX(-5px); }
+
+.admin_rev_intel_ws_controls { display: flex; gap: 15px; align-items: center; }
+
+.admin_rev_intel_search_mini {
+    display: flex; align-items: center; gap: 10px; background: white;
+    padding: 10px 18px; border-radius: 14px; border: 1px solid #f1f5f9;
+}
+.admin_rev_intel_search_mini input { border: none; outline: none; font-size: 14px; width: 220px; color: #1e293b; font-weight: 600; }
+
+.admin_rev_intel_ws_controls select {
+    padding: 10px 18px; border-radius: 14px; border: 1px solid #f1f5f9;
+    font-weight: 800; color: #475569; outline: none; cursor: pointer; background: white;
+}
+
+.admin_rev_intel_workspace_hero {
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(135deg, #007acc, #00d2ff);
+    padding: 45px; border-radius: 35px; color: white; margin-bottom: 40px;
+    box-shadow: 0 20px 50px rgba(0, 122, 204, 0.2);
+}
+
+.admin_rev_intel_hero_identity { display: flex; align-items: center; gap: 25px; }
+.admin_rev_intel_hero_identity img { width: 100px; height: 100px; border-radius: 28px; border: 4px solid rgba(255,255,255,0.3); }
+.admin_rev_intel_hero_identity h2 { margin: 0; font-size: 34px; font-weight: 900; letter-spacing: -1px; }
+.admin_rev_intel_hero_identity p { margin: 5px 0; opacity: 0.9; font-size: 16px; font-weight: 600; }
+
+.admin_rev_intel_status_tag { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+
+.admin_rev_intel_hero_stats { display: flex; gap: 45px; }
+.admin_rev_intel_h_stat { text-align: right; }
+.admin_rev_intel_h_stat span { display: block; font-size: 12px; opacity: 0.7; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+.admin_rev_intel_h_stat strong { font-size: 32px; font-weight: 900; }
+
+/* --- Masonry Feed --- */
+.admin_rev_intel_masonry { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 25px; }
+
+.admin_rev_intel_card { 
+    background: white; border-radius: 28px; border: 1px solid #f1f5f9; 
+    padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    display: flex; flex-direction: column; transition: 0.3s;
+}
+
+.admin_rev_intel_card:hover { transform: translateY(-5px); border-color: #007acc30; }
+.admin_rev_intel_card.critical_border { border-left: 6px solid #ef4444; }
+
+.admin_rev_intel_card_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.admin_rev_intel_patient_info { display: flex; align-items: center; gap: 12px; }
+.admin_rev_intel_p_avatar { width: 38px; height: 38px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #007acc; }
+
+.admin_rev_intel_text { font-size: 15px; color: #475569; line-height: 1.7; font-style: italic; margin: 15px 0; position: relative; }
+.admin_rev_intel_quote_icon { color: #e2e8f0; margin-bottom: 10px; display: block; }
+
+.admin_rev_intel_card_footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f8fafc; padding-top: 20px; margin-top: auto; }
+.admin_rev_intel_meta_group { display: flex; align-items: center; gap: 8px; color: #94a3b8; font-weight: 700; font-size: 12px; }
+
+.admin_rev_intel_card_actions { display: flex; gap: 10px; }
+.admin_rev_intel_action_icon, .admin_rev_intel_delete {
+    width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+
+.admin_rev_intel_action_icon { background: #f8fafc; color: #94a3b8; }
+.admin_rev_intel_action_icon:hover { background: #007acc; color: white; }
+.admin_rev_intel_delete { background: #fff1f2; color: #ef4444; }
+.admin_rev_intel_delete:hover { background: #ef4444; color: white; }
+
+/* --- States --- */
+.admin_rev_intel_loader_frame { height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #007acc; font-weight: 900; gap: 20px; }
+.admin_rev_intel_spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.admin_rev_intel_perfect_state, .admin_rev_intel_empty_state_full {
+    padding: 60px 20px; text-align: center; color: #cbd5e1; grid-column: 1 / -1;
+}
+.admin_rev_intel_empty_state_full h3 { color: #94a3b8; margin: 15px 0 5px; }
+
+.admin_rev_intel_v_badge { 
+    background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; 
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-top: 10px;
+}

@@ -1,72 +1,198 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  ShoppingBag, Pill, FlaskConical, Search, 
-  Trash2, Plus, Minus, CreditCard, ShieldCheck, Info 
-} from 'lucide-react';
-import './Pharmacy_Details.css';
-import { useAuth } from '../../context/AuthContext';
-import axiosInstance from '../../utils/axios';
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
+import {
+  ShoppingBag,
+  Pill,
+  FlaskConical,
+  Search,
+  Trash2,
+  Plus,
+  Minus,
+  CreditCard,
+  Loader2,
+  Info,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Filter,
+  Calendar,
+  FileText,
+  Download,
+  X,
+  Eye,
+  ChevronRight,
+} from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import "./Pharmacy_Details.css";
 
 export default function Pharmacy_Details() {
-  const { user } = useAuth()
+  // --- 1. STATE MANAGEMENT ---
+  const [medicines, setMedicines] = useState([]);
+  const [tests, setTests] = useState([]);
+  const [orderHistory, setOrderHistory] = useState([]);
 
-  // Data States
-  const [medicines, setMedicines] = useState([])
-  const [tests, setTests] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [historyFilter, setHistoryFilter] = useState("All");
+  const [monthFilter, setMonthFilter] = useState("All");
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // UI States
-  const [testLimit, setTestLimit] = useState(4);
   const [medLimit, setMedLimit] = useState(4);
-  const [cartItems, setCartItems] = useState([]);
-  const [checkingOut, setCheckingOut] = useState(false)
+  const [testLimit, setTestLimit] = useState(4);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch medicines and tests
+  const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("userData")) || {};
+
+  // --- 2. CART PERSISTENCE (LIFECYCLE) ---
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("pharma_cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const [medsRes, testsRes] = await Promise.all([
-          axiosInstance.get('/medicines'),
-          axiosInstance.get('/diagnostic-tests')
-        ])
-        setMedicines(medsRes.data.data || [])
-        setTests(testsRes.data.data || [])
-      } catch (err) {
-        console.error('Failed to load pharmacy data')
-      } finally {
-        setLoading(false)
-      }
+    localStorage.setItem("pharma_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // --- 3. DATA FETCHING ---
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [medRes, testRes, historyRes] = await Promise.all([
+        axios.get("http://localhost:5000/api/medicines/all", { headers }),
+        axios.get("http://localhost:5000/api/tests/all", { headers }),
+        axios
+          .get(`http://localhost:5000/api/orders/patient/${user._id}`, {
+            headers,
+          })
+          .catch(() => ({ data: [] })),
+      ]);
+
+      setMedicines(medRes.data);
+      setTests(testRes.data);
+      setOrderHistory(historyRes.data);
+    } catch (err) {
+      console.error("Clinical System Sync Error:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchData()
-  }, [])
+  };
 
-  // Search filter
-  const filteredMeds = useMemo(() => {
-    if (!searchTerm) return medicines
-    return medicines.filter(m => 
-      m.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.category?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [medicines, searchTerm])
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const filteredTests = useMemo(() => {
-    if (!searchTerm) return tests
-    return tests.filter(t => 
-      t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.category?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [tests, searchTerm])
+  // --- 4. FILTER ENGINES ---
+  const availableMonths = useMemo(() => {
+    const months = orderHistory.map((order) => {
+      const date = new Date(order.createdAt);
+      return date.toLocaleString("default", { month: "long", year: "numeric" });
+    });
+    return ["All", ...new Set(months)];
+  }, [orderHistory]);
 
-  // Cart Handlers
+  const filteredHistory = useMemo(() => {
+    return orderHistory.filter((order) => {
+      const statusMatch =
+        historyFilter === "All" || order.status === historyFilter;
+      const orderMonth = new Date(order.createdAt).toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+      const monthMatch = monthFilter === "All" || orderMonth === monthFilter;
+      return statusMatch && monthMatch;
+    });
+  }, [orderHistory, historyFilter, monthFilter]);
+
+  const totalAmount = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cartItems],
+  );
+
+  // --- 5. PDF & VAULT LOGIC ---
+  const handleDownloadInvoice = (order) => {
+    const doc = new jsPDF();
+    const dateStr = new Date(order.createdAt).toLocaleDateString();
+
+    // PDF UI Construction
+    doc.setFontSize(22);
+    doc.text("MEDICO CLINICAL RECEIPT", 14, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Transaction ID: #${order.orderID}`, 14, 30);
+    doc.text(`Billing Date: ${dateStr}`, 14, 35);
+    doc.text(`Patient: ${user.name}`, 14, 40);
+
+    const tableRows = order.items.map((item) => [
+      item.name,
+      item.type,
+      item.quantity,
+      `INR ${item.price}`,
+      `INR ${item.price * item.quantity}`,
+    ]);
+
+    autoTable(doc, {
+      startY: 50,
+      head: [
+        ["Item Description", "Category", "Quantity", "Unit Rate", "Amount"],
+      ],
+      body: tableRows,
+      theme: "grid",
+      headStyles: { fillColor: [15, 23, 42] },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.text(`Subtotal: INR ${order.totalAmount - 50}.00`, 140, finalY);
+    doc.text(`Logistics: INR 50.00`, 140, finalY + 5);
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.text(`GRAND TOTAL: INR ${order.totalAmount}.00`, 140, finalY + 12);
+
+    // device download
+    const fileName = `Invoice_${order.orderID}.pdf`;
+    doc.save(fileName);
+
+    // Vault Synchronization
+    const currentVault = JSON.parse(
+      localStorage.getItem("patient_vault") || "[]",
+    );
+    const vaultEntry = {
+      id: order._id,
+      name: `Pharma Receipt #${order.orderID}`,
+      date: new Date().toISOString(),
+      category: "Billing",
+      fileType: "PDF",
+      orderID: order.orderID,
+    };
+
+    if (!currentVault.find((v) => v.id === order._id)) {
+      localStorage.setItem(
+        "patient_vault",
+        JSON.stringify([vaultEntry, ...currentVault]),
+      );
+      alert("Document successfully archived in your Patient Vault.");
+    }
+  };
+
+  // --- 6. ACTION HANDLERS ---
   const handleAddToCart = (item, category) => {
-    setCartItems(prev => {
-      const existing = prev.find(i => i._id === item._id && i.type === category);
+    if (category === "Medicine" && item.stock <= 0) return;
+    setCartItems((prev) => {
+      const existing = prev.find(
+        (i) => i._id === item._id && i.type === category,
+      );
       if (existing) {
-        return prev.map(i => (i._id === item._id && i.type === category) 
-          ? { ...i, quantity: i.quantity + 1 } 
-          : i
+        if (category === "Medicine" && existing.quantity >= item.stock)
+          return prev;
+        return prev.map((i) =>
+          i._id === item._id && i.type === category
+            ? { ...i, quantity: i.quantity + 1 }
+            : i,
         );
       }
       return [...prev, { ...item, quantity: 1, type: category }];
@@ -74,218 +200,376 @@ export default function Pharmacy_Details() {
   };
 
   const updateQuantity = (id, type, delta) => {
-    setCartItems(prev => prev.map(item => 
-      (item._id === id && item.type === type) 
-        ? { ...item, quantity: Math.max(1, item.quantity + delta) } 
-        : item
-    ));
+    setCartItems((prev) =>
+      prev.map((item) => {
+        if (item._id === id && item.type === type) {
+          const newQty = item.quantity + delta;
+          const masterItem = medicines.find((m) => m._id === id);
+          if (
+            type === "Medicine" &&
+            delta > 0 &&
+            newQty > (masterItem?.stock || 0)
+          )
+            return item;
+          return { ...item, quantity: Math.max(1, newQty) };
+        }
+        return item;
+      }),
+    );
   };
 
-  const removeItem = (id, type) => {
-    setCartItems(prev => prev.filter(item => !(item._id === id && item.type === type)));
-  };
-
-  // Calculations
-  const totalAmount = useMemo(() => 
-    cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0), 
-  [cartItems]);
-
-  // Checkout
   const handleCheckout = async () => {
-    if (cartItems.length === 0) return
+    setCheckoutLoading(true);
     try {
-      setCheckingOut(true)
-
-      // Get patient profile first to get patient._id
-      const patientRes = await axiosInstance.get(`/patients/${user._id}`)
-      const patientId = patientRes.data.data._id
-
-      await axiosInstance.post(`/orders/${patientId}/create`, {
-        items: cartItems.map(item => ({
-          itemType: item.type === 'Medicine' ? 'medicine' : 'test',
-          itemId: item._id,
-          itemName: item.name,
-          price: item.price,
-          quantity: item.quantity
+      const token = localStorage.getItem("token");
+      const orderPayload = {
+        patientId: user._id,
+        patientName: user.name,
+        items: cartItems.map((i) => ({
+          itemId: i._id,
+          name: i.name,
+          quantity: i.quantity,
+          price: i.price,
+          type: i.type,
         })),
         totalAmount: totalAmount + 50,
-        paymentMethod: 'upi'
-      })
+        status: "Pending",
+      };
 
-      setCartItems([])
-      alert('Order placed successfully!')
+      const res = await axios.post(
+        "http://localhost:5000/api/orders/create",
+        orderPayload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (res.status === 201) {
+        setCartItems([]);
+        fetchData(); // Sync stock and history
+        alert(`Order Placed: #${res.data.orderID}`);
+      }
     } catch (err) {
-      alert(err.response?.data?.message || 'Checkout failed')
+      alert("Checkout failed. Check stock levels.");
     } finally {
-      setCheckingOut(false)
+      setCheckoutLoading(false);
     }
-  }
+  };
 
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <p>Loading pharmacy...</p>
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="pat_pharma_loading">
+        <Loader2 className="spinner" />
+        <span>Synchronizing...</span>
+      </div>
+    );
 
   return (
     <div className="pat_pharma_container">
-      
-      {/* Marketplace Main Feed */}
       <div className="pat_pharma_main">
-        
-        {/* Header Area */}
+        {/* TOP SEARCH BAR */}
         <div className="pat_pharma_header">
-          <h1>Pharmacy <span>& Labs</span></h1>
+          <h1>
+            Medical <span>Supplies & Diagnostics</span>
+          </h1>
           <div className="pat_pharma_search">
             <Search size={18} />
-            <input 
-              type="text" 
-              placeholder="Search medicines, health packages, or diagnostic tests..."
-              value={searchTerm}
+            <input
+              type="text"
+              placeholder="Search prescriptions or labs..."
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Medicines Catalog */}
+        {/* MEDICINES SECTION */}
         <section className="pat_pharma_section">
           <div className="pat_pharma_sec_head">
             <div className="flex_align">
-              <Pill size={20} color="#007acc"/> 
-              <h2>Verified Medicines</h2>
+              <Pill size={20} color="#2563eb" /> <h2>Medicines</h2>
             </div>
-            <button className="pat_pharma_text_btn" onClick={() => setMedLimit(medLimit === 4 ? 12 : 4)}>
-              {medLimit === 4 ? 'View All' : 'Show Less'}
+            <button
+              className="pat_pharma_text_btn"
+              onClick={() => setMedLimit(medLimit === 4 ? 12 : 4)}
+            >
+              {medLimit === 4 ? "Expand" : "Collapse"}
             </button>
           </div>
           <div className="pat_pharma_grid">
-            {filteredMeds.slice(0, medLimit).map(med => (
-              <div className="pat_pharma_card" key={med._id}>
-                <div className="pat_pharma_tag">{med.category}</div>
-                <div className="pat_pharma_body">
-                  <h3>{med.name}</h3>
-                  <p>{med.description}</p>
-                  <div className="pat_pharma_meta">
-                    <span>💊 {med.dosage}</span>
+            {medicines
+              .filter((m) =>
+                m.name.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .slice(0, medLimit)
+              .map((med) => (
+                <div
+                  className={`pat_pharma_card ${med.stock <= 0 ? "out_of_stock" : ""}`}
+                  key={med._id}
+                >
+                  <div className="pat_pharma_tag">{med.category}</div>
+                  <div className="pat_pharma_body">
+                    <h3>{med.name}</h3>
+                    <p>{med.composition}</p>
+                    <span className="stock_indicator">
+                      In Stock: {med.stock}
+                    </span>
+                  </div>
+                  <div className="pat_pharma_footer">
+                    <strong>₹{med.price}</strong>
+                    <button
+                      disabled={med.stock <= 0}
+                      onClick={() => handleAddToCart(med, "Medicine")}
+                    >
+                      Add
+                    </button>
                   </div>
                 </div>
-                <div className="pat_pharma_footer">
-                  <strong>₹{med.price}</strong>
-                  <button onClick={() => handleAddToCart(med, 'Medicine')}>
-                    Add <Plus size={14}/>
-                  </button>
-                </div>
-              </div>
-            ))}
-            {filteredMeds.length === 0 && (
-              <p style={{ color: '#94a3b8', gridColumn: '1/-1' }}>No medicines found</p>
-            )}
+              ))}
           </div>
         </section>
 
-        {/* Diagnostic Labs Catalog */}
+        {/* TESTS SECTION */}
         <section className="pat_pharma_section">
           <div className="pat_pharma_sec_head">
             <div className="flex_align">
-              <FlaskConical size={20} color="#007acc"/> 
-              <h2>Diagnostic Tests</h2>
+              <FlaskConical size={20} color="#2563eb" /> <h2>Lab Tests</h2>
             </div>
-            <button className="pat_pharma_text_btn" onClick={() => setTestLimit(testLimit === 4 ? 12 : 4)}>
-              {testLimit === 4 ? 'View All' : 'Show Less'}
+            <button
+              className="pat_pharma_text_btn"
+              onClick={() => setTestLimit(testLimit === 4 ? 12 : 4)}
+            >
+              {testLimit === 4 ? "Expand" : "Collapse"}
             </button>
           </div>
           <div className="pat_pharma_grid">
-            {filteredTests.slice(0, testLimit).map(test => (
-              <div className="pat_pharma_card test_card" key={test._id}>
-                <div className="pat_pharma_tag">{test.category}</div>
-                <div className="pat_pharma_body">
-                  <h3>{test.name}</h3>
-                  <div className="pat_pharma_warning">
-                    <Info size={12}/> {test.fastingNote || (test.fastingRequired ? 'Fasting required' : 'No fasting required')}
+            {tests
+              .filter((t) =>
+                t.name.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .slice(0, testLimit)
+              .map((test) => (
+                <div className="pat_pharma_card test_card" key={test._id}>
+                  <div className="pat_pharma_tag">{test.category}</div>
+                  <div className="pat_pharma_body">
+                    <h3>{test.name}</h3>
+                    <div className="test_meta">
+                      <Clock size={12} /> TAT: {test.turnaroundTime}
+                    </div>
+                  </div>
+                  <div className="pat_pharma_footer">
+                    <strong>₹{test.price}</strong>
+                    <button onClick={() => handleAddToCart(test, "Test")}>
+                      Book
+                    </button>
                   </div>
                 </div>
-                <div className="pat_pharma_footer">
-                  <strong>₹{test.price}</strong>
-                  <button className="book_btn" onClick={() => handleAddToCart(test, 'Test')}>
-                    Book
-                  </button>
-                </div>
-              </div>
-            ))}
-            {filteredTests.length === 0 && (
-              <p style={{ color: '#94a3b8', gridColumn: '1/-1' }}>No tests found</p>
-            )}
+              ))}
           </div>
         </section>
       </div>
 
-      {/* Checkout Sidebar */}
+      {/* --- UNIFIED SIDEBAR --- */}
       <aside className="pat_pharma_sidebar">
-        <div className="pat_pharma_cart_card">
-          <div className="cart_head">
-            <ShoppingBag size={20} />
-            <h3>Your Cart <span>({cartItems.length})</span></h3>
+        {/* SECTION 1: LIVE CART */}
+        <div className="sidebar_section cart_box">
+          <div className="sidebar_label">
+            <ShoppingBag size={18} /> <h3>Bag ({cartItems.length})</h3>
           </div>
-          
-          {/* Cart Item List */}
-          <div className="cart_list">
-            {cartItems.length > 0 ? cartItems.map(item => (
-              <div className="cart_item" key={`${item.type}-${item._id}`}>
+          <div className="cart_list_unified">
+            {cartItems.map((item) => (
+              <div className="cart_item" key={item._id}>
                 <div className="item_info">
                   <strong>{item.name}</strong>
-                  <span>₹{item.price} × {item.quantity}</span>
+                  <span>₹{item.price}</span>
                 </div>
                 <div className="item_actions">
                   <div className="qty_stepper">
-                    <button onClick={() => updateQuantity(item._id, item.type, -1)}>
-                      <Minus size={12}/>
+                    <button
+                      onClick={() => updateQuantity(item._id, item.type, -1)}
+                    >
+                      <Minus size={10} />
                     </button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item._id, item.type, 1)}>
-                      <Plus size={12}/>
+                    <button
+                      onClick={() => updateQuantity(item._id, item.type, 1)}
+                    >
+                      <Plus size={10} />
                     </button>
                   </div>
-                  <button className="remove_btn" onClick={() => removeItem(item._id, item.type)}>
-                    <Trash2 size={14}/>
+                  <button
+                    className="remove_btn"
+                    onClick={() =>
+                      setCartItems((prev) =>
+                        prev.filter((i) => i._id !== item._id),
+                      )
+                    }
+                  >
+                    <Trash2 size={12} />
                   </button>
                 </div>
               </div>
-            )) : (
-              <div className="cart_empty">Your cart is empty</div>
+            ))}
+            {cartItems.length === 0 && (
+              <p className="empty_hint">No items selected.</p>
             )}
           </div>
+          {cartItems.length > 0 && (
+            <div className="cart_footer">
+              <div className="cart_total_row">
+                <span>Grand Total:</span>
+                <strong>₹{totalAmount + 50}</strong>
+              </div>
+              <button
+                className="checkout_btn"
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? (
+                  <Loader2 className="spin" size={16} />
+                ) : (
+                  <CreditCard size={16} />
+                )}{" "}
+                Checkout Now
+              </button>
+            </div>
+          )}
+        </div>
 
-          {/* Payment Summary */}
-          <div className="cart_summary">
-            <div className="summary_row">
-              <span>Subtotal</span> 
-              <span>₹{totalAmount}</span>
+        <hr className="sidebar_hr" />
+
+        {/* SECTION 2: ORDER HISTORY */}
+        <div className="sidebar_section history_box">
+          <div className="sidebar_label">
+            <Clock size={18} /> <h3>History</h3>
+          </div>
+
+          <div className="history_filter_strip">
+            <div className="mini_filter">
+              <Filter size={10} />
+              <select
+                value={historyFilter}
+                onChange={(e) => setHistoryFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Delivered">Delivered</option>
+              </select>
             </div>
-            <div className="summary_row">
-              <span>Service Fee</span> 
-              <span>₹50</span>
+            <div className="mini_filter">
+              <Calendar size={10} />
+              <select
+                value={monthFilter}
+                onChange={(e) => setMonthFilter(e.target.value)}
+              >
+                {availableMonths.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="summary_row total">
-              <span>Total</span> 
-              <span>₹{totalAmount > 0 ? totalAmount + 50 : 0}</span>
-            </div>
-            <button 
-              className="checkout_btn" 
-              disabled={cartItems.length === 0 || checkingOut}
-              onClick={handleCheckout}
-            >
-              <CreditCard size={18} /> 
-              {checkingOut ? 'Processing...' : 'Checkout Now'}
-            </button>
+          </div>
+
+          <div className="history_list_unified">
+            {filteredHistory.map((order) => (
+              <div
+                className="history_card_compact"
+                key={order._id}
+                onClick={() => setSelectedOrder(order)}
+              >
+                <div className="h_card_top">
+                  <span className="h_id">#{order.orderID}</span>
+                  <span className={`h_status ${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </div>
+                <div className="h_card_bottom">
+                  <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                  <strong>₹{order.totalAmount}</strong>
+                  <ChevronRight size={12} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Trust Badge */}
-        <div className="pat_pharma_card_mini pat_pharma_secure">
-          <ShieldCheck size={24} color="#10b981" />
-          <p>Verified by <strong>Medico+ Pharmacy</strong>. Sourced from certified labs.</p>
-        </div>
       </aside>
+
+      {/* --- ORDER DETAILS MODAL OVERLAY --- */}
+      {selectedOrder && (
+        <div className="order_details_overlay">
+          <div className="order_details_panel">
+            <div className="details_header">
+              <div className="header_title_set">
+                <FileText color="#2563eb" size={24} />
+                <div>
+                  <h2>Clinical Order Details</h2>
+                  <p>Order Reference: #{selectedOrder.orderID}</p>
+                </div>
+              </div>
+              <button
+                className="close_panel"
+                onClick={() => setSelectedOrder(null)}
+              >
+                <X />
+              </button>
+            </div>
+
+            <div className="details_body">
+              <div className="status_badge_row">
+                <span
+                  className={`full_status ${selectedOrder.status.toLowerCase()}`}
+                >
+                  {selectedOrder.status === "Delivered" ? (
+                    <CheckCircle2 size={16} />
+                  ) : (
+                    <Clock size={16} />
+                  )}
+                  {selectedOrder.status} Status
+                </span>
+              </div>
+
+              <div className="items_ledger">
+                <label>Inventory Breakdown</label>
+                {selectedOrder.items.map((item, idx) => (
+                  <div key={idx} className="ledger_row">
+                    <div className="l_info">
+                      <strong>{item.name}</strong>
+                      <span>
+                        {item.quantity} x {item.type}
+                      </span>
+                    </div>
+                    <strong>₹{item.price * item.quantity}</strong>
+                  </div>
+                ))}
+              </div>
+
+              <div className="billing_summary_box">
+                <div className="b_row">
+                  <span>Clinical Items</span>
+                  <span>₹{selectedOrder.totalAmount - 50}</span>
+                </div>
+                <div className="b_row">
+                  <span>Logistic Charges</span>
+                  <span>₹50</span>
+                </div>
+                <div className="b_row b_total">
+                  <span>Grand Total</span>
+                  <span>₹{selectedOrder.totalAmount}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="details_footer">
+              <button
+                className="download_invoice_action"
+                onClick={() => handleDownloadInvoice(selectedOrder)}
+              >
+                <Download size={18} /> Download Invoice & Sync to Vault
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

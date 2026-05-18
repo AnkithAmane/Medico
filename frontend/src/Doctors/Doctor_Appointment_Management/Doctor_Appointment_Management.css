@@ -1,4 +1,4 @@
-/* 1. ROOT VARIABLES & GLOBAL FOUNDATIONS */
+/* 1. ROOT VARIABLES & CLINICAL THEME */
 :root {
   --dr-primary: #2563eb;
   --dr-primary-hover: #1d4ed8;
@@ -8,21 +8,22 @@
   --dr-text-muted: #64748b;
   --dr-white: #ffffff;
   --dr-success: #10b981;
+  --dr-warning: #f59e0b; /* For Shift Pending */
+  --dr-danger: #ef4444; /* For Cancel Pending */
   --dr-radius-lg: 24px;
   --dr-radius-md: 12px;
   --dr-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  --dr-gradient: linear-gradient(135deg, #007acc 0%, #00d2ff 100%);
 }
 
 .doc_apt_m_med-doc-appt {
   padding: 30px;
   background-color: var(--dr-bg-main);
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: var(--dr-text-main);
 }
 
-/* 2. HEADER & NAVIGATION CONTROL */
+/* 2. HEADER & SEGMENTED NAVIGATION */
 .doc_apt_m_med_section_header {
   display: flex;
   justify-content: space-between;
@@ -32,7 +33,7 @@
   padding: 20px 25px;
   border-radius: 20px;
   border: 1px solid var(--dr-border);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .doc_apt_m_dr_segmented_control {
@@ -53,7 +54,6 @@
   cursor: pointer;
   background: transparent;
   transition: 0.3s ease;
-  min-width: 100px;
 }
 
 .doc_apt_m_dr_segmented_control button.doc_apt_m_active {
@@ -62,7 +62,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* 3. LIST VIEW: CARD GRID */
+/* 3. CLINICAL CARD GRID & PENDING STATES */
 .doc_apt_m_dr_card_grid_pro {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -75,8 +75,26 @@
   border: 1px solid var(--dr-border);
   padding: 24px;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 122, 204, 0.06);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 122, 204, 0.04);
+}
+
+/* Shift Pending: Soft Orange */
+.doc_apt_m_dr_session_card_elite.pending_shift_card {
+  background: #fffaf0;
+  border-color: #fbd38d;
+}
+
+/* Cancel Pending: Soft Rose */
+.doc_apt_m_dr_session_card_elite.pending_cancel_card {
+  background: #fff5f5;
+  border-color: #feb2b2;
+}
+
+/* Disabled Future State */
+.doc_apt_m_dr_session_card_elite.card_disabled {
+  opacity: 0.75;
+  filter: grayscale(0.2);
 }
 
 .doc_apt_m_card_header_main {
@@ -86,29 +104,51 @@
   margin-bottom: 20px;
 }
 
-.doc_apt_m_card_header_main img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.doc_apt_m_pat_id_stack strong { display: block; font-size: 1rem; color: var(--dr-text-main); }
-.doc_apt_m_pat_id_stack span { font-size: 0.75rem; color: var(--dr-text-muted); }
-
-.doc_apt_m_card_body_info {
-  margin-bottom: 20px;
-}
-
-.doc_apt_m_meta_row {
+.doc_apt_m_avatar_init {
+  width: 48px;
+  height: 48px;
+  background: var(--dr-primary);
+  color: white;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: var(--dr-text-main);
-  margin-bottom: 8px;
+  justify-content: center;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 
+.doc_apt_m_pat_id_stack strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.doc_apt_m_pat_id_stack span {
+  font-size: 0.75rem;
+  color: var(--dr-text-muted);
+  display: block;
+}
+
+/* Pending Status Badge */
+.pending_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  padding: 2px 8px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.pending_cancel_card .pending_badge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+/* 4. ACTIONS & UTILITIES */
 .doc_apt_m_med_btn_manage_full {
   width: 100%;
   background: var(--dr-primary);
@@ -118,120 +158,39 @@
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   transition: all 0.2s;
+  margin-top: 15px;
 }
 
 .doc_apt_m_med_btn_manage_full:hover {
   background: var(--dr-primary-hover);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transform: translateY(-2px);
 }
 
-/* 4. LIST VIEW: REGISTRY TABLE */
-.doc_apt_m_med_table_container {
-  background: var(--dr-white);
+.doc_no_data {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px;
+  background: #f1f5f9;
   border-radius: 20px;
-  border: 1px solid var(--dr-border);
-  overflow: hidden;
-}
-
-.doc_apt_m_med_table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.doc_apt_m_med_table th {
-  background: #f8fafc;
-  padding: 15px 20px;
-  text-align: left;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+  border: 2px dashed var(--dr-border);
   color: var(--dr-text-muted);
+  font-weight: 600;
 }
-
-.doc_apt_m_med_table td {
-  padding: 18px 20px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.doc_apt_m_med_cell_user { display: flex; align-items: center; gap: 12px; }
-.doc_apt_m_med_cell_user img { width: 40px; height: 40px; border-radius: 50%; }
-
-.doc_apt_m_med_status_pill {
-  padding: 5px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.doc_apt_m_med_status_pill.ongoing { background: #e0f2fe; color: #0369a1; }
-.doc_apt_m_med_status_pill.completed { background: #dcfce7; color: #15803d; }
-
-.doc_apt_m_med_btn_manage {
-  background: white;
-  border: 1px solid var(--dr-primary);
-  color: var(--dr-primary);
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.doc_apt_m_med_btn_manage:hover {
-  background: var(--dr-primary);
-  color: white;
-}
-
-/* 5. CLINICAL WORKSPACE: DETAIL VIEW */
+/* 5. CLINICAL WORKSPACE: BENTO GRID LAYOUT */
 .doc_apt_m_detail_view {
   max-width: 1400px;
   margin: 0 auto;
-  animation: docAptM_fadeIn 0.5s ease;
+  animation: docAptM_fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.doc_apt_m_detail_header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.doc_apt_m_back_btn {
-  background: var(--dr-white);
-  border: 1px solid var(--dr-border);
-  padding: 10px 20px;
-  border-radius: var(--dr-radius-md);
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.2s ease;
-}
-
-.doc_apt_m_back_btn:hover {
-  background: #f1f5f9;
-  transform: translateX(-3px);
-}
-
-.doc_apt_m_status_indicator {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--dr-text-muted);
-  background: #ffffff;
-  padding: 10px 18px;
-  border-radius: 14px;
-  border: 1px solid var(--dr-border);
-}
-
-/* 6. BENTO GRID ARCHITECTURE */
 .doc_apt_m_grid_layout {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 400px 1fr; /* Profile/Admin on left, Rx on right */
   gap: 24px;
 }
 
@@ -241,191 +200,390 @@
   border-radius: var(--dr-radius-lg);
   border: 1px solid var(--dr-border);
   box-shadow: var(--dr-shadow);
+  height: fit-content;
 }
 
-.doc_apt_m_label_alt {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--dr-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 20px;
-}
-
-/* 7. PATIENT PROFILE & VITALS */
-.doc_apt_m_profile_flex {
-  display: flex;
-  gap: 25px;
-  align-items: center;
-}
-
-.doc_apt_m_profile_img {
-  width: 100px;
-  height: 100px;
-  border-radius: 20px;
-  object-fit: cover;
-  border: 3px solid #f1f5f9;
-}
-
-.doc_apt_m_demographic_grid {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 12px;
-}
-
-.doc_apt_m_demo_item {
-  font-size: 0.9rem;
-  color: var(--dr-text-muted);
-}
-
-.doc_apt_m_demo_item b {
-  color: var(--dr-text-main);
-  margin-left: 4px;
-}
-
-.doc_apt_m_vitals_strip {
-  display: flex;
-  justify-content: space-around;
-  padding-top: 10px;
-}
-
-.doc_apt_m_vital_item { text-align: center; }
-.doc_apt_m_vital_item span { display: block; font-size: 0.75rem; color: var(--dr-text-muted); margin-bottom: 5px; }
-.doc_apt_m_vital_item b { font-size: 1.1rem; color: var(--dr-primary); }
-
-/* 8. SESSION DATA TILES */
-.doc_apt_m_session_details_full { grid-column: span 2; }
-
-.doc_apt_m_session_row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.doc_apt_m_session_cell {
+/* 6. ADMINISTRATIVE MANAGEMENT PANEL */
+.doc_admin_panel_inner {
   background: #f8fafc;
   padding: 20px;
   border-radius: 18px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  border: 1px solid transparent;
+  border: 1.5px solid var(--dr-border);
 }
 
-.doc_apt_m_session_cell svg { color: var(--dr-primary); }
-.doc_apt_m_session_cell small { display: block; font-size: 0.7rem; color: var(--dr-text-muted); }
-.doc_apt_m_session_cell p { font-weight: 700; font-size: 0.95rem; margin: 0; }
+.doc_request_tools {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-/* 9. PRESCRIPTION WORKSPACE */
-.doc_apt_m_history_full { grid-column: span 2; }
+.doc_request_tools p {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--dr-text-muted);
+  line-height: 1.4;
+}
+
+.doc_shift_select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--dr-border);
+  font-weight: 600;
+  color: var(--dr-text-main);
+  background: white;
+  outline: none;
+  cursor: pointer;
+}
+
+.doc_btn_cancel_req {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: #fff1f2;
+  color: var(--dr-danger);
+  border: 1.5px solid #fecaca;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.doc_btn_cancel_req:hover:not(:disabled) {
+  background: #ffe4e6;
+  border-color: var(--dr-danger);
+}
+
+.doc_btn_cancel_req:disabled,
+.doc_shift_select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.doc_pending_alert {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* 7. CLINICAL REQUISITION (INVENTORY BRIDGE) */
+.doc_requisition_search {
+  position: relative;
+  margin-top: 10px;
+}
+
+.doc_lock_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.85);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--dr-text-muted);
+  border-radius: 10px;
+  backdrop-filter: blur(1px);
+}
+
+.doc_search_input_wrap {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background: #fff;
+  border: 1.5px solid var(--dr-border);
+  border-radius: 10px;
+  gap: 10px;
+}
+
+/* 8. CONSULTATION PAD (RX TEXTAREA) */
+.doc_apt_m_history_full {
+  display: flex;
+  flex-direction: column;
+}
 
 .doc_apt_m_rx_textarea {
-  width: 100%;
-  min-height: 300px;
-  border: 1px solid var(--dr-border);
-  border-radius: 16px;
-  padding: 24px;
-  font-family: inherit;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  outline: none;
-  background: var(--dr-white);
+  flex-grow: 1;
+  min-height: 450px;
+  padding: 25px;
+  border: 1.5px solid var(--dr-border);
+  border-radius: 20px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  resize: none;
+  background: #fff;
+  color: var(--dr-text-main);
+  transition: 0.3s;
 }
 
 .doc_apt_m_rx_textarea:focus {
   border-color: var(--dr-primary);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+  outline: none;
 }
 
-.doc_apt_m_verified_block {
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 16px;
-  border: 1px dashed var(--dr-border);
-}
-
-.doc_apt_m_verified_pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: #dcfce7;
-  color: #15803d;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin-bottom: 15px;
+.doc_apt_m_rx_textarea:disabled {
+  background: #f1f5f9;
+  cursor: not-allowed;
+  color: var(--dr-text-muted);
 }
 
 .doc_apt_m_save_btn {
-  background: var(--dr-primary);
-  color: #fff;
+  margin-top: 20px;
+  background: var(--dr-success);
+  color: white;
   border: none;
-  padding: 14px 32px;
-  border-radius: 12px;
-  font-weight: 700;
+  padding: 18px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-  transition: all 0.2s ease;
-}
-
-/* 10. PAGINATION SYSTEM */
-.doc_apt_m_pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  background: var(--dr-white);
-  border-top: 1px solid var(--dr-border);
-}
-
-.doc_apt_m_pag_controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.doc_apt_m_pag_controls button {
-  min-width: 36px;
-  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid var(--dr-border);
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
 }
 
-.doc_apt_m_pag_active {
-  background: var(--dr-primary) !important;
-  color: #fff !important;
-  border-color: var(--dr-primary) !important;
+.doc_apt_m_save_btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
 }
 
-/* 11. ANIMATIONS & UTILITIES */
+.doc_lock_notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 12px;
+  background: #eff6ff;
+  color: var(--dr-primary);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* 9. STATUS PILLS & INDICATORS */
+.status_locked {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-color: #fecaca !important;
+}
+
+.spin {
+  animation: doc_spin 1s linear infinite;
+}
+
+@keyframes doc_spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes docAptM_fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* Highlight for pending Shift */
+.doc_card_pending_shift {
+  border-left: 5px solid #2563eb !important;
+  background: #eff6ff !important;
 }
 
-.doc_apt_m_pulse {
-  width: 10px;
-  height: 10px;
-  background: var(--dr-success);
-  border-radius: 50%;
-  position: relative;
+/* Highlight for pending Cancel */
+.doc_card_pending_cancel {
+  border-left: 5px solid #ef4444 !important;
+  background: #fef2f2 !important;
 }
 
-.doc_apt_m_truncate {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.pending_tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.doc_card_pending_shift .pending_tag {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.doc_card_pending_cancel .pending_tag {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin_lock_notice {
+  padding: 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+}
+/* Sub-Filter Section Tool Strip Configuration */
+.doc_apt_m_sub_filter_strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 15px 0;
+}
+
+.filter_strip_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.filter_strip_label svg {
+  color: #007acc;
+}
+
+.filter_strip_actions select {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #334155;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter_strip_actions select:focus {
+  border-color: #007acc;
+}
+
+/* List view type inline badge indicators */
+.doc_apt_m_inline_type_tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #475569;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  width: max-content;
+}
+
+/* Transferred-out status design overrides */
+.card_finalized_transferred {
+  border-left: 4px solid #6366f1 !important;
+  background: rgba(99, 102, 241, 0.03) !important;
+}
+
+.finalized_transfer_badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #e0e7ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+  width: max-content;
+}
+/* Re-architecting the Sub-Filter Selection Strip with inline fields */
+.doc_apt_m_sub_filter_strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin: 18px 0;
+  gap: 20px;
+}
+
+.filter_left_search_group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.filter_search_input_box,
+.filter_date_input_box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  gap: 8px;
+  color: #64748b;
+}
+
+.filter_search_input_box input,
+.filter_date_input_box input {
+  border: none;
+  outline: none;
+  font-size: 0.88rem;
+  color: #334155;
+  background: transparent;
+}
+
+.filter_search_input_box input {
+  width: 220px;
+}
+
+.clear_filters_inline_btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.clear_filters_inline_btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.filter_category_dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
 }

@@ -1,0 +1,650 @@
+/* ==========================================================================
+   MEDICO+ ELITE: RESOURCE HUB ERP (ALIGNMENT OPTIMIZED)
+   ========================================================================== */
+
+:root {
+  --erp-blue: #007acc;
+  --erp-bg: #f8fafc;
+  --erp-border: #e2e8f0;
+  --erp-text-main: #1e293b;
+  --erp-text-muted: #94a3b8;
+  --erp-radius: 16px;
+  --erp-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.admin_res_hub_root_view {
+  padding: 25px 0;
+  min-height: 100vh;
+  background-color: var(--erp-bg);
+  font-family: "Poppins", sans-serif;
+}
+
+/* --- 1. MASTER HEADER ALIGNMENT --- */
+.admin_res_hub_top_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Critical for vertical alignment */
+  margin-bottom: 30px;
+  padding: 0 5px;
+}
+
+.admin_res_hub_branding_zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.admin_res_hub_branding_zone h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--erp-text-main);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.admin_res_hub_sync_pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--erp-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  background: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--erp-border);
+}
+
+/* --- 2. ACTION CONTROLS ALIGNMENT --- */
+.admin_res_hub_header_actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin_res_hub_global_search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 0 18px;
+  height: 48px; /* Fixed height for alignment */
+  border-radius: 14px;
+  border: 1px solid var(--erp-border);
+  box-shadow: var(--erp-shadow);
+  width: 300px;
+}
+
+.admin_res_hub_global_search input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--erp-text-main);
+  background: transparent;
+  width: 100%;
+}
+
+.admin_res_hub_view_toggle_group {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+  height: 48px; /* Matching search bar height */
+  box-sizing: border-box;
+}
+
+.admin_res_hub_view_toggle_group button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 100%;
+  border-radius: 9px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--erp-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.admin_res_hub_view_toggle_group button.active {
+  background: white;
+  color: var(--erp-blue);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin_res_hub_add_btn {
+  height: 48px;
+  padding: 0 22px;
+  background: var(--erp-text-main);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.admin_res_hub_add_btn:hover {
+  background: #000;
+  transform: translateY(-2px);
+}
+
+/* --- 3. TAB NAVIGATION ALIGNMENT --- */
+.admin_res_hub_toolbar_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 5px;
+}
+
+.admin_res_hub_tab_group {
+  display: flex;
+  gap: 10px;
+}
+
+.admin_res_hub_tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--erp-border);
+  background: white;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--erp-text-muted);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.admin_res_hub_tab.active {
+  background: var(--erp-blue);
+  color: white;
+  border-color: var(--erp-blue);
+  box-shadow: 0 8px 15px rgba(0, 122, 204, 0.2);
+}
+
+.admin_res_hub_sort_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin_res_hub_sort_label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--erp-text-muted);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin_res_hub_sort_select {
+  padding: 8px 15px;
+  border-radius: 10px;
+  border: 1px solid var(--erp-border);
+  background: white;
+  font-weight: 700;
+  color: var(--erp-text-main);
+  outline: none;
+  cursor: pointer;
+}
+/* --- 4. SMART GRID SYSTEM ALIGNMENT --- */
+.admin_res_hub_smart_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 25px;
+  align-items: stretch; /* Ensures all cards in a row have equal height */
+}
+
+.admin_res_hub_resource_card {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid var(--erp-border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column; /* Vertical stack */
+  justify-content: space-between; /* Pushes actions to the bottom */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.admin_res_hub_resource_card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 122, 204, 0.1);
+  border-color: rgba(0, 122, 204, 0.3);
+}
+
+/* Internal Row: Icon + ID + Settings */
+.admin_res_hub_card_head {
+  display: flex;
+  align-items: center; /* Vertical center alignment */
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.admin_res_hub_icon_box {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Prevents icon from squishing */
+}
+
+.diag_theme {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+.pharm_theme {
+  background: #f5f3ff;
+  color: #8b5cf6;
+}
+
+.admin_res_hub_card_meta {
+  flex-grow: 1;
+  margin-left: 15px; /* Strict horizontal spacing */
+}
+
+.admin_res_hub_meta_tag {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--erp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin_res_hub_meta_id {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--erp-text-main);
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Card Body: Title & Description */
+.admin_res_hub_card_content {
+  margin-bottom: 20px;
+}
+
+.admin_res_hub_item_title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--erp-text-main);
+  margin: 0;
+  line-height: 1.3;
+  min-height: 46px; /* Prevents height shift for 1 vs 2 line titles */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.admin_res_hub_item_sub {
+  font-size: 12px;
+  color: var(--erp-text-muted);
+  font-weight: 600;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Metric Pills Alignment */
+.admin_res_hub_metrics_row {
+  background: #fcfdfe;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.admin_res_hub_diag_metrics,
+.admin_res_hub_pharm_metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin_res_hub_metric_pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.admin_res_hub_metric_pill strong {
+  color: var(--erp-text-main);
+}
+
+.admin_res_hub_price_pill {
+  color: #10b981;
+  font-weight: 800;
+}
+.admin_res_hub_expiry_pill.expired {
+  color: #ef4444;
+}
+
+/* Visual Health Pulse Alignment */
+.admin_res_hub_visual_pulse {
+  margin-bottom: 15px;
+}
+
+.admin_res_hub_pulse_bg {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin_res_hub_pulse_fill {
+  height: 100%;
+  transition: width 1s ease;
+}
+
+.admin_res_hub_critical_label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #ef4444;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* Footer Action Symmetry */
+.admin_res_hub_card_footer_actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto; /* Stays at bottom */
+}
+
+.admin_res_hub_action_edit {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--erp-border);
+  background: white;
+  font-weight: 700;
+  font-size: 13px;
+  color: #475569;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.admin_res_hub_action_delete {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #e11d48;
+  border: none;
+  cursor: pointer;
+}
+/* --- 5. TRANSACTIONAL AUDIT TABLE ALIGNMENT --- */
+.admin_res_hub_audit_terminal {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid var(--erp-border);
+  overflow: hidden; /* Clips the table corners to match radius */
+  box-shadow: var(--erp-shadow);
+}
+
+.admin_res_hub_audit_header {
+  padding: 20px 24px;
+  background: #fcfdfe;
+  border-bottom: 1px solid var(--erp-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.audit_summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.audit_summary h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--erp-text-main);
+}
+
+.audit_summary p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--erp-text-muted);
+  font-weight: 600;
+}
+
+.admin_res_hub_audit_count {
+  background: #eff6ff;
+  color: var(--erp-blue);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Table Column Width Control */
+.admin_res_hub_audit_table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Forced alignment across columns */
+}
+
+.admin_res_hub_audit_table th {
+  background: #f8fafc;
+  padding: 15px 24px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--erp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--erp-border);
+}
+
+/* Specific Column Sizing */
+.admin_res_hub_audit_table th:nth-child(1) {
+  width: 18%;
+} /* Order Ref */
+.admin_res_hub_audit_table th:nth-child(2) {
+  width: 22%;
+} /* Staff */
+.admin_res_hub_audit_table th:nth-child(3) {
+  width: 25%;
+} /* Resource */
+.admin_res_hub_audit_table th:nth-child(4) {
+  width: 12%;
+} /* Qty */
+.admin_res_hub_audit_table th:nth-child(5) {
+  width: 13%;
+} /* Status */
+.admin_res_hub_audit_table th:nth-child(6) {
+  width: 10%;
+} /* Total */
+
+.admin_res_hub_audit_table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f8fafc;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.admin_res_hub_order_id b {
+  display: block;
+  color: var(--erp-text-main);
+  font-size: 14px;
+}
+
+.admin_res_hub_order_id span {
+  font-size: 11px;
+  color: var(--erp-text-muted);
+  font-weight: 600;
+}
+
+.admin_res_hub_staff_meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin_res_hub_staff_icon {
+  width: 34px;
+  height: 34px;
+  background: #f1f5f9;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.admin_res_hub_staff_meta b {
+  font-size: 13px;
+  color: var(--erp-text-main);
+  display: block;
+}
+
+.admin_res_hub_staff_meta span {
+  font-size: 10px;
+  color: var(--erp-text-muted);
+  font-weight: 700;
+}
+
+/* Status Badging Alignment */
+.admin_res_hub_status_pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+  min-width: 80px;
+}
+
+.admin_res_hub_status_pill.completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+.admin_res_hub_status_pill.pending {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.admin_res_hub_valuation_text {
+  font-weight: 800;
+  color: var(--erp-text-main);
+}
+
+.admin_res_hub_text_right {
+  text-align: right;
+}
+
+/* --- 6. TERMINAL EMPTY STATE ALIGNMENT --- */
+.admin_res_hub_registry_empty,
+.admin_res_hub_table_empty {
+  padding: 60px 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 24px;
+}
+
+.empty_state_box {
+  margin-bottom: 20px;
+  color: #cbd5e1;
+}
+
+.admin_res_hub_registry_empty h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--erp-text-main);
+  margin-bottom: 10px;
+}
+
+.admin_res_hub_registry_empty p {
+  color: var(--erp-text-muted);
+  font-size: 14px;
+  max-width: 300px;
+  margin-bottom: 25px;
+}
+
+.admin_res_hub_reset_btn {
+  background: var(--erp-text-main);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.2s;
+}
+
+.admin_res_hub_reset_btn:hover {
+  background: var(--erp-blue);
+  transform: scale(1.05);
+}
+
+/* Custom Scrollbar for Table */
+.admin_res_hub_table_frame::-webkit-scrollbar {
+  height: 6px;
+}
+
+.admin_res_hub_table_frame::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.admin_res_hub_font_mono {
+  font-family: "JetBrains Mono", monospace;
+}
+/* Vault Order Highlight */
+.admin_res_hub_order_id .vault_badge {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #d1fae5;
+  margin-left: 8px;
+  font-weight: 800;
+}

@@ -301,3 +301,66 @@
     gap: 5px; 
     margin-top: 15px; 
 }
+.text_right { text-align: right; }
+
+.file_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.action_divider {
+    width: 1px;
+    height: 20px;
+    background: #e2e8f0;
+    margin: 0 4px;
+}
+
+.fulfillment_zone {
+    margin-right: 8px;
+}
+
+.vau_direct_order_btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1e293b;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.vau_direct_order_btn:hover {
+    background: #007acc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
+}
+
+.status_ordered {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #10b981;
+    font-size: 12px;
+    font-weight: 800;
+    background: #f0fdf4;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+.vault_instruction_card {
+    background: #fffbeb !important;
+    border: 1px solid #fef3c7 !important;
+}
+
+.vault_instruction_card p {
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.6;
+}

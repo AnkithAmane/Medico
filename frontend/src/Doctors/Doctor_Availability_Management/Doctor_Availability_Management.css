@@ -15,7 +15,7 @@
   padding: 30px;
   background: var(--doc-avail-bg);
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   zoom: 0.8;
   box-sizing: border-box;
 }
@@ -280,7 +280,7 @@
 .doc_avail_m_swap_filter button.active {
   background: #ffffff;
   color: var(--doc-avail-primary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .doc_avail_m_table_container {
@@ -332,7 +332,7 @@
   max-width: 550px;
   border-radius: 30px;
   padding: 40px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
   animation: modalSlideUp 0.3s ease-out;
 }
 
@@ -355,8 +355,8 @@
   gap: 8px;
 }
 
-.doc_avail_m_modal_field input, 
-.doc_avail_m_modal_field select, 
+.doc_avail_m_modal_field input,
+.doc_avail_m_modal_field select,
 .doc_avail_m_modal_field textarea {
   width: 100%;
   padding: 12px 15px;
@@ -370,82 +370,54 @@
 
 /* 8. RESPONSIVE QUERIES */
 @media screen and (max-width: 1024px) {
-  .doc_avail_m_root { zoom: 0.9; padding: 20px; }
-  .doc_avail_m_row_top { grid-template-columns: 1fr; }
+  .doc_avail_m_root {
+    zoom: 0.9;
+    padding: 20px;
+  }
+  .doc_avail_m_row_top {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media screen and (max-width: 850px) {
-  .doc_avail_m_section_header { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .doc_avail_m_btn_primary { width: 100%; justify-content: center; }
-  .doc_avail_m_registry_controls { width: 100%; justify-content: space-between; }
+  .doc_avail_m_section_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .doc_avail_m_btn_primary {
+    width: 100%;
+    justify-content: center;
+  }
+  .doc_avail_m_registry_controls {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 @media screen and (max-width: 480px) {
-  .doc_avail_m_root { zoom: 1; padding: 15px; }
-  .doc_avail_m_slot_grid_layout { grid-template-columns: 1fr; }
-  .doc_avail_m_modal_card_compact { padding: 25px; }
-  .doc_avail_m_modal_form_row { grid-template-columns: 1fr; }
+  .doc_avail_m_root {
+    zoom: 1;
+    padding: 15px;
+  }
+  .doc_avail_m_slot_grid_layout {
+    grid-template-columns: 1fr;
+  }
+  .doc_avail_m_modal_card_compact {
+    padding: 25px;
+  }
+  .doc_avail_m_modal_form_row {
+    grid-template-columns: 1fr;
+  }
+}
+/* Add this rules entry to your Doctor_Availability_Management.css file */
+
+.doc_avail_m_slot_card_elite.doc_avail_m_pending_admin {
+  background-color: #fef3c7 !important; /* Soft Amber background */
+  border: 1px solid #d97706 !important;
+  color: #b45309 !important;
 }
 
-/* MODAL FIELD SPACING FIX */
-.doc_avail_m_leave_form_body {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.doc_avail_m_modal_form_row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 0;
-}
-
-.doc_avail_m_modal_field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.doc_avail_m_modal_field label {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.doc_avail_m_modal_field input,
-.doc_avail_m_modal_field select,
-.doc_avail_m_modal_field textarea {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
-  font-family: inherit;
-  font-size: 0.9rem;
-  outline: none;
-  color: #1e293b;
-  transition: 0.2s;
-  box-sizing: border-box;
-}
-
-.doc_avail_m_modal_field input:focus,
-.doc_avail_m_modal_field select:focus,
-.doc_avail_m_modal_field textarea:focus {
-  border-color: #007acc;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.08);
-}
-
-.doc_avail_m_modal_field textarea {
-  resize: none;
-  min-height: 100px;
-}
-
-.doc_avail_m_modal_field select {
-  appearance: auto;
-  cursor: pointer;
+.doc_avail_m_slot_card_elite.doc_avail_m_pending_admin:hover {
+  background-color: #fde68a !important;
 }

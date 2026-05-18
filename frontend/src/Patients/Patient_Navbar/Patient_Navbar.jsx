@@ -5,13 +5,23 @@ import {
   Pill, UserCircle, Settings, LogOut, Menu, X, Bell, Search, User 
 } from 'lucide-react';
 import './Patient_Navbar.css';
-import patientImg from '../../Assets/Images/Patient/default_patient_pic.jpg';
+
+/* Default Fallback Image */
+import defaultPatientImg from '../../Assets/Images/Patient/default_patient_pic.jpg';
 
 export default function Patient_Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  /* Logic: Fetch Latest User Data for Dynamic Display */
+  const user = JSON.parse(localStorage.getItem('userData'));
+  
+  // Determine if we show the Multer-uploaded photo or the local default
+  const profilePic = user?.photo 
+    ? `http://localhost:5000/uploads/${user.photo}` 
+    : defaultPatientImg;
 
   // Navigation Registry
   const navOptions = [
@@ -27,6 +37,12 @@ export default function Patient_Navbar() {
     setMenuOpen(false);
     setProfileOpen(false);
   }, [location]);
+
+  /* Logic Section: Secure Logout */
+  const handleLogout = () => {
+    localStorage.clear(); // Clears token, role, and userData
+    navigate('/');
+  };
 
   return (
     <nav className="pat_nav_wrapper">
@@ -73,18 +89,20 @@ export default function Patient_Navbar() {
 
           <div className="pat_nav_profile_container">
             <img 
-              src={patientImg} 
-              alt="Patient" 
+              src={profilePic} 
+              alt="Patient Profile" 
               className="pat_nav_user_img" 
               onClick={() => setProfileOpen(!profileOpen)}
+              /* Error handling if server image fails to load */
+              onError={(e) => { e.target.src = defaultPatientImg; }}
             />
             
             {/* Account Dropdown */}
             {profileOpen && (
               <div className="pat_nav_dropdown_card">
                 <div className="pat_nav_dropdown_header">
-                  <strong>Patient Portal</strong>
-                  <span>Verified Identity</span>
+                  <strong>{user?.name || "Patient Portal"}</strong>
+                  <span>{user?.email || "Verified Identity"}</span>
                 </div>
                 <div className="pat_nav_divider"></div>
                 
@@ -98,7 +116,7 @@ export default function Patient_Navbar() {
                 
                 <div className="pat_nav_divider"></div>
                 
-                <button className="pat_nav_dropdown_link pat_nav_danger" onClick={() => navigate('/')}>
+                <button className="pat_nav_dropdown_link pat_nav_danger" onClick={handleLogout}>
                   <LogOut size={16} /> <span>Logout</span>
                 </button>
               </div>

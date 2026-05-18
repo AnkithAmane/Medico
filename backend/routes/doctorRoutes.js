@@ -1,21 +1,38 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { 
-  createDoctorProfile, 
-  getDoctorProfile, 
-  updateDoctorProfile, 
-  getAllDoctors, 
-  getDoctorById, 
-  deleteDoctor,
-  getDoctorByUserId
-} = require('../controllers/docCtrl');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const doctorController = require("../controllers/doctorController");
+const upload = require("../middleware/upload");
+const { protect } = require("../middleware/authMiddleware");
 
-router.get('/', getAllDoctors);
-router.post('/', protect, createDoctorProfile);
-router.get('/user/:userId', protect, getDoctorByUserId);
-router.get('/:doctorId', getDoctorById);
-router.put('/:doctorId', protect, authorize('doctor', 'admin'), updateDoctorProfile);
-router.delete('/:doctorId', protect, authorize('admin'), deleteDoctor);
+router.get("/list", doctorController.getAllDoctors);
+router.get("/replacements", protect, doctorController.getAvailableReplacements); // Line 12
 
+router.get("/profile/:id", doctorController.getDoctorById);
+router.get("/analytics/:id", doctorController.getPerformanceStats);
+
+router.post(
+  "/register",
+  protect,
+  upload.single("photo"),
+  doctorController.registerDoctor,
+);
+router.put(
+  "/update/:id",
+  protect,
+  upload.single("photo"),
+  doctorController.updateDoctorProfile,
+);
+router.put("/status/:id", protect, doctorController.updateAvailabilityStatus);
+router.put("/review/reply/:id", protect, doctorController.addReviewReply);
+
+router.get(
+  "/availability/:doctorId/:date",
+  protect,
+  doctorController.getDoctorAvailabilityByDate,
+);
+router.put(
+  "/availability/update",
+  protect,
+  doctorController.updateSlotAvailability,
+);
 module.exports = router;

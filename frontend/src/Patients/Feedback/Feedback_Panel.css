@@ -1,0 +1,234 @@
+/* Darkened Background Screen Overlay */
+.feedback_modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4); /* Dark translucent background */
+  backdrop-filter: blur(4px); /* Modern soft backdrop blur */
+  z-index: 9999; /* Higher priority than standard panels */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Floating Modal Box Window Frame */
+.feedback_modal_window {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 540px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+}
+
+/* absolute Top corner Close X */
+.feedback_modal_close_btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.feedback_modal_close_btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Header Section Custom adjustments */
+.feedback_panel_header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-right: 25px; /* Prevent clipping close button */
+}
+
+.header_icon_bubble {
+  background: #eff6ff;
+  padding: 14px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header_text_block h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.header_text_block p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Scroll Record Container Tracking List */
+.feedback_pending_list_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 20px;
+}
+
+/* Custom Scrollbar */
+.feedback_pending_list_wrapper::-webkit-scrollbar {
+  width: 5px;
+}
+.feedback_pending_list_wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.feedback_pending_list_wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Row Styling */
+.feedback_pending_row_card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feedback_pending_row_card:hover {
+  background: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
+}
+
+.pending_card_left_zone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mini_calendar_badge_box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.pending_card_clinical_meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc_title_name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dept_sub_tag {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.pending_card_right_zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action_interactive_hint {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.chevron_circle_holder {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.feedback_pending_row_card:hover .chevron_circle_holder {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Modal Action Footer */
+.feedback_modal_footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+}
+
+.feedback_skip_session_btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.feedback_skip_session_btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Popup scale animation framework */
+.animate_popup {
+  animation: scaleUpOpen 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleUpOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

@@ -1,27 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { 
-  createPatientProfile, 
-  getPatientProfile, 
-  updatePatientProfile, 
-  addMedicalHistory, 
-  addCurrentMedication, 
-  getAllPatients, 
-  deletePatient 
-} = require('../controllers/patientCtrl');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const patientController = require("../controllers/patientController");
+const upload = require("../middleware/upload"); // For Multer
 
-// Specific routes first
-router.post('/:patientId/medical-history', protect, addMedicalHistory);
-router.post('/:patientId/medication', protect, addCurrentMedication);
-
-// CRUD routes
-router.get('/:patientId', protect, getPatientProfile);
-router.put('/:patientId', protect, updatePatientProfile);
-router.delete('/:patientId', protect, authorize('admin'), deletePatient);
-
-// General routes last
-router.get('/', protect, getAllPatients);
-router.post('/', protect, createPatientProfile);
-
+/* All these routes are now independent of /api/auth */
+router.get("/dashboard/:name", patientController.getDashboardData);
+router.get("/profile/:id", patientController.getProfile);
+router.put(
+  "/update/:id",
+  upload.single("photo"),
+  patientController.updatePatientProfile,
+);
+router.get("/all", patientController.getAllPatients); // ADD THIS LINE
 module.exports = router;
