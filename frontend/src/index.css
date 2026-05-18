@@ -6,8 +6,9 @@
     text-size-adjust: 100%;
 }
 
-html, body, #root {
+html, body {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     overflow-x: hidden; 
+
 }

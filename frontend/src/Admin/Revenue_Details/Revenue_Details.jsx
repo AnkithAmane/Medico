@@ -1,190 +1,388 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement,
-  LineElement, ArcElement, Tooltip, Legend, Filler
-} from "chart.js";
+import { useOutletContext } from "react-router-dom";
+import axios from "axios";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
-import axiosInstance from "../../utils/axios";
+import { Loader2, RefreshCw, Printer, FileText } from "lucide-react";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+
 import "./Revenue_Details.css";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
+// ChartJS Configuration
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Filler,
+);
 
 export default function Revenue_Details() {
+  /* --- 1. MERN LIVE DATA STATES --- */
+  const [loading, setLoading] = useState(true);
+  const [dbData, setDbData] = useState({
+    appointments: [],
+    patients: [],
+    doctors: [],
+    orders: [],
+  });
+
+  /* --- 2. ORIGINAL UI STATES --- */
   const [trendView, setTrendView] = useState("Month");
   const [trendWeek, setTrendWeek] = useState("2026-W14");
   const [trendYear, setTrendYear] = useState(2026);
-  const [deptMonth, setDeptMonth] = useState("2026-05");
-  const [contributorMonth, setContributorMonth] = useState("2026-05");
+  // Automatically generates a string matching the current year and month (e.g., "2026-05")
+  const currentYearMonthString = new Date().toISOString().slice(0, 7);
+
+  const [deptMonth, setDeptMonth] = useState(currentYearMonthString);
+  const [contributorMonth, setContributorMonth] = useState(
+    currentYearMonthString,
+  );
   const [patientView, setPatientView] = useState("Age");
   const [lastSynced, setLastSynced] = useState(new Date().toLocaleTimeString());
 
-  // Data states
-  const [appointments, setAppointments] = useState([])
-  const [doctors, setDoctors] = useState([])
-  const [patients, setPatients] = useState([])
-  const [loading, setLoading] = useState(true)
+  /* --- 3. DATA SYNCHRONIZATION LOGIC --- */
+  const syncHospitalFinancials = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `Bearer ${token}` };
 
-  // Fetch data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const [apptRes, docRes, patRes] = await Promise.all([
-          axiosInstance.get('/appointments'),
-          axiosInstance.get('/doctors'),
-          axiosInstance.get('/patients')
-        ])
-        setAppointments(apptRes.data.data || [])
-        setDoctors(docRes.data.data || [])
-        setPatients(patRes.data.data || [])
-      } catch (err) {
-        console.error('Failed to load revenue data')
-      } finally {
-        setLoading(false)
-      }
+      const [apptRes, patRes, docRes, orderRes] = await Promise.all([
+        axios.get("http://localhost:5000/api/appointments/all", { headers }),
+        axios.get("http://localhost:5000/api/patients/all", { headers }),
+        axios.get("http://localhost:5000/api/doctors/list", { headers }),
+        axios
+          .get("http://localhost:5000/api/procurement/medicines/history", {
+            headers,
+          })
+          .catch(() => ({ data: [] })),
+      ]);
+
+      setDbData({
+        appointments: apptRes.data || [],
+        patients: patRes.data || [],
+        doctors: docRes.data || [],
+        orders: orderRes.data || [],
+      });
+      setLastSynced(new Date().toLocaleTimeString());
+    } catch (err) {
+      console.error("Clinical Revenue Sync Failed", err);
+    } finally {
+      setLoading(false);
     }
-    fetchData()
+  };
 
-    const interval = setInterval(() => setLastSynced(new Date().toLocaleTimeString()), 30000)
-    return () => clearInterval(interval)
-  }, [])
+  useEffect(() => {
+    syncHospitalFinancials();
+    const interval = setInterval(syncHospitalFinancials, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
-  // Revenue helper
-  const getApptRevenue = (appt) => appt.fees || appt.doctorId?.fees || 500
+  /* --- 4. CALCULATION HELPERS --- */
+  const getApptRevenue = (doctorName) => {
+    const doctor = dbData.doctors.find(
+      (d) =>
+        (d.name || d.doctorName || "").toLowerCase() ===
+        (doctorName || "").toLowerCase(),
+    );
+    return doctor ? doctor.fee || 500 : 500;
+  };
 
-  // Global stats
+  const isDateInWeek = (dateStr, weekStr) => {
+    const d = new Date(dateStr);
+    const [year, week] = weekStr.split("-W");
+    const firstDayOfYear = new Date(year, 0, 1);
+    const days = Math.floor((d - firstDayOfYear) / (24 * 60 * 60 * 1000));
+    const weekNum = Math.ceil((days + firstDayOfYear.getDay() + 1) / 7);
+    return (
+      d.getFullYear().toString() === year &&
+      weekNum.toString().padStart(2, "0") === week
+    );
+  };
+
+  /* --- 5. MEMOIZED ANALYTICS --- */
+
+  // Global Financial Statistics
   const globalStats = useMemo(() => {
-    let lifetimeRevenue = 0
-    const deptTotals = {}
+    let lifetimeRevenue = 0;
+    const deptTotals = {};
 
-    appointments.forEach(appt => {
-      const fee = getApptRevenue(appt)
-      lifetimeRevenue += fee
-      const dept = appt.doctorId?.specialization || 'General'
-      deptTotals[dept] = (deptTotals[dept] || 0) + fee
-    })
+    // A. Parse Consultation Yields
+    dbData.appointments.forEach((appt) => {
+      const fee = getApptRevenue(appt.doctorName || appt.doctor);
+      lifetimeRevenue += fee;
+      const dName = appt.department || "General";
+      deptTotals[dName] = (deptTotals[dName] || 0) + fee;
+    });
 
-    const highestDept = Object.entries(deptTotals).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'
+    // B. Parse Order Fulfillment Yields into Unified Lifetime Total
+    dbData.orders.forEach((order) => {
+      if (order.status !== "Cancelled") {
+        lifetimeRevenue += order.totalAmount || 0;
+      }
+    });
+
+    const highestDept =
+      Object.entries(deptTotals).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+    const divisor = lifetimeRevenue > 0 ? 100000 : 1;
 
     return {
-      lifetime: (lifetimeRevenue / 100000).toFixed(1),
-      avgAppt: appointments.length > 0 ? (lifetimeRevenue / appointments.length).toFixed(0) : 0,
+      lifetime: (lifetimeRevenue / divisor).toFixed(1),
+      avgAppt:
+        dbData.appointments.length > 0
+          ? (lifetimeRevenue / dbData.appointments.length).toFixed(0)
+          : 0,
       highestDept,
-      totalRegistry: patients.length,
-      staffCount: doctors.length
-    }
-  }, [appointments, doctors, patients])
+      totalRegistry: dbData.patients.length,
+      staffCount: dbData.doctors.length,
+    };
+  }, [dbData]);
 
-  // Revenue trend
+  // Revenue Trend Analytics
   const trendData = useMemo(() => {
     if (trendView === "Week") {
-      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-      const weekData = Array(7).fill(0)
-      const [year, week] = trendWeek.split("-W")
-      appointments.forEach(appt => {
-        const d = new Date(appt.date)
-        const firstDayOfYear = new Date(year, 0, 1)
-        const days2 = Math.floor((d - firstDayOfYear) / (24 * 60 * 60 * 1000))
-        const weekNum = Math.ceil((days2 + firstDayOfYear.getDay() + 1) / 7)
-        if (d.getFullYear().toString() === year && weekNum.toString().padStart(2, '0') === week) {
-          const dayIdx = (d.getDay() + 6) % 7
-          weekData[dayIdx] += getApptRevenue(appt)
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const currentWeek = [0, 0, 0, 0, 0, 0, 0];
+      dbData.appointments.forEach((appt) => {
+        if (isDateInWeek(appt.date, trendWeek)) {
+          const dayIdx = (new Date(appt.date).getDay() + 6) % 7;
+          currentWeek[dayIdx] += getApptRevenue(appt.doctorName || appt.doctor);
         }
-      })
+      });
       return {
         labels: days,
-        datasets: [{ label: 'Weekly Revenue', data: weekData, borderColor: "#007acc", backgroundColor: "rgba(0,122,204,0.08)", fill: true, tension: 0.4 }]
-      }
+        datasets: [
+          {
+            label: `Weekly Revenue`,
+            data: currentWeek,
+            borderColor: "#007acc",
+            backgroundColor: "rgba(0, 122, 204, 0.08)",
+            fill: true,
+            tension: 0.4,
+          },
+        ],
+      };
     } else {
-      const monthly = Array(12).fill(0)
-      appointments.forEach(appt => {
-        if (appt.date?.startsWith(trendYear.toString())) {
-          const mIdx = parseInt(appt.date.split('-')[1]) - 1
-          monthly[mIdx] += getApptRevenue(appt)
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const yearlyMonthlyData = Array(12).fill(0);
+      dbData.appointments.forEach((appt) => {
+        if (appt.date && appt.date.startsWith(trendYear.toString())) {
+          const splitParts = appt.date.split("-");
+          if (splitParts[1]) {
+            const monthIdx = parseInt(splitParts[1], 10) - 1;
+            yearlyMonthlyData[monthIdx] += getApptRevenue(
+              appt.doctorName || appt.doctor,
+            );
+          }
         }
-      })
+      });
       return {
-        labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-        datasets: [{ label: 'Monthly Revenue', data: monthly, borderColor: "#007acc", backgroundColor: "rgba(0,122,204,0.08)", fill: true, tension: 0.4 }]
-      }
+        labels: months,
+        datasets: [
+          {
+            label: `Monthly Revenue`,
+            data: yearlyMonthlyData,
+            borderColor: "#007acc",
+            backgroundColor: "rgba(0, 122, 204, 0.08)",
+            fill: true,
+            tension: 0.4,
+          },
+        ],
+      };
     }
-  }, [trendView, trendWeek, trendYear, appointments])
+  }, [dbData, trendView, trendWeek, trendYear]);
 
-  // Top contributors
+  // Contributor Leaderboard logic
   const topDoctors = useMemo(() => {
-    const docMap = {}
-    appointments.filter(a => a.date?.startsWith(contributorMonth)).forEach(a => {
-      const name = a.doctorId?.name || 'Unknown'
-      docMap[name] = (docMap[name] || 0) + getApptRevenue(a)
-    })
+    const docMap = {};
+    const [filterYear, filterMonth] = contributorMonth.split("-");
+
+    dbData.appointments.forEach((a) => {
+      if (!a.date) return;
+
+      const apptDateStr =
+        typeof a.date === "string" ? a.date : new Date(a.date).toISOString();
+      const matchYear = apptDateStr.includes(filterYear);
+      const matchMonth = apptDateStr.includes(`-${filterMonth}`);
+
+      if (matchYear && matchMonth) {
+        const name = a.doctorName || a.doctor;
+        if (name) {
+          docMap[name] = (docMap[name] || 0) + getApptRevenue(name);
+        }
+      }
+    });
+
     return Object.entries(docMap)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 4)
-      .map(([name, rev]) => ({
-        name,
-        rev: `₹${(rev / 1000).toFixed(1)}K`,
-        dept: doctors.find(d => d.name === name)?.specialization || 'Specialist'
-      }))
-  }, [contributorMonth, appointments, doctors])
+      .map(([name, rev]) => {
+        // 🟢 FIXED: Case-insensitive extraction block ensures department data aligns properly
+        const doctorDoc = dbData.doctors.find(
+          (d) =>
+            (d.name || d.doctorName || "").toLowerCase() === name.toLowerCase(),
+        );
+        return {
+          name,
+          rev: `₹${(rev / 1000).toFixed(1)}K`,
+          dept: doctorDoc?.department || "Specialist",
+        };
+      });
+  }, [dbData, contributorMonth]);
 
-  // Dept performance
+  // Departmental Performance logic
   const deptData = useMemo(() => {
-    const specs = [...new Set(doctors.map(d => d.specialization).filter(Boolean))]
-    const filtered = appointments.filter(a => a.date?.startsWith(deptMonth))
-    const totals = specs.map(s =>
-      filtered.filter(a => a.doctorId?.specialization === s)
-        .reduce((sum, a) => sum + getApptRevenue(a), 0)
-    )
-    return {
-      labels: specs.map(s => s.slice(0, 6)),
-      datasets: [
-        { label: 'Actual', data: totals, backgroundColor: "#007acc", borderRadius: 5 },
-        { label: 'Target', data: totals.map(v => v === 0 ? 5000 : v * 1.2), backgroundColor: "rgba(0,122,204,0.1)", borderRadius: 5 }
-      ]
-    }
-  }, [deptMonth, appointments, doctors])
+    // 🟢 FIXED: Swapped out static search arrays string array logic to derive active wings dynamically from appointments history bounds
+    const dynamicDepts = Array.from(
+      new Set(
+        dbData.appointments
+          .map((a) => a.department)
+          .filter((dept) => dept && dept.trim() !== ""),
+      ),
+    );
 
-  // Patient demographics
+    const fallbackDepts =
+      dynamicDepts.length > 0
+        ? dynamicDepts
+        : [
+            "Cardiology",
+            "Orthopedics",
+            "Neurology",
+            "Pediatrics",
+            "Gastroenterology",
+          ];
+
+    const filtered = dbData.appointments.filter(
+      (a) => a.date && a.date.startsWith(deptMonth),
+    );
+
+    const totals = fallbackDepts.map((d) =>
+      filtered
+        .filter(
+          (a) =>
+            (a.department || "").toLowerCase().trim() ===
+            d.toLowerCase().trim(),
+        )
+        .reduce((s, c) => s + getApptRevenue(c.doctorName || c.doctor), 0),
+    );
+
+    return {
+      labels: fallbackDepts.map((d) =>
+        d.length > 6 ? d.slice(0, 5) + "." : d,
+      ),
+      datasets: [
+        {
+          label: "Actual",
+          data: totals,
+          backgroundColor: "#007acc",
+          borderRadius: 5,
+        },
+        {
+          label: "Target",
+          data: totals.map((v) => (v === 0 ? 5000 : v * 1.2)),
+          backgroundColor: "rgba(0, 122, 204, 0.1)",
+          borderRadius: 5,
+        },
+      ],
+    };
+  }, [dbData, deptMonth]);
+
+  // Patient Demographics logic
   const patientData = useMemo(() => {
-    const isAge = patientView === "Age"
+    const isAge = patientView === "Age";
     const values = isAge
       ? [
-          patients.filter(p => { const age = p.age || 0; return age >= 19 && age < 60 }).length,
-          patients.filter(p => (p.age || 0) < 19).length,
-          patients.filter(p => (p.age || 0) >= 60).length
+          dbData.patients.filter((p) => p.age >= 19 && p.age < 60).length,
+          dbData.patients.filter((p) => p.age < 19).length,
+          dbData.patients.filter((p) => p.age >= 60).length,
         ]
       : [
-          patients.filter(p => p.userId?.gender === 'Male').length,
-          patients.filter(p => p.userId?.gender === 'Female').length,
-          patients.filter(p => p.userId?.gender !== 'Male' && p.userId?.gender !== 'Female').length
-        ]
+          dbData.patients.filter((p) => p.gender === "Male").length,
+          dbData.patients.filter((p) => p.gender === "Female").length,
+          dbData.patients.filter(
+            (p) => p.gender !== "Male" && p.gender !== "Female",
+          ).length,
+        ];
     return {
-      labels: isAge ? ["Adults", "Children", "Seniors"] : ["Male", "Female", "Other"],
-      datasets: [{ data: values, backgroundColor: ["#007acc", "#00d2ff", "#1e293b"], borderWidth: 0, cutout: "75%" }]
-    }
-  }, [patientView, patients])
+      labels: isAge
+        ? ["Adults", "Children", "Seniors"]
+        : ["Male", "Female", "Other"],
+      datasets: [
+        {
+          data: values,
+          backgroundColor: ["#007acc", "#00d2ff", "#1e293b"],
+          borderWidth: 0,
+        },
+      ],
+    };
+  }, [dbData, patientView]);
 
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-      <p>Loading revenue data...</p>
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="admin_dash_load">
+        <Loader2 className="spin" /> Calculating Clinical Yield...
+      </div>
+    );
 
   return (
     <div className="admin_rev_m_wrapper">
       <header className="admin_rev_m_header">
         <div className="admin_rev_m_header_text">
-          <h1>Revenue <span>Hub</span></h1>
-          <p>Live Pulse • {lastSynced}</p>
+          <h1>
+            Revenue <span>Hub</span>
+          </h1>
+          <p>Clinical Pulse • {lastSynced}</p>
         </div>
         <div className="admin_rev_m_export_suite">
-          <button className="admin_rev_m_export_btn">📄</button>
-          <button className="admin_rev_m_export_btn">📊</button>
-          <button className="admin_rev_m_export_btn">🖨️</button>
+          <button
+            className="admin_rev_m_export_btn"
+            title="Sync Registry"
+            onClick={syncHospitalFinancials}
+          >
+            <RefreshCw size={14} />
+          </button>
+          <button className="admin_rev_m_export_btn" title="Download Report">
+            <FileText size={14} />
+          </button>
+          <button
+            className="admin_rev_m_export_btn"
+            title="Print Hub"
+            onClick={() => window.print()}
+          >
+            <Printer size={14} />
+          </button>
         </div>
       </header>
 
-      {/* KPI Stats */}
+      {/* KPI Stats Grid */}
       <div className="admin_rev_m_stats_bento">
         <div className="admin_rev_m_stat_card admin_rev_m_primary">
           <div className="admin_rev_m_pulse_ring"></div>
@@ -194,14 +392,17 @@ export default function Revenue_Details() {
         <div className="admin_rev_m_stat_card">
           <span className="admin_rev_m_label">Patient Registry</span>
           <h2 className="admin_rev_m_value">{globalStats.totalRegistry}</h2>
+          <div className="admin_rev_m_pill_up">+12% ↑</div>
         </div>
         <div className="admin_rev_m_stat_card">
           <span className="admin_rev_m_label">Avg Consulting</span>
           <h2 className="admin_rev_m_value">₹{globalStats.avgAppt}</h2>
         </div>
-        <div className="admin_rev_m_stat_card">
-          <span className="admin_rev_m_label">Lead Dept</span>
-          <h2 className="admin_rev_m_value" style={{ fontSize: "0.9rem" }}>{globalStats.highestDept}</h2>
+        <div className="admin_rev_m_stat_card admin_rev_m_highlight">
+          <span className="admin_rev_m_label">Lead Wing</span>
+          <h2 className="admin_rev_m_value" style={{ fontSize: "0.9rem" }}>
+            {globalStats.highestDept}
+          </h2>
         </div>
         <div className="admin_rev_m_stat_card">
           <span className="admin_rev_m_label">Clinical Staff</span>
@@ -209,27 +410,61 @@ export default function Revenue_Details() {
         </div>
       </div>
 
-      {/* Revenue Trend + Contributors */}
+      {/* Primary Analytics Section */}
       <div className="admin_rev_m_bento_row">
-        <div className="admin_rev_m_bento_item admin_rev_m_span_2">
+        <div className="admin_rev_m_span_2">
           <div className="admin_rev_m_card_head">
             <div className="admin_rev_m_title_with_toggle">
               <h3>Revenue Trend</h3>
               <div className="admin_rev_m_filter_cluster">
                 <div className="admin_rev_m_mini_tabs">
-                  <button className={trendView === "Month" ? "admin_rev_m_active" : ""} onClick={() => setTrendView("Month")}>Yearly</button>
-                  <button className={trendView === "Week" ? "admin_rev_m_active" : ""} onClick={() => setTrendView("Week")}>Weekly</button>
+                  <button
+                    className={
+                      trendView === "Month" ? "admin_rev_m_active" : ""
+                    }
+                    onClick={() => setTrendView("Month")}
+                  >
+                    Yearly
+                  </button>
+                  <button
+                    className={trendView === "Week" ? "admin_rev_m_active" : ""}
+                    onClick={() => setTrendView("Week")}
+                  >
+                    Weekly
+                  </button>
                 </div>
-                {trendView === "Week" ? (
-                  <input type="week" className="admin_rev_m_year_select" value={trendWeek} onChange={(e) => setTrendWeek(e.target.value)} />
-                ) : (
-                  <input type="number" className="admin_rev_m_year_select" value={trendYear} onChange={(e) => setTrendYear(e.target.value)} style={{ width: '85px' }} />
-                )}
+                <div className="admin_rev_m_calendar_input">
+                  {trendView === "Week" ? (
+                    <input
+                      type="week"
+                      className="admin_rev_m_year_select"
+                      value={trendWeek}
+                      onChange={(e) => setTrendWeek(e.target.value)}
+                    />
+                  ) : (
+                    <input
+                      type="number"
+                      className="admin_rev_m_year_select"
+                      value={trendYear}
+                      onChange={(e) =>
+                        setTrendYear(parseInt(e.target.value, 10) || 2026)
+                      }
+                      style={{ width: "85px" }}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
           <div className="admin_rev_m_canvas_holder">
-            <Line data={trendData} options={{ responsive: true, maintainAspectRatio: false }} />
+            <Line
+              data={trendData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { grid: { display: false } } },
+              }}
+            />
           </div>
         </div>
 
@@ -237,51 +472,93 @@ export default function Revenue_Details() {
           <div className="admin_rev_m_card_head">
             <div className="admin_rev_m_title_with_toggle">
               <h3>Contributors</h3>
-              <input type="month" className="admin_rev_m_year_select" value={contributorMonth}
-                onChange={(e) => setContributorMonth(e.target.value)} />
+              <input
+                type="month"
+                className="admin_rev_m_year_select"
+                value={contributorMonth}
+                onChange={(e) => setContributorMonth(e.target.value)}
+                style={{ fontSize: "0.7rem", padding: "4px 8px" }}
+              />
             </div>
           </div>
           <div className="admin_rev_m_doc_leaderboard">
-            {topDoctors.length > 0 ? topDoctors.map((doc, i) => (
-              <div key={i} className="admin_rev_m_list_row">
-                <div className="admin_rev_m_list_info">
-                  <strong>{doc.name}</strong>
-                  <span>{doc.dept}</span>
+            {topDoctors.length > 0 ? (
+              topDoctors.map((doc, i) => (
+                <div key={i} className="admin_rev_m_list_row">
+                  <div className="admin_rev_m_list_info">
+                    <strong>{doc.name}</strong>
+                    <span>{doc.dept}</span>
+                  </div>
+                  <div className="admin_rev_m_list_val">{doc.rev}</div>
                 </div>
-                <div className="admin_rev_m_list_val">{doc.rev}</div>
-              </div>
-            )) : (
-              <p style={{ textAlign: "center", color: "#94a3b8", marginTop: "40px" }}>No records for this month</p>
+              ))
+            ) : (
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "#94a3b8",
+                  marginTop: "40px",
+                }}
+              >
+                No activity logs
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Demographics + Dept Performance */}
+      {/* Secondary Analytics Section */}
       <div className="admin_rev_m_bento_row">
         <div className="admin_rev_m_bento_item admin_rev_m_patient_card">
           <div className="admin_rev_m_card_head">
             <div className="admin_rev_m_title_with_toggle">
               <h3>Demographics</h3>
               <div className="admin_rev_m_mini_tabs">
-                <button className={patientView === "Age" ? "admin_rev_m_active" : ""} onClick={() => setPatientView("Age")}>Age</button>
-                <button className={patientView === "Gender" ? "admin_rev_m_active" : ""} onClick={() => setPatientView("Gender")}>Gen</button>
+                <button
+                  className={patientView === "Age" ? "admin_rev_m_active" : ""}
+                  onClick={() => setPatientView("Age")}
+                >
+                  Age
+                </button>
+                <button
+                  className={
+                    patientView === "Gender" ? "admin_rev_m_active" : ""
+                  }
+                  onClick={() => setPatientView("Gender")}
+                >
+                  Gender
+                </button>
               </div>
             </div>
           </div>
           <div className="admin_rev_m_patient_content">
             <div className="admin_rev_m_doughnut_box">
-              <Doughnut data={patientData} options={{ cutout: "80%", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+              <Doughnut
+                data={patientData}
+                options={{
+                  cutout: "80%",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                }}
+              />
               <div className="admin_rev_m_center_insight">
                 <span className="admin_rev_m_insight_label">Registry</span>
-                <strong className="admin_rev_m_insight_val">{patients.length}</strong>
+                <strong className="admin_rev_m_insight_val">
+                  {dbData.patients.length}
+                </strong>
               </div>
             </div>
           </div>
           <div className="admin_rev_m_legend">
             {patientData.labels.map((label, idx) => (
               <div key={idx} className="admin_rev_m_legend_pill">
-                <span className="admin_rev_m_dot" style={{ backgroundColor: ["#007acc", "#00d2ff", "#1e293b"][idx] }}></span>
+                <span
+                  className="admin_rev_m_dot"
+                  style={{
+                    backgroundColor: ["#007acc", "#00d2ff", "#1e293b"][idx],
+                  }}
+                ></span>
                 <span className="admin_rev_m_pill_text">{label}</span>
               </div>
             ))}
@@ -291,12 +568,24 @@ export default function Revenue_Details() {
         <div className="admin_rev_m_bento_item admin_rev_m_span_2">
           <div className="admin_rev_m_card_head">
             <div className="admin_rev_m_title_with_toggle">
-              <h3>Dept. Performance</h3>
-              <input type="month" className="admin_rev_m_year_select" value={deptMonth} onChange={(e) => setDeptMonth(e.target.value)} />
+              <h3>Wing Performance</h3>
+              <input
+                type="month"
+                className="admin_rev_m_year_select"
+                value={deptMonth}
+                onChange={(e) => setDeptMonth(e.target.value)}
+              />
             </div>
           </div>
           <div className="admin_rev_m_canvas_holder_compact">
-            <Bar data={deptData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+            <Bar
+              data={deptData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+              }}
+            />
           </div>
         </div>
       </div>

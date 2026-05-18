@@ -1,0 +1,155 @@
+/* --- Root Overlay --- */
+.pat_onboard_overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6); 
+  backdrop-filter: blur(4px); /* Reduced blur for performance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+/* --- Tighter Card Container --- */
+.pat_onboard_card {
+  background: #ffffff;
+  width: 95%;
+  max-width: 500px; /* Reduced from 650px */
+  padding: 25px;    /* Reduced from 40px */
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+}
+
+/* --- Header Section --- */
+.pat_onboard_header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.pat_onboard_header h2 {
+  color: #1e293b;
+  font-size: 1.4rem; /* Reduced from 1.8rem */
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pat_onboard_header p {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+/* --- Compact Image Section --- */
+.pat_onboard_image_section {
+  display: flex;
+  flex-direction: row; /* Horizontal layout to save vertical space */
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.pat_onboard_avatar_preview {
+  width: 60px;  /* Reduced from 110px */
+  height: 60px; /* Reduced from 110px */
+  border-radius: 50%;
+  border: 2px solid #3b82f6;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.pat_onboard_file_btn {
+  background: #3b82f6;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+/* --- Tight Grid --- */
+.pat_onboard_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Balanced 2-column */
+  gap: 12px; /* Reduced gap */
+  margin-bottom: 15px;
+}
+
+.pat_onboard_group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.full_width {
+  grid-column: span 2;
+}
+
+.pat_onboard_group label {
+  font-size: 0.75rem; /* Smaller labels */
+  font-weight: 600;
+  color: #475569;
+}
+
+.pat_onboard_group input, 
+.pat_onboard_group select, 
+.pat_onboard_group textarea {
+  padding: 8px 12px; /* Thinner inputs */
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.pat_onboard_group textarea {
+  height: 60px; /* Shorter textarea */
+}
+
+/* --- Action Buttons --- */
+.pat_onboard_actions {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Horizontal actions to save space */
+  gap: 10px;
+}
+
+.pat_onboard_submit_btn {
+  background: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 2;
+}
+
+.pat_onboard_skip_btn {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  flex: 1;
+  border: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .pat_onboard_grid {
+    grid-template-columns: 1fr;
+  }
+  .full_width {
+    grid-column: span 1;
+  }
+}

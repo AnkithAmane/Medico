@@ -1,44 +1,48 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, CalendarCheck, Users, Clock,
-  BarChart4, Star, LogOut, Bell, Search,
-  ChevronLeft, ChevronRight, Settings as SettingsIcon
+  LayoutDashboard,
+  CalendarCheck,
+  Users,
+  Clock,
+  BarChart4,
+  Star,
+  LogOut,
+  Bell,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Settings as SettingsIcon,
+  User as UserIcon
 } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../utils/axios";
+
 import "./Doctor_Home.css";
 
 export default function DoctorHome() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [doctorProfile, setDoctorProfile] = useState(null)
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth()
 
-  // Fetch doctor profile
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return
-      try {
-        const res = await axiosInstance.get(`/doctors/user/${user._id}`)
-        setDoctorProfile(res.data.data)
-      } catch (err) {
-        console.error('Failed to load doctor profile')
-      }
-    }
-    fetchProfile()
-  }, [user])
+  // 1. Logic: Identify Logged-in Doctor via LocalStorage
+  // This replaces doctorsData[5] to make the sidebar dynamic
+  const currentDoc = useMemo(() => {
+    return JSON.parse(localStorage.getItem('userData')) || {
+      name: "Medical Officer",
+      department: "General Clinical",
+      degrees: "MBBS"
+    };
+  }, []);
 
-  // Clock
+  // 2. Real-time clinical clock
   useEffect(() => {
     const timer = setInterval(() => setDateTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // 3. Navigation configuration
   const mainNavOptions = useMemo(() => [
     { id: 1, label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/doctor/doctor_dashboard" },
     { id: 2, label: "Appointments", icon: <CalendarCheck size={20} />, path: "/doctor/doctor_appointments_management" },
@@ -48,47 +52,48 @@ export default function DoctorHome() {
     { id: 6, label: "Reviews", icon: <Star size={20} />, path: "/doctor/doctor_review_management" },
   ], []);
 
+  // 4. Logic: Secure Logout
   const handleLogout = () => {
     if (window.confirm("Terminate clinical session at Medico+?")) {
-      logout()
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      navigate("/");
     }
   };
 
-  // Avatar fallback
-  const avatarUrl = doctorProfile?.profilePic || 
-    `https://ui-avatars.com/api/?name=${doctorProfile?.name || 'Doctor'}&background=007acc&color=fff&size=100`
-
   return (
     <div className="doc_home_med_doctor_root">
-      {/* Sidebar */}
+      {/* Sidebar Navigation */}
       <aside className={`doc_home_med_sidebar_elite ${isCollapsed ? "doc_home_is_collapsed" : ""}`}>
         
-        {/* Doctor Identity */}
+        {/* Doctor Identity Module */}
         <div className="doc_home_doc_identity_panel" onClick={() => navigate("/doctor/doctor_profile")}>
           <div className="doc_home_avatar_wrapper">
+            {/* Dynamic Image from Backend path */}
             <img
-              src={avatarUrl}
+              src={currentDoc.photo ? `http://localhost:5000/uploads/${currentDoc.photo}` : "https://via.placeholder.com/150"}
               alt="Doctor"
               className={`doc_home_identity_avatar ${isCollapsed ? "doc_home_avatar_mini" : ""}`}
             />
             <div className="doc_home_active_indicator_sidebar"></div>
           </div>
+
           {!isCollapsed && (
             <div className="doc_home_identity_meta doc_home_view_fade_in">
-              <h3 className="doc_home_doc_full_name">{doctorProfile?.name || user?.firstName}</h3>
-              <p className="doc_home_doc_degree_tag">{doctorProfile?.specialization || 'Doctor'}</p>
-              <p className="doc_home_doc_dept_tag">{doctorProfile?.specialization}</p>
+              <h3 className="doc_home_doc_full_name">{currentDoc.name}</h3>
+              <p className="doc_home_doc_degree_tag">{currentDoc.degrees}</p>
+              <p className="doc_home_doc_dept_tag">{currentDoc.department} Dept</p>
             </div>
           )}
         </div>
 
-        {/* Navigation */}
+        {/* Menu Navigation Items */}
         <nav className="doc_home_sidebar_navigation_menu">
           <div className="doc_home_nav_spacer_top"></div>
           {mainNavOptions.map((opt) => (
             <button
               key={opt.id}
-              className={`doc_home_nav_menu_item ${location.pathname === opt.path ? "doc_home_is_active" : ""}`}
+              className={`doc_home_nav_menu_item ${location.pathname.includes(opt.path) ? "doc_home_is_active" : ""}`}
               onClick={() => navigate(opt.path)}
             >
               <span className="doc_home_nav_icon_box">{opt.icon}</span>
@@ -98,7 +103,7 @@ export default function DoctorHome() {
           ))}
         </nav>
 
-        {/* Footer */}
+        {/* Sidebar Footer Controls */}
         <div className="doc_home_sidebar_footer_actions">
           <button className="doc_home_logout_btn_elite" onClick={handleLogout}>
             <LogOut size={20} />
@@ -106,13 +111,15 @@ export default function DoctorHome() {
           </button>
         </div>
 
+        {/* Sidebar Collapse Toggle */}
         <button className="doc_home_sidebar_toggle_trigger" onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </aside>
 
-      {/* Main Workspace */}
+      {/* Main Workspace Area */}
       <main className="doc_home_med_workspace_viewport">
+        {/* Workspace Top Header */}
         <header className="doc_home_med_workspace_header">
           <div className="doc_home_header_left_brand">
             <div className="doc_home_medico_plus_logo_area">
@@ -121,6 +128,7 @@ export default function DoctorHome() {
             </div>
           </div>
 
+          {/* Global Registry Search */}
           <div className="doc_home_header_center_search">
             <div className={`doc_home_global_search_container ${isSearchFocused ? "doc_home_is_focused" : ""}`}>
               <Search size={18} className="doc_home_search_icon_main" />
@@ -133,6 +141,7 @@ export default function DoctorHome() {
             </div>
           </div>
 
+          {/* Header Utilities and Clock */}
           <div className="doc_home_header_right_controls">
             <div className="doc_home_widget_header_sync">
               <div className="doc_home_live_time_group">
@@ -159,8 +168,10 @@ export default function DoctorHome() {
           </div>
         </header>
 
+        {/* Dynamic Route Content */}
         <section className="doc_home_med_workspace_content">
           <div className="doc_home_content_inner_wrapper doc_home_view_fade_in">
+            {/* This is where sub-pages like Dashboard or Appointments will render */}
             <Outlet />
           </div>
         </section>

@@ -922,3 +922,202 @@
     grid-template-columns: 1fr;
   }
 }
+/* Real-time Reschedule Ticker Pending Highlight Badge Alert */
+.admin_appt_m_pulse_alert {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  animation: apptPulseWarningFlag 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes apptPulseWarningFlag {
+  to {
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+}
+
+/* Instant Target Row Highlight Flare */
+.admin_appt_row_highlight_flare {
+  animation: apptTargetRowBlink 3s ease;
+}
+
+@keyframes apptTargetRowBlink {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  20%,
+  60% {
+    background-color: rgba(13, 148, 136, 0.15);
+    border-left: 4px solid #0d9488;
+  }
+}
+
+/* Slideout Panel Layout Framework */
+.admin_appt_m_overlay_backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin_appt_m_overlay_panel {
+  background: #ffffff;
+  width: 420px;
+  height: 100%;
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin_appt_m_overlay_scroll_body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* 🟢 SCROLL ENCLOSURE ENVELOPE: Scrollable styling options for the full encounter archives */
+.admin_appt_m_modal_scrollable_viewport {
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 5px;
+  margin-top: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.admin_appt_m_modal_scrollable_viewport::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin_appt_m_modal_scrollable_viewport::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Double click safety locks */
+.admin_appt_m_req_actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.admin_appt_m_view_more_trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  color: #007acc;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin_appt_m_view_more_trigger:hover {
+  background: #f0fdfa;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+/* 🟢 INLINE OVERFLOW ENGINE: Activates custom scroller parameters right inside the summary card */
+.admin_appt_m_history_list_v3.admin_appt_m_inline_scroll_active {
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+/* Custom Scrollbar configurations for the expanded inline section */
+.admin_appt_m_history_list_v3.admin_appt_m_inline_scroll_active::-webkit-scrollbar {
+  width: 6px;
+}
+.admin_appt_m_history_list_v3.admin_appt_m_inline_scroll_active::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Ensure the expand/collapse button stays sticky at the base of the list box */
+.admin_appt_m_view_more_trigger {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: #f8fafc;
+  box-shadow: 0 -4px 12px rgba(255, 255, 255, 0.9);
+}
+/* Rescheduled Highlight text inside the list view table */
+.admin_appt_m_resched_dot {
+  display: block;
+  font-size: 0.72rem;
+  color: #2563eb;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin-top: 2px;
+  background: rgba(37, 99, 235, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: max-content;
+}
+
+/* Detailed Overview Card: Trace routes box container layout */
+.admin_appt_m_resched_history_banner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.admin_appt_m_resched_history_banner span {
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.admin_appt_m_resched_history_banner svg {
+  color: #64748b;
+  margin-bottom: -2px;
+}
+
+.resched_time_delta_flow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.resched_time_delta_flow svg {
+  color: #94a3b8;
+}
+
+.resched_time_delta_flow .time_stamp {
+  font-size: 0.8rem !important;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.resched_time_delta_flow .time_stamp.historical {
+  background: #f1f5f9;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.resched_time_delta_flow .time_stamp.operational {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}

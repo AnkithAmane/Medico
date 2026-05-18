@@ -1,82 +1,70 @@
-// Server Entry Point
-const express = require('express');
-const dotenv = require('dotenv');
-const morgan = require('morgan');
-const cors = require('cors');
-const connectDB = require('./config/db');
-const errorHandler = require('./middleware/errorHandler');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path"); // 1. Import path module
+require("dotenv").config();
 
-dotenv.config();
+const authRoutes = require("./routes/authRoutes");
+const patientRoutes = require("./routes/patientRoutes");
+const doctorRoutes = require("./routes/doctorRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const vaultRoutes = require("./routes/vaultRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
+const medicineRoutes = require("./routes/medicineRoutes");
+const procurementRoutes = require("./routes/procurementRoutes");
+const leaveRoutes = require("./routes/leaveRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const departmentRoutes = require("./routes/departmentRoutes");
+const testRoutes = require("./routes/testRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 
 const app = express();
-
-// Connect to MongoDB
-connectDB();
+const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({
-  origin: function(origin, callback) {
-    callback(null, true)
-  },
-  credentials: true
-}));
+app.use(cors());
 
-app.use(express.json());
-app.use(morgan('dev'));
+/* 2. Increase JSON limit for Base64 (Optional but safe) 
+   and standard parsing */
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(
+  "/uploads/vault",
+  express.static(path.join(__dirname, "uploads/vault")),
+);
 
-// Request Logger
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`)
-  next()
-})
+/* 3. SERVE STATIC FILES (This is the fix)
+   This allows the frontend to access files in your 'uploads' folder */
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes - Authentication
-const authRoutes = require('./routes/authRoutes');
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Database Connected"))
+  .catch((err) => console.error("Database Connection Error:", err));
 
-// Routes - Patient Module
-const patientRoutes = require('./routes/patientRoutes');
-const doctorRoutes = require('./routes/doctorRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes');
-const prescriptionRoutes = require('./routes/prescriptionRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
-const medicineRoutes = require('./routes/medicineRoutes');
-const diagnosticTestRoutes = require('./routes/diagnosticTestRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const medicalVaultRoutes = require('./routes/medicalVaultRoutes');
-
-// Test route
-app.get('/test', (req, res) => {
-  console.log('TEST ROUTE HIT!')
-  res.json({ message: 'test works' })
-})
-
-// Register Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/patients', patientRoutes);
-app.use('/api/doctors', doctorRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/prescriptions', prescriptionRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/medicines', medicineRoutes);
-app.use('/api/diagnostic-tests', diagnosticTestRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/medical-vault', medicalVaultRoutes);
-
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Route ${req.originalUrl} not found`,
-  });
+// Root Route
+app.get("/", (req, res) => {
+  res.send("Medico+ Backend Server is Active");
 });
 
-// Global Error Handler
-app.use(errorHandler);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/patient/vault", vaultRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/medicines", medicineRoutes);
+app.use("/api/procurement", procurementRoutes);
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/tests", testRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/uploads/vault", express.static("uploads/vault"));
 
-// Server startup
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

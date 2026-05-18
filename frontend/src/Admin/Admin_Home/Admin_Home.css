@@ -65,7 +65,7 @@
 /* Navigation Menu Items */
 .admin_home_nav {
   flex: 1;
-  padding: 10px 12px;
+  padding: 6px 12px;
   overflow-y: auto;
 }
 
@@ -201,7 +201,7 @@
   align-items: center;
   background: #f1f5f9;
   border-radius: 10px;
-  padding: 4px 0px 4px 15px;
+  padding: 10px 20px;
   width: 70%;
   max-width: 550px;
   gap: 10px;

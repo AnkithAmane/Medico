@@ -1,397 +1,566 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Search, User, Activity, ArrowLeft, Phone, Mail, MapPin, 
-  Download, Scale, Ruler, Zap, ChevronRight, ChevronLeft, X
+import axios from "axios";
+import {
+  Search,
+  User,
+  ArrowLeft,
+  Phone,
+  Mail,
+  Scale,
+  Ruler,
+  Zap,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  Loader2,
+  Pill,
+  FlaskConical,
+  ShoppingCart,
+  Send,
+  Calendar,
+  Clock,
+  Activity,
 } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../utils/axios";
 import "./Doctor_Patient_Management.css";
 
 export default function Patients() {
   const navigate = useNavigate();
-  const { user } = useAuth()
+  const rowsPerPage = 5;
 
-  // Data states
-  const [doctorProfile, setDoctorProfile] = useState(null)
-  const [appointments, setAppointments] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  // UI states
+  /* --- 1. CORE STATE MANAGEMENT --- */
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterGender, setFilterGender] = useState("");
-  const [filterAgeRange, setFilterAgeRange] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const [patients, setPatients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch doctor and appointments
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return
-      try {
-        setLoading(true)
-        const docRes = await axiosInstance.get(`/doctors/user/${user._id}`)
-        const doctor = docRes.data.data
-        setDoctorProfile(doctor)
+  // Requisition Terminal States
+  const [inventory, setInventory] = useState({ medicines: [], tests: [] });
+  const [orderQuery, setOrderQuery] = useState("");
+  const [selectedResource, setSelectedResource] = useState(null);
+  const [prescriptionCount, setPrescriptionCount] = useState(1);
+  const [isOrdering, setIsOrdering] = useState(false);
 
-        const apptRes = await axiosInstance.get(`/appointments/doctor/${doctor._id}`)
-        setAppointments(apptRes.data.data || [])
-      } catch (err) {
-        console.error('Failed to load patients:', err.message)
-      } finally {
-        setLoading(false)
-      }
+  // Dialogue Workspace Detail Overlays
+  const [activeInspectionAppt, setActiveInspectionAppt] = useState(null);
+
+  const doctorUser = JSON.parse(localStorage.getItem("userData")) || {};
+  const currentDocName = doctorUser.name || "Dr. Guest";
+
+  /* --- 2. REGISTRY PIPELINE (DATA FETCHING) --- */
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [patRes, apptRes, medRes, testRes] = await Promise.all([
+        axios
+          .get("http://localhost:5000/api/patients/all", { headers })
+          .catch(() => ({ data: [] })),
+        axios
+          .get("http://localhost:5000/api/appointments/all", { headers })
+          .catch(() => ({ data: [] })),
+        axios
+          .get("http://localhost:5000/api/medicines/all", { headers })
+          .catch(() => ({ data: [] })),
+        axios
+          .get("http://localhost:5000/api/tests/all", { headers })
+          .catch(() => ({ data: [] })),
+      ]);
+
+      setPatients(patRes.data);
+      setAppointments(apptRes.data);
+      setInventory({ medicines: medRes.data, tests: testRes.data });
+    } catch (err) {
+      console.error("Clinical Registry critical failure:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchData()
-  }, [user])
+  };
 
-  // Get unique patients from appointments
-  const allPatients = useMemo(() => {
-    const seen = new Set()
-    const patients = []
-    appointments.forEach(appt => {
-      const patientId = appt.patientId?._id
-      if (patientId && !seen.has(patientId.toString())) {
-        seen.add(patientId.toString())
-        patients.push(appt.patientId)
-      }
-    })
-    return patients
-  }, [appointments])
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  // Age calculation
-  const calculateAge = (dob) => {
-    if (!dob) return null
-    const today = new Date()
-    const birthDate = new Date(dob)
-    return today.getFullYear() - birthDate.getFullYear()
-  }
-
-  const getAgeClass = (age) => {
-    if (!age) return 'Unknown'
-    if (age < 13) return "Child"
-    if (age < 20) return "Teen"
-    if (age < 60) return "Adult"
-    return "Senior"
-  }
-
-  const calculateBMI = (weight, height) => {
-    const w = parseFloat(weight)
-    const h = parseFloat(height) / 100
-    if (!w || !h || h === 0) return { bmi: "N/A", color: "#94a3b8" }
-    const bmi = (w / (h * h)).toFixed(1)
-    let color = "#22c55e"
-    if (bmi < 18.5 || bmi >= 25) color = "#f59e0b"
-    if (bmi >= 30) color = "#ef4444"
-    return { bmi, color }
-  }
-
-  // Filter patients
+  /* --- 3. COMPUTED MEMO INFRASTRUCTURE --- */
   const filteredPatients = useMemo(() => {
-    return allPatients.filter(p => {
-      const firstName = p?.userId?.firstName || ''
-      const lastName = p?.userId?.lastName || ''
-      const fullName = `${firstName} ${lastName}`
-      const age = calculateAge(p?.userId?.dateOfBirth)
-      const gender = p?.userId?.gender
+    const seenPatientNames = [
+      ...new Set(
+        appointments
+          .filter((appt) => appt.doctorName === currentDocName)
+          .map((appt) => appt.patientName),
+      ),
+    ];
 
-      const matchesSearch = fullName.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesGender = filterGender ? gender === filterGender : true
+    return patients.filter((p) => {
+      const isEstablished = seenPatientNames.includes(p.name);
+      if (!isEstablished) return false;
 
-      let matchesAge = true
-      if (filterAgeRange === "0-18") matchesAge = age <= 18
-      else if (filterAgeRange === "19-40") matchesAge = age >= 19 && age <= 40
-      else if (filterAgeRange === "41-60") matchesAge = age >= 41 && age <= 60
-      else if (filterAgeRange === "60+") matchesAge = age > 60
+      return p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [patients, appointments, currentDocName, searchTerm]);
 
-      return matchesSearch && matchesGender && matchesAge
-    })
-  }, [allPatients, searchTerm, filterGender, filterAgeRange])
+  const currentPatients = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredPatients.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredPatients, currentPage]);
 
-  // Pagination
-  const totalPages = Math.ceil(filteredPatients.length / rowsPerPage)
-  const indexOfLastRow = currentPage * rowsPerPage
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage
-  const currentPatients = filteredPatients.slice(indexOfFirstRow, indexOfLastRow)
+  const totalPages = Math.ceil(filteredPatients.length / rowsPerPage);
 
-  // Patient appointment history
-  const patientHistory = useMemo(() => {
-    if (!selectedPatient) return { local: [], global: [] }
-    const allRecords = appointments.filter(a => 
-      a.patientId?._id?.toString() === selectedPatient._id?.toString()
-    )
-    return { local: allRecords, global: [] }
-  }, [selectedPatient, appointments])
+  const sortedPatientHistory = useMemo(() => {
+    if (!selectedPatient) return [];
+    // Gathers and sorts all historical interactions chronologically for the active patient
+    return appointments
+      .filter((a) => a.patientName === selectedPatient.name)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [selectedPatient, appointments]);
 
-  const handlePageChange = (num) => {
-    setCurrentPage(num)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  const suggestedResources = useMemo(() => {
+    if (orderQuery.length < 2) return [];
+    const pool = [
+      ...inventory.medicines.map((m) => ({ ...m, type: "Medicine" })),
+      ...inventory.tests.map((t) => ({ ...t, type: "Test" })),
+    ];
+    return pool
+      .filter((r) => r.name.toLowerCase().includes(orderQuery.toLowerCase()))
+      .slice(0, 5);
+  }, [orderQuery, inventory]);
 
-  const handleOpenFile = (p) => {
-    setSelectedPatient(p)
-    setIsDetailView(true)
-  }
+  /* --- 4. ACTION HANDLERS --- */
+  const commitPrescriptionToVault = async () => {
+    if (!selectedResource || !selectedPatient) return;
+    setIsOrdering(true);
+    try {
+      const token = localStorage.getItem("token");
+      const payload = {
+        patientId: selectedPatient._id,
+        type:
+          selectedResource.type === "Test" ? "Lab Reports" : "Prescriptions",
+        name: `Prescription: ${selectedResource.name}`,
+        lename: `ORDER_PENDING_${Date.now()}.pdf`,
+        resourceId: selectedResource._id,
+        onModel: selectedResource.type === "Test" ? "Tests" : "Medicines",
+        prescribedCount: parseInt(prescriptionCount, 10),
+        unitPrice: selectedResource.price,
+        size: 1024,
+        mimeType: "application/pdf",
+      };
 
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <p>Loading patients...</p>
-    </div>
-  )
+      await axios.post(
+        "http://localhost:5000/api/patient/vault/upload-structured",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      alert("Clinical requisition committed to vault.");
+      setSelectedResource(null);
+      setOrderQuery("");
+      setPrescriptionCount(1);
+    } catch (err) {
+      alert("Vault sync failed. Ensure structured data endpoints exist.");
+    } finally {
+      setIsOrdering(false);
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="doc_patn_loading">
+        <Loader2 className="spin" size={14} /> Opening Clinical Vault...
+      </div>
+    );
 
   return (
     <div className="doc_patn_m_root doc_patn_m_page_fade_in">
       {!isDetailView ? (
         <div className="doc_patn_m_list_view">
-          {/* Header */}
-          <div className="doc_patn_m_section_header">
+          <header className="doc_patn_m_section_header">
             <div className="doc_patn_m_branding">
-              <h1 className="doc_patn_m_title_elite">Clinical <span className="doc_patn_m_highlight">Registry</span></h1>
-              <p className="doc_patn_m_subtitle">{filteredPatients.length} established patient files under your care</p>
+              <h1 className="doc_patn_m_title_elite">
+                Clinical <span className="doc_patn_m_highlight">Registry</span>
+              </h1>
+              <p>
+                {filteredPatients.length} active case proles assigned to your
+                desk
+              </p>
             </div>
-            <div className="doc_patn_m_action_group">
-              <button className="doc_patn_m_btn_outline"><Download size={16}/> Export List</button>
-            </div>
-          </div>
+          </header>
 
-          {/* Filters */}
           <div className="doc_patn_m_filter_bar">
             <div className="doc_patn_m_search_box">
-              <Search size={18} color="#007acc" />
-              <input 
-                type="text" 
-                placeholder="Search by name..." 
+              <Search size={18} />
+              <input
+                placeholder="Search Patient Name..."
                 value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
-            </div>
-            <div className="doc_patn_m_dropdown_group">
-              <select className="doc_patn_m_select_filter" value={filterGender} onChange={(e) => { setFilterGender(e.target.value); setCurrentPage(1); }}>
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <select className="doc_patn_m_select_filter" value={filterAgeRange} onChange={(e) => { setFilterAgeRange(e.target.value); setCurrentPage(1); }}>
-                <option value="">All Ages</option>
-                <option value="0-18">Under 18</option>
-                <option value="19-40">19 - 40 Yrs</option>
-                <option value="41-60">41 - 60 Yrs</option>
-                <option value="60+">60+ Yrs</option>
-              </select>
-              {(searchTerm || filterGender || filterAgeRange) && (
-                <button className="doc_patn_m_clear_btn" onClick={() => { setSearchTerm(""); setFilterGender(""); setFilterAgeRange(""); setCurrentPage(1); }}>
-                  <X size={14} /> Clear
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Patient Table */}
           <div className="doc_patn_m_table_container">
             <table className="doc_patn_m_table">
               <thead>
                 <tr>
                   <th>Patient Identity</th>
-                  <th>Age / Classification</th>
-                  <th>Gender</th>
-                  <th>Primary Condition</th>
+                  <th>Primary Classication</th>
                   <th className="doc_patn_m_text_right">Management</th>
                 </tr>
               </thead>
               <tbody>
-                {currentPatients.length > 0 ? currentPatients.map((p, i) => {
-                  const firstName = p?.userId?.firstName || 'Unknown'
-                  const lastName = p?.userId?.lastName || ''
-                  const age = calculateAge(p?.userId?.dateOfBirth)
-                  const gender = p?.userId?.gender || 'N/A'
-                  const condition = p?.primaryDisease || p?.medicalHistory?.[0] || 'General'
-                  return (
-                    <tr key={p._id || i}>
-                      <td>
-                        <div className="doc_patn_m_cell_user">
-                          <div style={{
-                            width: 44, height: 44, borderRadius: 12,
-                            background: '#e0f2fe', color: '#007acc',
-                            display: 'flex', alignItems: 'center',
-                            justifyContent: 'center', fontWeight: 800
-                          }}>
-                            {firstName.charAt(0)}
-                          </div>
-                          <div>
-                            <b>{firstName} {lastName}</b>
-                            <span>#{p._id?.toString().slice(-6)}</span>
-                          </div>
+                {currentPatients.map((p) => (
+                  <tr key={p._id}>
+                    <td>
+                      <div className="doc_patn_m_cell_user">
+                        <div className="doc_patn_m_avatar_placeholder">
+                          <User size={14} />
                         </div>
-                      </td>
-                      <td>
-                        {age ? `${age}Y` : 'N/A'}
-                        <small className="doc_patn_m_age_pill">{getAgeClass(age)}</small>
-                      </td>
-                      <td>{gender}</td>
-                      <td><span className="doc_patn_m_disease_tag">{condition}</span></td>
-                      <td className="doc_patn_m_text_right">
-                        <button className="doc_patn_m_btn_manage" onClick={() => handleOpenFile(p)}>
-                          Open File
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                }) : (
-                  <tr>
-                    <td colSpan="5" className="doc_patn_m_no_results">
-                      <Activity size={32} />
-                      <p>No patients found.</p>
+                        <div>
+                          <b>{p.name}</b>
+                          <span>REF ID: {p._id.slice(-6).toUpperCase()}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="doc_patn_m_disease_tag">
+                        {p.disease || "General Checkup"}
+                      </span>
+                    </td>
+                    <td className="doc_patn_m_text_right">
+                      <button
+                        className="doc_patn_m_btn_manage"
+                        onClick={() => {
+                          setSelectedPatient(p);
+                          setIsDetailView(true);
+                        }}
+                      >
+                        Open EHR
+                      </button>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="doc_patn_m_pagination_bar">
-              <div className="doc_patn_m_pag_info">
-                Showing <b>{indexOfFirstRow + 1}-{Math.min(indexOfLastRow, filteredPatients.length)}</b> of <b>{filteredPatients.length}</b>
-              </div>
-              <div className="doc_patn_m_pag_buttons">
-                <button className="doc_patn_m_pag_nav_btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                  <ChevronLeft size={16}/>
-                </button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button 
-                    key={i}
-                    className={`doc_patn_m_pag_num_btn ${currentPage === i + 1 ? 'doc_patn_m_active' : ''}`}
-                    onClick={() => handlePageChange(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button className="doc_patn_m_pag_nav_btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                  <ChevronRight size={16}/>
-                </button>
-              </div>
+            <div className="doc_patn_m_pagination">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                <ChevronLeft />
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                <ChevronRight />
+              </button>
             </div>
           )}
         </div>
       ) : (
-        // Patient Detail View
         <div className="doc_patn_m_patient_workspace doc_patn_m_page_fade_in">
           <div className="doc_patn_m_detail_nav">
-            <button className="doc_patn_m_back_btn" onClick={() => setIsDetailView(false)}>
-              <ArrowLeft size={18}/> Back to Registry
+            <button
+              className="doc_patn_m_back_btn"
+              onClick={() => setIsDetailView(false)}
+            >
+              <ArrowLeft size={18} /> Back to Registry
             </button>
-            <div className="doc_patn_m_case_id_badge">
-              EHR Active: <b>{selectedPatient?.userId?.firstName} {selectedPatient?.userId?.lastName}</b>
-            </div>
           </div>
 
           <div className="doc_patn_m_bento_workspace_grid">
-            {/* Demographics */}
-            <div className="doc_patn_m_card_refined doc_patn_m_id_card">
-              <span className="doc_patn_m_label_micro">Patient Demographics</span>
-              <div className="doc_patn_m_pat_vertical_header">
-                <div style={{
-                  width: 90, height: 90, borderRadius: 24,
-                  background: 'linear-gradient(135deg, #007acc, #00d2ff)',
-                  color: '#fff', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontWeight: 800, fontSize: '2rem'
-                }}>
-                  {selectedPatient?.userId?.firstName?.charAt(0)}
-                </div>
-                <div className="doc_patn_m_pat_name_stack">
-                  <h2>{selectedPatient?.userId?.firstName} {selectedPatient?.userId?.lastName}</h2>
-                  <span className="doc_patn_m_id_pill">UID: #{selectedPatient?._id?.toString().slice(-6)}</span>
+            {/* COMPREHENSIVE MEDICAL PATIENT PROLE DOSSIER */}
+            <div className="doc_patn_m_card_rened doc_patn_m_id_card">
+              <div className="ehr_prole_flex_header">
+                <img
+                  src={
+                    selectedPatient?.photo
+                      ? `http://localhost:5000/uploads/${selectedPatient.photo}`
+                      : "https://via.placeholder.com/150"
+                  }
+                  className="ehr_dossier_avatar_asset"
+                  alt="Patient Identity Snapshot"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
+                />
+                <div className="ehr_header_meta_block">
+                  <h2>{selectedPatient.name}</h2>
+                  <span className="doc_patn_m_id_pill">
+                    {selectedPatient.gender} • {selectedPatient.age || "24"}{" "}
+                    Years
+                  </span>
                 </div>
               </div>
-              <div className="doc_patn_m_pat_contact_vertical">
+
+              <div className="dossier_vitals_strip_metrics">
+                <div className="strip_metric_box">
+                  <Ruler size={14} />
+                  <span>
+                    Height:{" "}
+                    <strong>{selectedPatient.height || "172"} cm</strong>
+                  </span>
+                </div>
+                <div className="strip_metric_box">
+                  <Scale size={14} />
+                  <span>
+                    Weight: <strong>{selectedPatient.weight || "68"} kg</strong>
+                  </span>
+                </div>
+                <div className="strip_metric_box">
+                  <Activity size={14} />
+                  <span>
+                    Blood: <strong>{selectedPatient.bloodGroup || "B+"}</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div className="doc_patn_m_contact_vertical">
                 <div className="doc_patn_m_contact_line">
-                  <div className="doc_patn_m_icon_circ"><Phone size={14}/></div>
-                  <span>{selectedPatient?.userId?.contact || 'N/A'}</span>
+                  <Phone size={14} />{" "}
+                  <span>{selectedPatient.contact || "N/A"}</span>
                 </div>
                 <div className="doc_patn_m_contact_line">
-                  <div className="doc_patn_m_icon_circ"><Mail size={14}/></div>
-                  <span>{selectedPatient?.userId?.email || 'N/A'}</span>
+                  <Mail size={14} />{" "}
+                  <span>{selectedPatient.email || "N/A"}</span>
                 </div>
-                <div className="doc_patn_m_contact_line">
-                  <div className="doc_patn_m_icon_circ"><MapPin size={14}/></div>
-                  <span>{selectedPatient?.address || 'N/A'}</span>
-                </div>
+                {selectedPatient.emergencyContact && (
+                  <div className="doc_patn_m_contact_line backup_emergency_line">
+                    <span className="emergency_alert_tag">ICE Line:</span>
+                    <strong>{selectedPatient.emergencyContact}</strong>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Clinical Data */}
-            <div className="doc_patn_m_card_refined doc_patn_m_clinical_card">
-              <span className="doc_patn_m_label_micro">Clinical Status & BMI</span>
-              <div className="doc_patn_m_logistics_grid">
-                <div className="doc_patn_m_logistics_item">
-                  <div className="doc_patn_m_log_icon"><Activity size={18}/></div>
-                  <div className="doc_patn_m_log_text">
-                    <label>Diagnosis</label>
-                    <strong>{selectedPatient?.primaryDisease || selectedPatient?.medicalHistory?.[0] || 'N/A'}</strong>
-                  </div>
-                </div>
-                <div className="doc_patn_m_logistics_item">
-                  <div className="doc_patn_m_log_icon"><Scale size={18}/></div>
-                  <div className="doc_patn_m_log_text">
-                    <label>BMI</label>
-                    <strong>
-                      {calculateBMI(selectedPatient?.weight, selectedPatient?.height).bmi}
-                    </strong>
-                  </div>
-                </div>
-                <div className="doc_patn_m_logistics_item">
-                  <div className="doc_patn_m_log_icon"><Ruler size={18}/></div>
-                  <div className="doc_patn_m_log_text">
-                    <label>Height</label>
-                    <strong>{selectedPatient?.height ? `${selectedPatient.height} cm` : 'N/A'}</strong>
-                  </div>
-                </div>
-                <div className="doc_patn_m_logistics_item">
-                  <div className="doc_patn_m_log_icon"><User size={18}/></div>
-                  <div className="doc_patn_m_log_text">
-                    <label>Blood Group</label>
-                    <strong>{selectedPatient?.bloodGroup || 'N/A'}</strong>
-                  </div>
-                </div>
+            {/* AUTOMATED REQUISITION TERMINAL */}
+            <div className="doc_patn_m_card_rened doc_patn_m_order_terminal">
+              <div className="doc_patn_m_order_head">
+                <ShoppingCart size={20} color="#0d9488" />
+                <h3>Clinical Requisition</h3>
               </div>
 
-              {/* Appointment History */}
-              <div className="doc_patn_m_history_section">
-                <div className="doc_patn_m_history_header_flex">
-                  <h4><Zap size={16} /> Consultations with You</h4>
-                  <span>{patientHistory.local.length} Entries</span>
+              <div className="doc_patn_m_order_input_zone">
+                <div className="doc_patn_m_smart_search">
+                  <Search size={14} />
+                  <input
+                    placeholder="Search Pharmacy / Lab Database..."
+                    value={orderQuery}
+                    onChange={(e) => setOrderQuery(e.target.value)}
+                  />
                 </div>
-                <div className="doc_patn_m_history_list_stack">
-                  {patientHistory.local.map(appt => (
-                    <div key={appt._id} className="doc_patn_m_history_card_item doc_patn_m_local">
-                      <div className="doc_patn_m_h_date_badge">
-                        <span>{appt.date?.split('-')[2]}</span>
-                        <small>{new Date(appt.date).toLocaleString('default', { month: 'short' })}</small>
+
+                {suggestedResources.length > 0 && (
+                  <div className="doc_patn_m_suggestions_dropdown">
+                    {suggestedResources.map((res) => (
+                      <div
+                        key={res._id}
+                        className="suggestion_item"
+                        onClick={() => {
+                          setSelectedResource(res);
+                          setOrderQuery(res.name);
+                        }}
+                      >
+                        {res.type === "Medicine" ? (
+                          <Pill size={12} />
+                        ) : (
+                          <FlaskConical size={12} />
+                        )}
+                        <span>{res.name}</span>
+                        <small>₹{res.price}</small>
                       </div>
-                      <div className="doc_patn_m_h_info">
-                        <strong>{appt.type} Session</strong>
-                        <p>{appt.consultationNotes || appt.reason || "No notes available."}</p>
-                      </div>
-                      <ChevronRight size={18} className="doc_patn_m_jump_icon" />
+                    ))}
+                  </div>
+                )}
+
+                {selectedResource && (
+                  <div className="doc_patn_m_order_cong doc_patn_m_page_fade_in">
+                    <div className="cong_row">
+                      <label>Prescribe Dispense Count:</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={prescriptionCount}
+                        onChange={(e) => setPrescriptionCount(e.target.value)}
+                      />
                     </div>
-                  ))}
-                  {patientHistory.local.length === 0 && (
-                    <p style={{ color: '#94a3b8' }}>No consultation history.</p>
-                  )}
-                </div>
+                    <button
+                      className="doc_patn_m_btn_commit"
+                      onClick={commitPrescriptionToVault}
+                      disabled={isOrdering}
+                    >
+                      {isOrdering ? (
+                        <Loader2 className="spin" size={14} />
+                      ) : (
+                        <Send size={14} />
+                      )}
+                      Commit to Vault
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Global Timeline */}
-            <div className="doc_patn_m_card_refined doc_patn_m_global_history_sidebar">
-              <span className="doc_patn_m_label_micro">Clinical Timeline (Global)</span>
-              <div className="doc_patn_m_global_timeline_stack">
-                <div className="doc_patn_m_empty_timeline">
-                  Global timeline from other doctors will appear here.
+            {/* SCROLL-LOCKED HISTORICAL LOG INFRASTRUCTURE */}
+            <div className="doc_patn_m_card_rened doc_patn_m_history_card">
+              <h4 className="doc_patn_m_history_title">
+                <Zap size={16} /> Complete Consultation Case Logs
+              </h4>
+
+              {/* Box container enforces internal scrolling above 5 records natively */}
+              <div className="doc_patn_m_history_list_stack vertical_scroll_lock_container">
+                {sortedPatientHistory.length > 0 ? (
+                  sortedPatientHistory.map((appt) => (
+                    <div
+                      key={appt._id}
+                      className={`doc_patn_m_history_card_item clickable_case_row ${appt.doctorName === currentDocName ? "own_encounter_node" : "external_encounter_node"}`}
+                      onClick={() => setActiveInspectionAppt(appt)}
+                    >
+                      <div className="case_row_left_stack">
+                        <div className="case_badge_date_info">
+                          <strong>{appt.date}</strong>
+                          <span className="case_consultant_label">
+                            Dr. {appt.doctorName}
+                          </span>
+                        </div>
+                        <p className="case_notes_truncate_preview">
+                          {appt.notes ||
+                            "No clinical diagnostic summary logged."}
+                        </p>
+                      </div>
+                      <div className="case_row_right_flex">
+                        <span
+                          className={`case_status_pill status_${appt.status.toLowerCase()}`}
+                        >
+                          {appt.status}
+                        </span>
+                        <ChevronRight size={16} />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="empty_text">
+                    No prior recorded cases linked to this le.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OVERLAY ACTION DIALOGUE: APPOINTMENT SPECICATION DRAWER */}
+      {activeInspectionAppt && (
+        <div className="clinical_inspection_modal_overlay">
+          <div className="inspection_modal_card_blueprint doc_patn_m_page_fade_in">
+            <div className="inspection_modal_header">
+              <div>
+                <h3>Case Log Details</h3>
+                <span className="modal_ref_id">
+                  Reference Ticket:{" "}
+                  {activeInspectionAppt.appointmentID ||
+                    activeInspectionAppt._id}
+                </span>
+              </div>
+              <button
+                className="close_modal_action"
+                onClick={() => setActiveInspectionAppt(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="inspection_modal_body_content">
+              <div className="modal_meta_grid_layout">
+                <div className="modal_meta_cell">
+                  <Calendar size={14} />{" "}
+                  <span>
+                    Date: <strong>{activeInspectionAppt.date}</strong>
+                  </span>
                 </div>
+                <div className="modal_meta_cell">
+                  <Clock size={14} />{" "}
+                  <span>
+                    Time Slot: <strong>{activeInspectionAppt.time}</strong>
+                  </span>
+                </div>
+                <div className="modal_meta_cell">
+                  <User size={14} />{" "}
+                  <span>
+                    Consultant:{" "}
+                    <strong>Dr. {activeInspectionAppt.doctorName}</strong>
+                  </span>
+                </div>
+                <div className="modal_meta_cell">
+                  <Activity size={14} />{" "}
+                  <span>
+                    Department:{" "}
+                    <strong>
+                      {activeInspectionAppt.department || "General"}
+                    </strong>
+                  </span>
+                </div>
+              </div>
+
+              <div className="modal_clinical_ndings_box">
+                <h4>Clinical ndings & Diagnostics Notes:</h4>
+                <p>
+                  "
+                  {activeInspectionAppt.notes ||
+                    "No general clinical ndings documented for this case channel."}
+                  "
+                </p>
+              </div>
+
+              <div className="modal_rx_dispatched_block">
+                <h4>Prescribed Items Matrix:</h4>
+                {activeInspectionAppt.prescribedItems &&
+                activeInspectionAppt.prescribedItems.length > 0 ? (
+                  <div className="modal_rx_table_wrapper">
+                    {activeInspectionAppt.prescribedItems.map((item, idx) => (
+                      <div key={idx} className="modal_rx_item_row">
+                        <div className="rx_item_main_identity">
+                          <strong>{item.name}</strong>
+                          <span className="rx_item_type_tag">{item.type}</span>
+                        </div>
+                        <div className="rx_item_clinical_dosage_meta">
+                          <span>
+                            Quantity: <strong>{item.quantity} units</strong>
+                          </span>
+                          {item.type === "Medicine" && (
+                            <>
+                              <span className="divider_dot">•</span>
+                              <span>
+                                Intake: <strong>{item.intake}</strong>
+                              </span>
+                              <span className="divider_dot">•</span>
+                              <span>
+                                Instruction: <strong>{item.instruction}</strong>
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no_rx_logged_warning">
+                    No pharmacotherapy orders or diagnostics items linked to
+                    this encounter.
+                  </p>
+                )}
               </div>
             </div>
           </div>

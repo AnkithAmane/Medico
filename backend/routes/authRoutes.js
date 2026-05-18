@@ -1,23 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { 
-  register, 
-  login, 
-  getMe, 
-  logout,
-  updatePassword,
-  updateEmail
-} = require('../controllers/authCtrl');
-const { protect } = require('../middleware/authMiddleware');
-const { authValidation } = require('../middleware/validation');
+const authController = require("../controllers/authController");
+const upload = require("../middleware/upload");
 
-router.post('/register', ...authValidation.register, register);
-router.post('/login', ...authValidation.login, login);
-router.get('/me', protect, getMe);
-router.post('/logout', protect, logout);
-router.put('/update-password', protect, updatePassword);
-router.put('/update-email', protect, updateEmail);
-
-
+router.post("/signup", authController.signUp);
+router.post("/signin", authController.signIn);
+router.post("/google", authController.googleAuth);
+router.put("/update-password", authController.updatePassword);
+router.put("/update-profile/:id", upload.single("photo"), authController.updateProfile);
 
 module.exports = router;

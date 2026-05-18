@@ -1,151 +1,204 @@
 import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import {
-  ShieldCheck, ArrowLeftRight, Search, Download,
-  AlertTriangle, Clock, CheckCircle2, ChevronLeft,
-  ChevronRight, Calendar as CalIcon, X, User,
-  Briefcase, Zap, FileText, Plus, ArrowRight,
-  Users, Activity
+  ShieldCheck,
+  ArrowLeftRight,
+  Search,
+  AlertTriangle,
+  Clock,
+  ChevronLeft,
+  Calendar as CalIcon,
+  X,
+  Zap,
+  Plus,
+  ArrowRight,
+  Users,
+  Loader2,
 } from "lucide-react";
-import axiosInstance from "../../utils/axios";
+
 import "./Availability_Management.css";
 
 export default function Availability_Management() {
-  // Data states
-  const [doctors, setDoctors] = useState([])
-  const [loading, setLoading] = useState(true)
+  /* --- MERN LIVE DATA STATES --- */
+  const [requests, setRequests] = useState([]);
+  const [doctorsList, setDoctorsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dbDepartments, setDbDepartments] = useState([]); // 🟢 FIXED: Declared missing state parameter to prevent crash threads
 
-  // UI states
+  /* --- UI STATE MANAGEMENT --- */
   const [showManualForm, setShowManualForm] = useState(false);
   const [selectedReq, setSelectedReq] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-  const [requests, setRequests] = useState([])
-  const [submitting, setSubmitting] = useState(false)
 
-  // Fetch doctors
+  /* 1. DATA SYNC LOGIC */
+  // Inside Availability_Management.jsx or registration components
+
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const loadHospitalDepartments = async () => {
       try {
-        setLoading(true)
-        const res = await axiosInstance.get('/doctors')
-        setDoctors(res.data.data || [])
-
-        // Load leave requests from localStorage
-        const saved = localStorage.getItem('admin_leave_requests')
-        if (saved) setRequests(JSON.parse(saved))
+        // 🟢 Swapped away from the doctor domain lane to hit the correct department router track!
+        const res = await axios.get(
+          "http://localhost:5000/api/departments/dropdown/list",
+        );
+        setDbDepartments(res.data || []);
       } catch (err) {
-        console.error('Failed to load doctors')
-      } finally {
-        setLoading(false)
+        console.error(
+          "Failed to query hospital units registries via department lane",
+          err,
+        );
       }
+    };
+    loadHospitalDepartments();
+  }, []);
+  const syncHospitalData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const [leaveRes, docRes] = await Promise.all([
+        axios.get("http://localhost:5000/api/leaves/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:5000/api/doctors/list", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+      setRequests(leaveRes.data || []);
+      setDoctorsList(docRes.data || []);
+    } catch (err) {
+      console.error("Clinical Load Sync Failed", err);
+    } finally {
+      setLoading(false);
     }
-    fetchDoctors()
-  }, [])
+  };
 
-  // Save requests to localStorage
-  const saveRequests = (updated) => {
-    setRequests(updated)
-    localStorage.setItem('admin_leave_requests', JSON.stringify(updated))
-  }
+  useEffect(() => {
+    syncHospitalData();
+  }, []);
 
-  // Find replacement doctor
-  const findReplacement = (specialization, currentDocId) => {
-    if (!specialization) return null
-    return doctors.find(d =>
-      d.specialization === specialization &&
-      d._id !== currentDocId &&
-      d.isAvailable
-    ) || null
-  }
+  /* 2. REPLACEMENT ENGINE (Logic to find best colleague for coverage) */
+  const findReplacement = (dept, currentDocId) => {
+    if (!dept) return null;
+    const candidates = doctorsList.filter(
+      (d) =>
+        d.department === dept &&
+        d.doctorId !== currentDocId &&
+        d._id !== currentDocId &&
+        d.availability === "Available",
+    );
 
-  // Handle decision
+    if (candidates.length === 0) return null;
+
+    // Prioritize by experience if multiple candidates exist
+    return candidates.sort((a, b) => {
+      const expA = parseInt(a.experience) || 0;
+      const expB = parseInt(b.experience) || 0;
+      return expB - expA;
+    })[0];
+  };
+
+  /* 3. DECISION LOGIC: Approves leave and triggers the Bulk Redistribution */
   const handleDecision = async (id, newStatus) => {
-    const req = requests.find(r => r.id === id)
-    let proxyName = null
+    try {
+      const token = localStorage.getItem("token");
+      const req = requests.find((r) => r._id === id);
 
-    if (newStatus === "Approved" && req.appointments > 0) {
-      const replacement = findReplacement(req.dept, req.docId)
-      proxyName = replacement ? replacement.name : "System Unassigned"
-      newStatus = "Reassigned"
+      // Determine proxy doctor
+      const replacement = findReplacement(req.department, req.doctorId);
+      const targetDoctor = replacement ? replacement.name : "System Unassigned";
+
+      // Trigger the specialized Backend Redistribution Route
+      await axios.put(
+        `http://localhost:5000/api/leaves/update/${id}`,
+        {
+          targetDoctor: targetDoctor,
+          status:
+            newStatus === "Approved" && replacement ? "Reassigned" : newStatus,
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      alert(
+        newStatus === "Rejected"
+          ? "Absence request declined safely."
+          : `Success: Clinical load shifted to ${targetDoctor}`,
+      );
+      syncHospitalData();
+      setSelectedReq(null);
+    } catch (err) {
+      alert(
+        "Redistribution Sync Failed: " +
+          (err.response?.data?.message || "Server Error"),
+      );
     }
+  };
 
-    const updated = requests.map(r =>
-      r.id === id ? { ...r, status: newStatus, assignedTo: proxyName } : r
-    )
-    saveRequests(updated)
-    setSelectedReq(null)
-  }
-
-  // Manual leave submission
+  /* 4. MANUAL SUBMISSION: Logs a leave and auto-calculates patient impact */
   const handleManualSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const docId = formData.get('docId')
-    const selectedDoc = doctors.find(d => d._id === docId)
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const docId = formData.get("docId");
+    const selectedDoc = doctorsList.find(
+      (d) => d.doctorId === docId || d._id === docId,
+    );
 
-    if (!selectedDoc) {
-      alert('Please select a valid doctor')
-      return
-    }
+    if (!selectedDoc) return alert("Please select a valid specialist.");
 
     try {
-      setSubmitting(true)
+      const token = localStorage.getItem("token");
 
-      // Update doctor availability
-      await axiosInstance.put(`/doctors/${docId}`, { isAvailable: false })
+      // Check real-time conflict count from DB
+      const conflictRes = await axios.get(
+        `http://localhost:5000/api/leaves/check-conflicts?doctorName=${encodeURIComponent(selectedDoc.name)}&startDate=${formData.get("startDate")}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-      const newRequest = {
-        id: `REQ-${Math.floor(1000 + Math.random() * 9000)}`,
-        docId,
-        doctor: selectedDoc.name,
-        dept: selectedDoc.specialization,
-        type: formData.get('type'),
-        date: formData.get('date'),
-        appointments: 0,
-        status: 'Pending',
-        priority: formData.get('priority'),
-        reason: formData.get('reason') || 'Clinical Sabbatical',
-        patients: [],
-        assignedTo: null
-      }
+      const payload = {
+        doctorId: selectedDoc.doctorId || selectedDoc._id,
+        doctorName: selectedDoc.name,
+        department: selectedDoc.department,
+        leaveType: "Full_Day",
+        startDate: formData.get("startDate"),
+        endDate: formData.get("endDate") || formData.get("startDate"),
+        priority: formData.get("priority"),
+        reason: formData.get("reason"),
+        appointments: conflictRes.data.count,
+        status: "Pending",
+      };
 
-      const updated = [newRequest, ...requests]
-      saveRequests(updated)
-      setShowManualForm(false)
+      await axios.post("http://localhost:5000/api/leaves/apply", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setShowManualForm(false);
+      syncHospitalData();
     } catch (err) {
-      alert('Failed to submit leave request')
-    } finally {
-      setSubmitting(false)
+      alert("Manual log failed.");
     }
-  }
+  };
 
-  // Filter requests
+  /* 5. SEARCH & FILTER LOGIC */
   const filtered = useMemo(() => {
-    return requests.filter(r =>
-      (r.doctor?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.dept?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (activeTab === "All" || r.status === activeTab)
-    )
-  }, [requests, searchTerm, activeTab])
+    return requests.filter(
+      (r) =>
+        ((r.doctorName || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+          (r.department || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) &&
+        (activeTab === "All" || r.status === activeTab),
+    );
+  }, [requests, searchTerm, activeTab]);
 
-  // Stats
-  const stats = {
-    total: doctors.length,
-    pending: requests.filter(r => r.status === 'Pending').length,
-    reassigned: requests.filter(r => r.status === 'Reassigned').length,
-    available: doctors.filter(d => d.isAvailable).length
-  }
-
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-      <p>Loading...</p>
-    </div>
-  )
+  if (loading)
+    return (
+      <div className="admin_dash_load">
+        <Loader2 className="spin" /> Syncing Clinical Load...
+      </div>
+    );
 
   return (
     <div className="admin_avail_m_wrapper">
-      {/* Header */}
       <header className="admin_avail_m_header">
         <div className="admin_avail_m_branding">
           <h1 className="admin_avail_m_title_elite">
@@ -153,320 +206,364 @@ export default function Availability_Management() {
           </h1>
           <p className="admin_avail_m_subtitle">
             {selectedReq
-              ? `Analytics for ${selectedReq.doctor} [ID: ${selectedReq.id}]`
-              : "Specialist Availability Impact & Clinical Load Balancing"}
+              ? `Analytics for ${selectedReq.doctorName}`
+              : "Clinical Load Balancing & Specialist Coverage"}
           </p>
         </div>
+
         {!selectedReq && (
           <div className="admin_avail_m_action_group">
             <div className="admin_avail_m_search_box">
               <Search size={18} color="#94a3b8" />
               <input
                 type="text"
-                placeholder="Search requests or specialists..."
+                placeholder="Search specialists..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="admin_avail_m_btn_primary" onClick={() => setShowManualForm(true)}>
+            <button
+              className="admin_avail_m_btn_primary"
+              onClick={() => setShowManualForm(true)}
+            >
               <Plus size={18} /> Log Manual Leave
             </button>
           </div>
         )}
       </header>
-
       {!selectedReq ? (
-        <div>
-          {/* Stats Grid */}
+        <div className="admin_avail_m_fade_in">
+          {/* STATS OVERVIEW */}
           <section className="admin_avail_m_stat_grid">
             <div className="admin_avail_m_stat_tile">
-              <div className="admin_avail_m_tile_icon"><Users size={20} /></div>
+              <div className="admin_avail_m_tile_icon">
+                <Users size={20} />
+              </div>
               <div className="admin_avail_m_tile_txt">
-                <h3>{stats.total}</h3><p>Clinical Registry</p>
+                <h3>{doctorsList.length}</h3>
+                <p>Active Staff</p>
               </div>
             </div>
             <div className="admin_avail_m_stat_tile">
-              <div className="admin_avail_m_tile_icon" style={{ color: "#f59e0b" }}><Clock size={20} /></div>
+              <div
+                className="admin_avail_m_tile_icon"
+                style={{ color: "#f59e0b" }}
+              >
+                <Clock size={20} />
+              </div>
               <div className="admin_avail_m_tile_txt">
-                <h3>{stats.pending}</h3><p>Pending Review</p>
+                <h3>{requests.filter((r) => r.status === "Pending").length}</h3>
+                <p>Awaiting Review</p>
               </div>
             </div>
             <div className="admin_avail_m_stat_tile">
-              <div className="admin_avail_m_tile_icon" style={{ color: "#22c55e" }}><ArrowLeftRight size={20} /></div>
-              <div className="admin_avail_m_tile_txt">
-                <h3>{stats.reassigned}</h3><p>Active Proxy Shifts</p>
+              <div
+                className="admin_avail_m_tile_icon"
+                style={{ color: "#22c55e" }}
+              >
+                <ArrowLeftRight size={20} />
               </div>
-            </div>
-            <div className="admin_avail_m_stat_tile">
-              <div className="admin_avail_m_tile_icon" style={{ color: "#007acc" }}><ShieldCheck size={20} /></div>
               <div className="admin_avail_m_tile_txt">
-                <h3>{stats.available}</h3><p>Available Doctors</p>
+                <h3>
+                  {
+                    requests.filter(
+                      (r) =>
+                        r.status === "Reassigned" || r.status === "Approved",
+                    ).length
+                  }
+                </h3>
+                <p>Redistributed</p>
               </div>
             </div>
           </section>
 
-          {/* Tabs */}
+          {/* CONTROL TABS */}
           <div className="admin_avail_m_control_bar">
             <div className="admin_avail_m_tabs">
-              {["All", "Pending", "Approved", "Reassigned"].map(tab => (
-                <button key={tab} className={`admin_avail_m_tab_btn ${activeTab === tab ? "active" : ""}`}
-                  onClick={() => setActiveTab(tab)}>
-                  {tab}
-                </button>
-              ))}
+              {["All", "Pending", "Approved", "Reassigned", "Rejected"].map(
+                (tab) => (
+                  <button
+                    key={tab}
+                    className={`admin_avail_m_tab_btn ${activeTab === tab ? "active" : ""}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ),
+              )}
             </div>
-            <button className="admin_avail_m_btn_outline">
-              <Download size={14} /> Export Logs
-            </button>
           </div>
 
-          {/* Requests Grid */}
+          {/* DATA GRID */}
           <div className="admin_avail_m_specialist_grid">
-            {filtered.length > 0 ? filtered.map(req => (
-              <div key={req.id} className="admin_avail_m_glass_card" onClick={() => setSelectedReq(req)}>
+            {filtered.map((req) => (
+              <div
+                key={req._id}
+                className="admin_avail_m_glass_card"
+                onClick={() => setSelectedReq(req)}
+              >
                 <div className="admin_avail_m_card_header">
-                  <span className="admin_avail_m_id_badge">{req.id}</span>
-                  <div className={`admin_avail_m_priority_dot ${req.priority?.toLowerCase()}`}></div>
+                  <span className="admin_avail_m_id_badge">
+                    LOG-{req._id.slice(-4).toUpperCase()}
+                  </span>
+                  <div
+                    className={`admin_avail_m_priority_dot ${req.priority?.toLowerCase()}`}
+                  ></div>
                 </div>
                 <div className="admin_avail_m_spec_identity">
-                  <div className="admin_avail_m_avatar_circle">
-                    <div style={{
-                      width: '100%', height: '100%',
-                      display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontWeight: 800,
-                      fontSize: '1.2rem', color: '#007acc'
-                    }}>
-                      {req.doctor?.charAt(0)}
-                    </div>
-                  </div>
-                  <div className="admin_avail_m_name_stack">
-                    <strong>{req.doctor}</strong>
-                    <span>{req.dept} Wing</span>
-                  </div>
+                  <strong>{req.doctorName}</strong>
+                  <span>{req.department} Unit</span>
+                  {req.leaveType === "Slot_Block" && (
+                    <small
+                      style={{
+                        color: "#d97706",
+                        fontWeight: "700",
+                        marginTop: "4px",
+                      }}
+                    >
+                      Hourly Blockout Selection
+                    </small>
+                  )}
                 </div>
                 <div className="admin_avail_m_spec_meta">
-                  <div className="admin_avail_m_meta_pill"><CalIcon size={12}/> {req.date}</div>
-                  <div className="admin_avail_m_meta_pill"><Clock size={12}/> {req.type}</div>
+                  <div className="admin_avail_m_meta_pill">
+                    <CalIcon size={12} /> {req.startDate}
+                  </div>
+                  <div
+                    className={`admin_avail_m_pill_status ${req.status.toLowerCase()}`}
+                  >
+                    {req.status}
+                  </div>
                 </div>
                 <div className="admin_avail_m_conflict_box">
                   {req.appointments > 0 ? (
                     <p className="admin_avail_m_txt_conflict">
-                      <AlertTriangle size={14}/> {req.appointments} Slots Impacted
+                      <AlertTriangle size={14} /> {req.appointments} Patients at
+                      Risk
                     </p>
                   ) : (
                     <p className="admin_avail_m_txt_safe">
-                      <ShieldCheck size={14}/> Schedule Is Verified Safe
+                      <ShieldCheck size={14} /> Schedule Safe
                     </p>
                   )}
                 </div>
-                <div className="admin_avail_m_card_footer">
-                  <span className={`admin_avail_m_pill_status ${req.status?.toLowerCase()}`}>
-                    {req.status} {req.assignedTo ? `→ ${req.assignedTo.split(' ').pop()}` : ''}
-                  </span>
-                  <button className="admin_avail_m_btn_manage">Analyze Impact</button>
-                </div>
               </div>
-            )) : (
-              <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '100px' }}>
-                <Activity size={48} color="#cbd5e1" />
-                <p style={{ marginTop: '20px', color: '#94a3b8', fontWeight: '600' }}>
-                  {requests.length === 0
-                    ? 'No leave requests yet. Use "Log Manual Leave" to add one.'
-                    : 'No requests matching current criteria.'
-                  }
-                </p>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       ) : (
-        /* Detail Workspace */
-        <div className="admin_avail_m_detail_container">
+        /* WORKSPACE VIEW: THE REASSIGNMENT INTERFACE */
+        <div className="admin_avail_m_detail_container admin_avail_m_fade_in">
           <div className="admin_avail_m_panel_top">
-            <button className="admin_avail_m_btn_outline" onClick={() => setSelectedReq(null)}>
-              <ChevronLeft size={20}/> Exit Workspace
+            <button
+              className="admin_avail_m_btn_outline"
+              onClick={() => setSelectedReq(null)}
+            >
+              <ChevronLeft size={20} /> Return to Dashboard
             </button>
-            <div className="admin_avail_m_ref_id">Reference: <b>{selectedReq.id}</b></div>
+            <div className="admin_avail_m_ref_id">Ref: {selectedReq._id}</div>
           </div>
 
           <div className="admin_avail_m_workspace_grid">
             <div className="admin_avail_m_workspace_left">
-              {/* Profile */}
               <div className="admin_avail_m_profile_hero">
-                <div style={{
-                  width: 100, height: 100, borderRadius: 20,
-                  background: 'linear-gradient(135deg, #007acc, #00d2ff)',
-                  color: '#fff', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontWeight: 800, fontSize: '2rem'
-                }}>
-                  {selectedReq.doctor?.charAt(0)}
-                </div>
-                <div className="admin_avail_m_hero_info">
-                  <h2>{selectedReq.doctor}</h2>
-                  <p><Briefcase size={14}/> {selectedReq.dept} Consultant</p>
-                  <div className="admin_avail_m_hero_badges">
-                    <span className={`admin_avail_m_prio_tag ${selectedReq.priority?.toLowerCase()}`}>
-                      {selectedReq.priority} Priority
-                    </span>
-                    <span className="admin_avail_m_type_tag">{selectedReq.type}</span>
-                  </div>
-                </div>
+                <h2>{selectedReq.doctorName}</h2>
+                <p>{selectedReq.department} Consultant</p>
               </div>
-
-              {/* Details */}
               <div className="admin_avail_m_details_bento">
                 <div className="admin_avail_m_bento_item">
-                  <label><CalIcon size={14}/> Effective Date</label>
-                  <strong>{selectedReq.date}</strong>
+                  <label>Strategy Type</label>
+                  <strong>
+                    {selectedReq.leaveType === "Slot_Block"
+                      ? "Hourly Slot Blockout"
+                      : "Full Vacation Range"}
+                  </strong>
                 </div>
                 <div className="admin_avail_m_bento_item">
-                  <label><Clock size={14}/> Coverage Shift</label>
-                  <strong>All Sessions (09:00 - 18:00)</strong>
+                  <label>Target Date Window</label>
+                  <strong>
+                    {selectedReq.startDate}{" "}
+                    {selectedReq.endDate !== selectedReq.startDate
+                      ? ` to ${selectedReq.endDate}`
+                      : ""}
+                  </strong>
                 </div>
+
+                {/* 🟢 NEW SUBSECTION: Renders the individual hour items from array if Slot_Block requested */}
+                {selectedReq.leaveType === "Slot_Block" && (
+                  <div
+                    className="admin_avail_m_bento_item full"
+                    style={{
+                      background: "#fffdfa",
+                      border: "1px solid #fef3c7",
+                    }}
+                  >
+                    <label style={{ color: "#b45309" }}>
+                      Requested Blockout Hours
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "6px",
+                        marginTop: "6px",
+                      }}
+                    >
+                      {selectedReq.blockedSlots?.map((slot, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            background: "#fff",
+                            border: "1px solid #cbd5e1",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            fontSize: "0.75rem",
+                            fontWeight: "700",
+                            color: "#334155",
+                          }}
+                        >
+                          {slot}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="admin_avail_m_bento_item full">
-                  <label><FileText size={14}/> Rationale</label>
+                  <label>Reasoning</label>
                   <p>{selectedReq.reason}</p>
                 </div>
               </div>
             </div>
 
             <div className="admin_avail_m_workspace_right">
-              {/* Intelligence Card */}
               <div className="admin_avail_m_logic_card">
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Zap size={18} color="#f59e0b" fill="#f59e0b"/> Reassignment Intelligence
+                <h3>
+                  <Zap size={18} color="#f59e0b" fill="#f59e0b" /> Shift
+                  Intelligence
                 </h3>
-
-                {selectedReq.appointments > 0 ? (
-                  <div>
+                {selectedReq.status === "Pending" ? (
+                  <div className="admin_avail_m_logic_body">
                     <div className="admin_avail_m_visual_bridge">
-                      <div className="admin_avail_m_bridge_node">
-                        <span>From (Origin)</span>
-                        <strong>{selectedReq.doctor?.split(' ').pop()}</strong>
-                      </div>
-                      <ArrowRight size={24} color="#007acc"/>
-                      <div className="admin_avail_m_bridge_node active">
-                        <span>To (Recommended)</span>
-                        <strong>
-                          {findReplacement(selectedReq.dept, selectedReq.docId)?.name?.split(' ').pop() || 'Unassigned'}
-                        </strong>
-                      </div>
+                      <strong>
+                        {selectedReq.doctorName.split(" ")[1] ||
+                          selectedReq.doctorName}
+                      </strong>
+                      <ArrowRight size={24} color="#007acc" />
+                      <strong className="active">
+                        {findReplacement(
+                          selectedReq.department,
+                          selectedReq.doctorId,
+                        )?.name?.split(" ")[1] || "None"}
+                      </strong>
                     </div>
-                    <div className="admin_avail_m_proxy_stats">
-                      <div className="admin_avail_m_s_row">
-                        <label>Assigned Specialist</label>
-                        <span>{findReplacement(selectedReq.dept, selectedReq.docId)?.name || 'NO PROXY AVAILABLE'}</span>
-                      </div>
-                      <div className="admin_avail_m_s_row">
-                        <label>Experience</label>
-                        <span>{findReplacement(selectedReq.dept, selectedReq.docId)?.experience || 'N/A'} years</span>
-                      </div>
-                      <div className="admin_avail_m_s_row">
-                        <label>Status</label>
-                        <span style={{ color: '#22c55e' }}>Available for Load Shift</span>
-                      </div>
+                    <p className="proxy_name_display">
+                      Suggested Proxy:{" "}
+                      {findReplacement(
+                        selectedReq.department,
+                        selectedReq.doctorId,
+                      )?.name || "No colleague available"}
+                    </p>
+                    <div className="admin_avail_m_action_btns">
+                      <button
+                        className="admin_avail_m_btn_submit"
+                        onClick={() =>
+                          handleDecision(selectedReq._id, "Approved")
+                        }
+                      >
+                        Shift Load & Approve
+                      </button>
+                      <button
+                        className="admin_avail_m_btn_reject"
+                        onClick={() =>
+                          handleDecision(selectedReq._id, "Rejected")
+                        }
+                      >
+                        Decline Leave
+                      </button>
                     </div>
-                    <button className="admin_avail_m_btn_submit" onClick={() => handleDecision(selectedReq.id, 'Approved')}>
-                      Commit Shift & Authorize Leave
-                    </button>
                   </div>
                 ) : (
-                  <div className="admin_avail_m_logic_safe">
-                    <ShieldCheck size={50} color="#10b981"/>
-                    <h4>No Overlapping Bookings</h4>
-                    <p>No patient records detected. You may approve this leave directly.</p>
-                    <button className="admin_avail_m_btn_submit" onClick={() => handleDecision(selectedReq.id, 'Approved')}>
-                      Authorize Leave
-                    </button>
+                  <div
+                    className="admin_avail_m_logic_safe"
+                    style={{ padding: "20px", textAlign: "center" }}
+                  >
+                    <ShieldCheck size={32} color="#10b981" />
+                    <p style={{ marginTop: "10px", fontWeight: "600" }}>
+                      This application file has already been audited as{" "}
+                      <span style={{ color: "#007acc" }}>
+                        {selectedReq.status}
+                      </span>
+                      .
+                    </p>
                   </div>
                 )}
-              </div>
-
-              {/* Impacted Patients */}
-              <div className="admin_avail_m_impact_card">
-                <div className="admin_avail_m_p_head">
-                  <h3><User size={18}/> Impacted Bookings</h3>
-                  <span className="admin_avail_m_p_count">{selectedReq.appointments} Records</span>
-                </div>
-                <div className="admin_avail_m_impact_list">
-                  {selectedReq.patients?.length > 0 ? selectedReq.patients.map((p, i) => (
-                    <div key={i} className="admin_avail_m_impact_item">
-                      <div className="admin_avail_m_p_avatar" style={{ background: '#f0f9ff', color: '#007acc' }}>
-                        {p.charAt(0)}
-                      </div>
-                      <div className="admin_avail_m_p_details">
-                        <strong>{p}</strong>
-                        <span>Pending Redistribution</span>
-                      </div>
-                      <div className="admin_avail_m_p_status"><Clock size={12}/> Rescheduling...</div>
-                    </div>
-                  )) : (
-                    <div style={{ textAlign: 'center', padding: 20 }}>
-                      <CheckCircle2 size={32} color="#22c55e"/>
-                      <p style={{ color: '#94a3b8' }}>No patient rescheduling required.</p>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Manual Leave Modal */}
+      /* MANUAL ABSENCE FORM MODAL */
       {showManualForm && (
         <div className="admin_avail_m_modal_overlay">
           <div className="admin_avail_m_form_card">
             <div className="admin_avail_m_modal_header">
-              <h2>Log <span>Manual Absence</span></h2>
-              <button onClick={() => setShowManualForm(false)} className="admin_avail_m_close_btn">
-                <X size={24}/>
+              <h2>
+                Register <span>Staff Absence</span>
+              </h2>
+              <button
+                onClick={() => setShowManualForm(false)}
+                className="admin_avail_m_close_btn"
+              >
+                <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleManualSubmit} className="admin_avail_m_form_grid">
+            <form
+              onSubmit={handleManualSubmit}
+              className="admin_avail_m_form_grid"
+            >
               <div className="admin_avail_m_input_box full">
-                <label>Select Specialist</label>
+                <label>Specialist</label>
                 <select name="docId" required className="admin_avail_m_select">
                   <option value="">Choose Specialist...</option>
-                  {doctors.map(doc => (
-                    <option key={doc._id} value={doc._id}>
-                      {doc.name} ({doc.specialization})
+                  {doctorsList.map((doc) => (
+                    <option
+                      key={doc._id || doc.doctorId}
+                      value={doc.doctorId || doc._id}
+                    >
+                      {doc.name} ({doc.department})
                     </option>
                   ))}
                 </select>
               </div>
               <div className="admin_avail_m_input_box">
-                <label>Type of Leave</label>
-                <select name="type" className="admin_avail_m_select">
-                  <option>Full Day Absence</option>
-                  <option>Session Leave (AM/PM)</option>
-                  <option>Emergency Clinical Leave</option>
-                  <option>Scientific Sabbatical</option>
-                </select>
+                <label>Start Date</label>
+                <input
+                  type="date"
+                  name="startDate"
+                  required
+                  className="admin_avail_m_input"
+                />
               </div>
               <div className="admin_avail_m_input_box">
                 <label>Priority</label>
                 <select name="priority" className="admin_avail_m_select">
-                  <option value="Normal">Normal</option>
-                  <option value="High">High Priority</option>
-                  <option value="Critical">Critical</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
                 </select>
               </div>
-              <div className="admin_avail_m_input_box">
-                <label>Effective Date</label>
-                <input type="date" name="date" required className="admin_avail_m_input"/>
-              </div>
-              <div className="admin_avail_m_input_box">
-                <label>Return Date (Optional)</label>
-                <input type="date" name="endDate" className="admin_avail_m_input"/>
-              </div>
               <div className="admin_avail_m_input_box full">
-                <label>Rationale</label>
-                <textarea name="reason" placeholder="Provide justification..." rows="3"
-                  className="admin_avail_m_textarea"></textarea>
+                <label>Reason for Absence</label>
+                <textarea
+                  name="reason"
+                  rows="2"
+                  className="admin_avail_m_textarea"
+                  required
+                ></textarea>
               </div>
-              <button type="submit" className="admin_avail_m_btn_submit full" style={{ border: 'none' }} disabled={submitting}>
-                {submitting ? 'Submitting...' : 'Submit & Analyze Coverage Impact'}
+              <button type="submit" className="admin_avail_m_btn_submit full">
+                Sync Schedule & Record
               </button>
             </form>
           </div>

@@ -1,19 +1,29 @@
 /* Animations */
 @keyframes admin_doc_m_FadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes admin_doc_m_SlideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Main Layout Wrapper */
 .admin_doc_m_wrapper {
   animation: admin_doc_m_FadeIn 0.6s ease-in-out;
   min-height: 100%;
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   box-sizing: border-box;
   zoom: 0.7;
   max-width: 1450px;
@@ -608,26 +618,27 @@
   width: 100%;
   max-width: 680px;
   border-radius: 35px;
-  padding: 50px;
+  padding: 20px 50px;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
   animation: admin_doc_m_SlideDown 0.4s ease;
 }
 
 .admin_doc_m_form_grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  grid-template-columns: 1r 1fr;
+  gap: 20px;
 }
 
 .admin_doc_m_input_box {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
 .admin_doc_m_input_box input,
+.admin_doc_m_input_box textarea,
 .admin_doc_m_input_box select {
-  padding: 16px;
+  padding: 15px;
   border-radius: 14px;
   border: 1.5px solid #e2e8f0;
   background: #f8fafc;
